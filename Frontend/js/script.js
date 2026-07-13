@@ -1,817 +1,725 @@
-/* =========================================================
-   HEALORA — HERO SECTION SCRIPT
-   Handles: navbar glass-on-scroll, mobile menu toggle,
-   and the hero headline typing animation.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  /* ---------- 1. Navbar glassmorphism on scroll ---------- */
-  const navbar = document.getElementById('navbar');
-  if (navbar) {
-    const SCROLL_THRESHOLD = 40;
-    const handleScroll = () => {
-      if (window.scrollY > SCROLL_THRESHOLD) {
-        navbar.classList.add('navbar--scrolled');
-      } else {
-        navbar.classList.remove('navbar--scrolled');
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // set initial state on load
-  }
+/* ============================================
+   HEALORA LANDING PAGE
+   script.js
+============================================ */
 
-  /* ---------- 2. Mobile menu toggle ---------- */
-  const burgerBtn = document.getElementById('burgerBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  
-  if (burgerBtn && mobileMenu) {
-    burgerBtn.addEventListener('click', () => {
-      const isOpen = mobileMenu.classList.toggle('is-open');
-      burgerBtn.setAttribute('aria-expanded', String(isOpen));
-      burgerBtn.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-      document.body.style.overflow = isOpen ? 'hidden' : '';
+/* ========= PRELOADER ========= */
+
+window.addEventListener("load", () => {
+
+    const preloader = document.querySelector(".preloader");
+
+    if (preloader) {
+        preloader.classList.add("hide");
+
+        setTimeout(() => {
+            preloader.remove();
+        }, 600);
+    }
+
+});
+
+/* ========= MOBILE MENU ========= */
+
+const menuBtn = document.querySelector(".menu-toggle");
+const navMenu = document.querySelector(".nav-links");
+
+if (menuBtn && navMenu) {
+
+    menuBtn.addEventListener("click", () => {
+
+        navMenu.classList.toggle("active");
+        menuBtn.classList.toggle("active");
+
     });
 
-    // Close mobile menu when a link is tapped
-    mobileMenu.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        mobileMenu.classList.remove('is-open');
-        burgerBtn.setAttribute('aria-expanded', 'false');
-        burgerBtn.setAttribute('aria-label', 'Open menu');
-        document.body.style.overflow = '';
-      });
+}
+
+/* ========= CLOSE MENU ========= */
+
+document.querySelectorAll(".nav-links a").forEach(link => {
+
+    link.addEventListener("click", () => {
+
+        if (navMenu) {
+
+            navMenu.classList.remove("active");
+
+        }
+
+        if (menuBtn) {
+
+            menuBtn.classList.remove("active");
+
+        }
+
     });
-  }
 
-  /* ---------- 3. Headline typing animation ---------- */
-  const typewriterEl = document.getElementById('typewriter');
-  if (typewriterEl) {
-    const phrases = ['a conversation', 'a quick chat', 'checking the weather'];
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+});
 
-    if (prefersReducedMotion) {
-      // Respect reduced-motion: show the primary phrase statically
-      typewriterEl.textContent = phrases[0];
+/* ========= STICKY NAVBAR ========= */
+
+const navbar = document.querySelector(".navbar");
+
+window.addEventListener("scroll", () => {
+
+    if (!navbar) return;
+
+    if (window.scrollY > 40) {
+
+        navbar.classList.add("sticky");
+
     } else {
-      let phraseIndex = 0;
-      let charIndex = 0;
-      let isDeleting = false;
 
-      const TYPE_SPEED = 55;
-      const DELETE_SPEED = 30;
-      const PAUSE_AFTER_TYPE = 1800;
-      const PAUSE_AFTER_DELETE = 300;
+        navbar.classList.remove("sticky");
 
-      const tick = () => {
-        const currentPhrase = phrases[phraseIndex];
-
-        if (!isDeleting) {
-          charIndex++;
-          typewriterEl.textContent = currentPhrase.slice(0, charIndex);
-
-          if (charIndex === currentPhrase.length) {
-            isDeleting = true;
-            setTimeout(tick, PAUSE_AFTER_TYPE);
-            return;
-          }
-          setTimeout(tick, TYPE_SPEED);
-        } else {
-          charIndex--;
-          typewriterEl.textContent = currentPhrase.slice(0, charIndex);
-
-          if (charIndex === 0) {
-            isDeleting = false;
-            phraseIndex = (phraseIndex + 1) % phrases.length;
-            setTimeout(tick, PAUSE_AFTER_DELETE);
-            return;
-          }
-          setTimeout(tick, DELETE_SPEED);
-        }
-      };
-
-      // Kick off after the headline's own entrance animation settles
-      setTimeout(tick, 500);
     }
-  }
+
 });
 
+/* ========= SMOOTH SCROLL ========= */
 
-/* =========================================================
-   HEALORA — FEATURES SECTION SCRIPT
-   Handles: scroll-reveal for the header and each feature card.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  const revealTargets = document.querySelectorAll('#features [data-reveal], .features [data-reveal]');
-  if (!revealTargets.length) return;
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    anchor.addEventListener("click", function (e) {
 
-  if (prefersReducedMotion) {
-    revealTargets.forEach((el) => el.classList.add('is-visible'));
-    return;
-  }
+        const target = document.querySelector(this.getAttribute("href"));
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target); 
-        }
-      });
-    },
-    {
-      threshold: 0.15,
-      rootMargin: '0px 0px -40px 0px',
-    }
-  );
+        if (target) {
 
-  revealTargets.forEach((el) => observer.observe(el));
-});
+            e.preventDefault();
 
+            target.scrollIntoView({
 
-/* =========================================================
-   HEALORA — HOW IT WORKS SECTION SCRIPT
-   Handles: scroll-reveal for steps, the SVG line "draw-on"
-   animation, and sequential arrow activation.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  const section = document.getElementById('how-it-works');
-  if (!section) return;
+                behavior: "smooth"
 
-  const steps = section.querySelectorAll('.step');
-  const revealTargets = section.querySelectorAll('[data-reveal]');
-  const trackPath = document.getElementById('trackPath');
-  const arrowheads = section.querySelectorAll('.timeline__arrowhead');
-
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  /* ---------- Reduced motion: reveal everything instantly ---------- */
-  if (prefersReducedMotion) {
-    revealTargets.forEach((el) => el.classList.add('is-visible'));
-    if (trackPath) trackPath.classList.add('is-drawn');
-    arrowheads.forEach((a) => a.classList.add('is-active'));
-    return;
-  }
-
-  /* ---------- Prepare the SVG path length for the draw animation ---------- */
-  if (trackPath) {
-    const length = trackPath.getTotalLength();
-    trackPath.style.strokeDasharray = String(length);
-    trackPath.style.strokeDashoffset = String(length);
-  }
-
-  let hasAnimated = false;
-
-  const sectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          hasAnimated = true;
-
-          if (trackPath) {
-            requestAnimationFrame(() => {
-              trackPath.classList.add('is-drawn');
-              trackPath.style.strokeDashoffset = '0';
             });
-          }
 
-          arrowheads.forEach((arrow, i) => {
-            setTimeout(() => arrow.classList.add('is-active'), 500 + i * 400);
-          });
-
-          sectionObserver.unobserve(section);
         }
-      });
-    },
-    { threshold: 0.25 }
-  );
 
-  sectionObserver.observe(section);
+    });
 
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.2, rootMargin: '0px 0px -40px 0px' }
-  );
-
-  revealTargets.forEach((el) => revealObserver.observe(el));
 });
 
+/* ========= HERO BUTTON ========= */
 
-/* =========================================================
-   HEALORA — STATISTICS SECTION SCRIPT
-   Handles: scroll-reveal for cards and the animated
-   count-up for each stat number. No external libraries.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  const statsSection = document.getElementById('statistics'); // Adjust ID if needed
-  const counters = document.querySelectorAll('.js-counter');
-  if (!counters.length) return;
-  
-  const revealTargets = document.querySelectorAll('.statistics [data-reveal], #statistics [data-reveal]');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const heroBtn = document.querySelector(".hero .btn-primary");
 
-  const animateCounter = (el) => {
-    const target = parseFloat(el.dataset.target, 10);
-    const suffix = el.dataset.suffix || '';
-    const duration = 1400; 
-    const startTime = performance.now();
+if (heroBtn) {
 
-    if (prefersReducedMotion) {
-      el.textContent = target + suffix;
-      return;
-    }
+    heroBtn.addEventListener("click", () => {
 
-    const easeOutQuad = (t) => t * (2 - t);
+        window.location.href = "pages/signup.html";
 
-    const step = (now) => {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = easeOutQuad(progress);
-      const current = Math.floor(eased * target);
+    });
 
-      el.textContent = current + suffix;
+}
 
-      if (progress < 1) {
-        requestAnimationFrame(step);
-      } else {
-        el.textContent = target + suffix; 
-      }
-    };
+/* ========= COUNTER ANIMATION ========= */
 
-    requestAnimationFrame(step);
-  };
+const counters = document.querySelectorAll(".counter");
 
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          const counterEl = entry.target.querySelector('.js-counter');
-          if (counterEl) {
-            animateCounter(counterEl);
-          }
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.3, rootMargin: '0px 0px -40px 0px' }
-  );
+function startCounters() {
 
-  revealTargets.forEach((el) => revealObserver.observe(el));
+    counters.forEach(counter => {
 
-  counters.forEach((counter) => {
-    if (!counter.closest('[data-reveal]')) {
-      const singleObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              animateCounter(entry.target);
-              singleObserver.unobserve(entry.target);
+        const target = +counter.dataset.target;
+
+        let value = 0;
+
+        const speed = target / 80;
+
+        function update() {
+
+            value += speed;
+
+            if (value < target) {
+
+                counter.innerText = Math.floor(value);
+
+                requestAnimationFrame(update);
+
+            } else {
+
+                counter.innerText = target;
+
             }
-          });
-        },
-        { threshold: 0.5 }
-      );
-      singleObserver.observe(counter);
-    }
-  });
+
+        }
+
+        update();
+
+    });
+
+}
+/* ============================================
+   PART 2
+   SCROLL ANIMATIONS + FAQ + ACTIVE NAV
+============================================ */
+
+/* ========= SCROLL REVEAL ========= */
+
+const revealElements = document.querySelectorAll(
+".feature-card, .analytics-card, .testimonial-card, .section-header, .chat-window, .cta-box"
+);
+
+function revealOnScroll(){
+
+    const trigger = window.innerHeight * 0.85;
+
+    revealElements.forEach(element=>{
+
+        const top = element.getBoundingClientRect().top;
+
+        if(top < trigger){
+
+            element.classList.add("show");
+
+        }
+
+    });
+
+}
+
+window.addEventListener("scroll",revealOnScroll);
+
+revealOnScroll();
+
+
+/* ========= ACTIVE NAV LINK ========= */
+
+const sections = document.querySelectorAll("section[id]");
+const navLinks = document.querySelectorAll(".nav-links a");
+
+window.addEventListener("scroll",()=>{
+
+    let current = "";
+
+    sections.forEach(section=>{
+
+        const sectionTop = section.offsetTop-140;
+
+        if(pageYOffset >= sectionTop){
+
+            current = section.getAttribute("id");
+
+        }
+
+    });
+
+    navLinks.forEach(link=>{
+
+        link.classList.remove("active");
+
+        if(link.getAttribute("href")==="#"+current){
+
+            link.classList.add("active");
+
+        }
+
+    });
+
 });
 
 
-/* =========================================================
-   HEALORA — TESTIMONIALS SECTION SCRIPT
-   Handles: sliding carousel (arrows + drag/swipe), dot
-   navigation, and scroll-reveal. No external libraries.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  const viewport = document.getElementById('viewport');
-  const track = document.getElementById('track');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const dotsContainer = document.getElementById('dots');
-  
-  if (!viewport || !track || !prevBtn || !nextBtn || !dotsContainer) return;
+/* ========= FAQ ========= */
 
-  const cards = Array.from(track.children);
-  if (!cards.length) return;
+const faqItems=document.querySelectorAll(".faq-item");
 
-  let currentIndex = 0;
-  let cardStep = 0; 
+faqItems.forEach(item=>{
 
-  const dots = cards.map((_, i) => {
-    const dot = document.createElement('button');
-    dot.className = 'carousel__dot';
-    dot.setAttribute('role', 'tab');
-    dot.setAttribute('aria-label', `Go to testimonial ${i + 1}`);
-    dot.addEventListener('click', () => goTo(i));
-    dotsContainer.appendChild(dot);
-    return dot;
-  });
+    const question=item.querySelector(".faq-question");
 
-  const measure = () => {
-    const style = window.getComputedStyle(track);
-    const gap = parseFloat(style.columnGap || style.gap || '0');
-    const cardWidth = cards[0].getBoundingClientRect().width;
-    cardStep = cardWidth + gap;
-  };
+    if(question){
 
-  const visibleCount = () => {
-    const viewportWidth = viewport.getBoundingClientRect().width;
-    return Math.max(1, Math.round(viewportWidth / cardStep));
-  };
+        question.addEventListener("click",()=>{
 
-  const maxIndex = () => Math.max(0, cards.length - visibleCount());
+            faqItems.forEach(other=>{
 
-  const render = () => {
-    const clamped = Math.min(Math.max(currentIndex, 0), maxIndex());
-    currentIndex = clamped;
-    track.style.transform = `translateX(${-clamped * cardStep}px)`;
+                if(other!==item){
 
-    prevBtn.disabled = clamped === 0;
-    nextBtn.disabled = clamped === maxIndex();
+                    other.classList.remove("active");
 
-    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === clamped));
-  };
+                }
 
-  const goTo = (index) => {
-    currentIndex = index;
-    render();
-  };
+            });
 
-  prevBtn.addEventListener('click', () => goTo(currentIndex - 1));
-  nextBtn.addEventListener('click', () => goTo(currentIndex + 1));
+            item.classList.toggle("active");
 
-  window.addEventListener('resize', () => {
-    measure();
-    render();
-  });
-
-  let isDragging = false;
-  let dragStartX = 0;
-  let dragDeltaX = 0;
-
-  track.addEventListener('pointerdown', (e) => {
-    isDragging = true;
-    dragStartX = e.clientX;
-    dragDeltaX = 0;
-    track.classList.add('is-dragging');
-    track.setPointerCapture(e.pointerId);
-  });
-
-  track.addEventListener('pointermove', (e) => {
-    if (!isDragging) return;
-    dragDeltaX = e.clientX - dragStartX;
-    const base = -currentIndex * cardStep;
-    track.style.transform = `translateX(${base + dragDeltaX}px)`;
-  });
-
-  const endDrag = () => {
-    if (!isDragging) return;
-    isDragging = false;
-    track.classList.remove('is-dragging');
-
-    const SWIPE_THRESHOLD = 60; 
-    if (dragDeltaX < -SWIPE_THRESHOLD) {
-      currentIndex += 1;
-    } else if (dragDeltaX > SWIPE_THRESHOLD) {
-      currentIndex -= 1;
-    }
-    render(); 
-  };
-
-  track.addEventListener('pointerup', endDrag);
-  track.addEventListener('pointercancel', endDrag);
-  track.addEventListener('pointerleave', () => {
-    if (isDragging) endDrag();
-  });
-
-  viewport.setAttribute('tabindex', '0');
-  viewport.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') goTo(currentIndex + 1);
-    if (e.key === 'ArrowLeft') goTo(currentIndex - 1);
-  });
-
-  const revealTargets = document.querySelectorAll('.testimonials [data-reveal], #testimonials [data-reveal]');
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) {
-    revealTargets.forEach((el) => el.classList.add('is-visible'));
-  } else if (revealTargets.length) {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
-          }
         });
-      },
-      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
-    );
-    revealTargets.forEach((el) => revealObserver.observe(el));
-  }
-  
-  measure();
-  render();
-}); // THIS WAS MISSING!
 
-
-/* =========================================================
-   HEALORA — FAQ SECTION SCRIPT
-   Handles: accordion expand/collapse, keyboard navigation
-   (per the WAI-ARIA accordion pattern), and scroll-reveal.
-   Vanilla JavaScript only — no libraries.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  const accordion = document.getElementById('accordion');
-  if (!accordion) return; // Added a safety check
-
-  const triggers = Array.from(accordion.querySelectorAll('.accordion__trigger'));
-
-  // Desktop allows multiple panels open at once; narrow/mobile viewports
-  // close others automatically when one opens, to avoid an overwhelming
-  // long scroll (matches the approved wireframe behavior).
-  const isSingleOpenMode = () => window.matchMedia('(max-width: 639px)').matches;
-
-  const getPanel = (trigger) =>
-    document.getElementById(trigger.getAttribute('aria-controls'));
-
-  /* ---------- Open / close a single panel ---------- */
-  const setExpanded = (trigger, expand) => {
-    const panel = getPanel(trigger);
-    trigger.setAttribute('aria-expanded', String(expand));
-    panel.classList.toggle('is-open', expand);
-  };
-
-  const toggleTrigger = (trigger) => {
-    const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
-    const willExpand = !isExpanded;
-
-    if (willExpand && isSingleOpenMode()) {
-      // Close every other panel first (single-open behavior on mobile)
-      triggers.forEach((t) => {
-        if (t !== trigger) setExpanded(t, false);
-      });
     }
 
-    setExpanded(trigger, willExpand);
-  };
+});
 
-  /* ---------- Click handling ---------- */
-  triggers.forEach((trigger) => {
-    trigger.addEventListener('click', () => toggleTrigger(trigger));
-  });
 
-  /* ---------- Keyboard navigation (WAI-ARIA accordion pattern) ----------
-     - Enter / Space: handled natively by <button>, toggles the panel
-     - Down / Up arrow: moves focus to the next / previous trigger
-     - Home / End: moves focus to the first / last trigger
-     Focus wraps from the last trigger to the first and vice versa. */
-  accordion.addEventListener('keydown', (e) => {
-    const currentIndex = triggers.indexOf(document.activeElement);
-    if (currentIndex === -1) return;
+/* ========= BUTTON RIPPLE ========= */
 
-    let targetIndex = null;
+const buttons=document.querySelectorAll(".btn");
 
-    switch (e.key) {
-      case 'ArrowDown':
-        targetIndex = (currentIndex + 1) % triggers.length;
-        break;
-      case 'ArrowUp':
-        targetIndex = (currentIndex - 1 + triggers.length) % triggers.length;
-        break;
-      case 'Home':
-        targetIndex = 0;
-        break;
-      case 'End':
-        targetIndex = triggers.length - 1;
-        break;
-      default:
-        return; // let all other keys behave normally
-    }
+buttons.forEach(button=>{
 
-    e.preventDefault();
-    triggers[targetIndex].focus();
-  });
+    button.addEventListener("click",function(e){
 
-  /* ---------- Scroll reveal for header + accordion block ---------- */
-  const revealTargets = document.querySelectorAll('[data-reveal]');
-  const prefersReducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)'
-  ).matches;
+        const circle=document.createElement("span");
 
-  if (prefersReducedMotion) {
-    revealTargets.forEach((el) => el.classList.add('is-visible'));
-  } else {
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            revealObserver.unobserve(entry.target);
-          }
+        const diameter=Math.max(this.clientWidth,this.clientHeight);
+
+        const radius=diameter/2;
+
+        circle.style.width=circle.style.height=diameter+"px";
+
+        circle.style.left=e.clientX-this.getBoundingClientRect().left-radius+"px";
+
+        circle.style.top=e.clientY-this.getBoundingClientRect().top-radius+"px";
+
+        circle.classList.add("ripple");
+
+        const ripple=this.getElementsByClassName("ripple")[0];
+
+        if(ripple){
+
+            ripple.remove();
+
+        }
+
+        this.appendChild(circle);
+
+    });
+
+});
+
+
+/* ========= HERO FLOAT ========= */
+
+const dashboard=document.querySelector(".dashboard-preview");
+
+window.addEventListener("mousemove",(e)=>{
+
+    if(!dashboard) return;
+
+    const x=(window.innerWidth/2-e.pageX)/45;
+
+    const y=(window.innerHeight/2-e.pageY)/45;
+
+    dashboard.style.transform=
+    `rotateY(${x}deg) rotateX(${-y}deg)`;
+
+});
+
+
+window.addEventListener("mouseleave",()=>{
+
+    if(!dashboard) return;
+
+    dashboard.style.transform="rotateY(0deg) rotateX(0deg)";
+
+});
+
+
+/* ========= SCROLL TO TOP ========= */
+
+const scrollBtn=document.querySelector(".scroll-top");
+
+if(scrollBtn){
+
+window.addEventListener("scroll",()=>{
+
+if(window.scrollY>600){
+
+scrollBtn.classList.add("show");
+
+}else{
+
+scrollBtn.classList.remove("show");
+
+}
+
+});
+
+scrollBtn.addEventListener("click",()=>{
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+});
+
+}
+/* ============================================
+   PART 3
+   PREMIUM INTERACTIONS
+============================================ */
+
+/* ========= COUNTER ON SCROLL ========= */
+
+const counterItems = document.querySelectorAll(".counter");
+
+let counterStarted = false;
+
+function animateCounters() {
+
+    if (counterStarted) return;
+
+    const analytics = document.querySelector(".analytics");
+
+    if (!analytics) return;
+
+    const trigger = analytics.getBoundingClientRect().top;
+
+    if (trigger < window.innerHeight - 120) {
+
+        counterStarted = true;
+
+        counterItems.forEach(counter => {
+
+            const target = Number(counter.dataset.target);
+
+            let count = 0;
+
+            const increment = Math.ceil(target / 100);
+
+            const update = () => {
+
+                count += increment;
+
+                if (count >= target) {
+
+                    counter.innerText = target;
+
+                } else {
+
+                    counter.innerText = count;
+
+                    requestAnimationFrame(update);
+
+                }
+
+            };
+
+            update();
+
         });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
-    );
-    revealTargets.forEach((el) => revealObserver.observe(el));
-  }
-}); // THIS WAS MISSING!
 
-
-/* =========================================================
-   HEALORA — FOOTER SCRIPT
-   Handles: newsletter form validation/submit feedback and
-   auto-filling the current year in the copyright line.
-   No external libraries.
-   ========================================================= */
-document.addEventListener('DOMContentLoaded', () => {
-  /* ---------- Auto-fill copyright year ---------- */
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  /* ---------- Newsletter form ---------- */
-  const form = document.getElementById('newsletterForm');
-  const emailInput = document.getElementById('newsletterEmail');
-  const msgEl = document.getElementById('newsletterMsg');
-  
-  if (!form || !emailInput || !msgEl) return; // Added safety check
-
-  const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  const showMessage = (text, type) => {
-    msgEl.textContent = text;
-    msgEl.classList.remove('is-success', 'is-error');
-    msgEl.classList.add(type === 'success' ? 'is-success' : 'is-error');
-  };
-
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = emailInput.value.trim();
-
-    if (!EMAIL_PATTERN.test(email)) {
-      showMessage('Please enter a valid email address.', 'error');
-      emailInput.focus();
-      return;
     }
 
-    // No backend wired up here — this simply confirms receipt client-side.
-    showMessage(`Thanks! We'll send updates to ${email}.`, 'success');
-    form.reset();
-  });
-}); // THIS WAS MISSING!
+}
+
+window.addEventListener("scroll", animateCounters);
 
 
-/* =========================================================================
-   HEALORA — Premium Footer Behaviour
-   Vanilla JS, no dependencies.
-   ========================================================================= */
-(function () {
-  "use strict";
+/* ========= PARALLAX BLOBS ========= */
 
-  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const blobs = document.querySelectorAll(".blob");
 
-  /* ---------------------------------------------------------------------
-     Auto-update copyright year
-  --------------------------------------------------------------------- */
-  var yearEl = document.getElementById("pfYear");
-  if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+window.addEventListener("mousemove", (e) => {
 
-  /* ---------------------------------------------------------------------
-     Scroll-to-top button: show after scrolling, smooth-scroll on click
-  --------------------------------------------------------------------- */
-  var toTopBtn = document.getElementById("pfToTop");
-  if (toTopBtn) {
-    toTopBtn.hidden = false; // control visibility via the is-visible class instead
+    blobs.forEach((blob, index) => {
 
-    var toggleToTop = function () {
-      toTopBtn.classList.toggle("is-visible", window.scrollY > 480);
-    };
-    toggleToTop();
-    window.addEventListener("scroll", toggleToTop, { passive: true });
+        const speed = (index + 1) * 0.02;
 
-    toTopBtn.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
-      // Move focus to a sensible landmark for keyboard/screen-reader users
-      var topAnchor = document.getElementById("top") || document.body;
-      topAnchor.setAttribute("tabindex", "-1");
-      topAnchor.focus({ preventScroll: true });
+        const x = (window.innerWidth / 2 - e.clientX) * speed;
+
+        const y = (window.innerHeight / 2 - e.clientY) * speed;
+
+        blob.style.transform =
+            `translate(${x}px, ${y}px)`;
+
     });
-  }
 
-  /* ---------------------------------------------------------------------
-     Newsletter form (client-side only — no backend in this deliverable)
-  --------------------------------------------------------------------- */
-  var form = document.getElementById("pfNewsletterForm");
-  var msg = document.getElementById("pfNewsletterMsg");
+});
 
-  if (form && msg) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var input = document.getElementById("pfEmail");
-      var email = input.value.trim();
-      var isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-      if (!isValid) {
-        msg.textContent = "Please enter a valid email address.";
-        msg.classList.add("is-error");
-        input.setAttribute("aria-invalid", "true");
-        input.focus();
-        return;
-      }
+/* ========= FLOATING ICONS ========= */
 
-      msg.classList.remove("is-error");
-      msg.textContent = "You're subscribed — thanks for joining.";
-      input.removeAttribute("aria-invalid");
-      form.reset();
+const floatingIcons = document.querySelectorAll(".floating-icon");
+
+floatingIcons.forEach((icon, i) => {
+
+    let angle = i * 50;
+
+    setInterval(() => {
+
+        angle += 0.02;
+
+        const x = Math.sin(angle) * 10;
+
+        const y = Math.cos(angle) * 10;
+
+        icon.style.transform =
+            `translate(${x}px, ${y}px)`;
+
+    }, 20);
+
+});
+
+
+/* ========= MAGNETIC BUTTON ========= */
+
+document.querySelectorAll(".btn").forEach(button => {
+
+    button.addEventListener("mousemove", (e) => {
+
+        const rect = button.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+
+        const y = e.clientY - rect.top;
+
+        const moveX = (x - rect.width / 2) / 8;
+
+        const moveY = (y - rect.height / 2) / 8;
+
+        button.style.transform =
+            `translate(${moveX}px, ${moveY}px)`;
+
     });
-  }
-})();
+
+    button.addEventListener("mouseleave", () => {
+
+        button.style.transform = "";
+
+    });
+
+});
 
 
-/* =========================================================================
-   HEALORA — Premium Login Page Behaviour
-   Vanilla JS, no dependencies. No backend in this deliverable — the
-   submit handler simulates a network call so the loading/success states
-   are demonstrable; swap runFakeLogin() for a real fetch() call.
-   ========================================================================= */
-(function () {
-  "use strict";
+/* ========= HERO IMAGE TILT ========= */
 
-  var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const heroImage = document.querySelector(".hero-right");
 
-  /* ---------------------------------------------------------------------
-     Floating particles (left panel)
-  --------------------------------------------------------------------- */
-  var particlesEl = document.getElementById("particles");
-  if (particlesEl && !prefersReducedMotion) {
-    var count = window.innerWidth < 700 ? 14 : 26;
-    for (var i = 0; i < count; i++) {
-      var p = document.createElement("span");
-      p.className = "particle";
-      var size = 2 + Math.random() * 4;
-      p.style.width = size + "px";
-      p.style.height = size + "px";
-      p.style.left = Math.random() * 100 + "%";
-      p.style.setProperty("--drift", (Math.random() * 60 - 30) + "px");
-      p.style.animationDuration = (10 + Math.random() * 10) + "s";
-      p.style.animationDelay = (Math.random() * 12) + "s";
-      particlesEl.appendChild(p);
+if (heroImage) {
+
+    heroImage.addEventListener("mousemove", (e) => {
+
+        const rect = heroImage.getBoundingClientRect();
+
+        const x = e.clientX - rect.left;
+
+        const y = e.clientY - rect.top;
+
+        const rotateY = (x - rect.width / 2) / 30;
+
+        const rotateX = -(y - rect.height / 2) / 30;
+
+        heroImage.style.transform =
+            `perspective(1000px)
+             rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)`;
+
+    });
+
+    heroImage.addEventListener("mouseleave", () => {
+
+        heroImage.style.transform =
+            "perspective(1000px) rotateX(0) rotateY(0)";
+
+    });
+
+}
+
+
+/* ========= RANDOM FLOAT ========= */
+
+document.querySelectorAll(".glass-card").forEach(card => {
+
+    const random = Math.random() * 6 + 4;
+
+    card.style.animation =
+        `floating ${random}s ease-in-out infinite`;
+
+});
+
+
+/* ========= CONSOLE MESSAGE ========= */
+
+console.log(
+
+"%c❤️ Welcome to Healora",
+
+"font-size:28px;color:#14B8A6;font-weight:bold;"
+
+);
+
+console.log(
+
+"%cBuilt with HTML • CSS • JavaScript",
+
+"font-size:15px;color:#0B4F6C;"
+
+);
+/* ============================================
+   PART 4
+   PREMIUM EFFECTS
+============================================ */
+
+/* ========= CURSOR GLOW ========= */
+
+const glow = document.createElement("div");
+
+glow.className = "cursor-glow";
+
+document.body.appendChild(glow);
+
+document.addEventListener("mousemove",(e)=>{
+
+    glow.style.left = e.clientX + "px";
+
+    glow.style.top = e.clientY + "px";
+
+});
+
+
+/* ========= SCROLL PROGRESS ========= */
+
+const progressBar = document.createElement("div");
+
+progressBar.className = "scroll-progress";
+
+document.body.appendChild(progressBar);
+
+window.addEventListener("scroll",()=>{
+
+    const scrollTop = document.documentElement.scrollTop;
+
+    const scrollHeight =
+    document.documentElement.scrollHeight -
+    document.documentElement.clientHeight;
+
+    const progress =
+    (scrollTop/scrollHeight)*100;
+
+    progressBar.style.width = progress + "%";
+
+});
+
+
+/* ========= NAVBAR BLUR ========= */
+
+window.addEventListener("scroll",()=>{
+
+    const nav=document.querySelector(".navbar");
+
+    if(!nav) return;
+
+    if(window.scrollY>80){
+
+        nav.style.backdropFilter="blur(20px)";
+        nav.style.background="rgba(255,255,255,.75)";
+
+    }else{
+
+        nav.style.backdropFilter="blur(0px)";
+        nav.style.background="transparent";
+
     }
-  }
 
-  /* ---------------------------------------------------------------------
-     Password visibility toggle
-  --------------------------------------------------------------------- */
-  var passwordInput = document.getElementById("password");
-  var toggleBtn = document.getElementById("passwordToggle");
-  if (passwordInput && toggleBtn) {
-    var eyeOpen = toggleBtn.querySelector(".eye-open");
-    var eyeClosed = toggleBtn.querySelector(".eye-closed");
+});
 
-    toggleBtn.addEventListener("click", function () {
-      var wasShown = passwordInput.type === "text";
-      var nowShown = !wasShown;
-      passwordInput.type = nowShown ? "text" : "password";
-      toggleBtn.setAttribute("aria-pressed", String(nowShown));
-      toggleBtn.setAttribute("aria-label", nowShown ? "Hide password" : "Show password");
-      eyeOpen.hidden = nowShown;
-      eyeClosed.hidden = !nowShown;
-    });
-  }
 
-  /* ---------------------------------------------------------------------
-     Field validation helpers
-  --------------------------------------------------------------------- */
-  function setFieldState(fieldEl, state, message) {
-    fieldEl.classList.remove("is-valid", "is-invalid");
-    var errorEl = fieldEl.querySelector(".field__error");
-    var input = fieldEl.querySelector("input");
+/* ========= RANDOM FLOAT ========= */
 
-    if (state === "valid") {
-      fieldEl.classList.add("is-valid");
-      input.setAttribute("aria-invalid", "false");
-      if (errorEl) errorEl.textContent = "";
-    } else if (state === "invalid") {
-      // Force reflow so the shake animation re-triggers on repeated errors
-      fieldEl.classList.remove("is-invalid");
-      // eslint-disable-next-line no-unused-expressions
-      void fieldEl.offsetWidth;
-      fieldEl.classList.add("is-invalid");
-      input.setAttribute("aria-invalid", "true");
-      if (errorEl) errorEl.textContent = message || "This field is required.";
-    } else {
-      input.removeAttribute("aria-invalid");
-      if (errorEl) errorEl.textContent = "";
+document.querySelectorAll(".feature-card").forEach((card,index)=>{
+
+    card.style.animation=
+    `floating ${5+index}s ease-in-out infinite`;
+
+});
+
+
+/* ========= HERO PARALLAX ========= */
+
+window.addEventListener("scroll",()=>{
+
+    const hero=document.querySelector(".hero");
+
+    if(!hero) return;
+
+    hero.style.backgroundPositionY=
+    window.scrollY*0.3+"px";
+
+});
+
+
+/* ========= PAGE VISIBILITY ========= */
+
+document.addEventListener("visibilitychange",()=>{
+
+    if(document.hidden){
+
+        document.title="❤️ Come back to Healora";
+
     }
-  }
 
-  function validateEmail(value) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-  }
+    else{
 
-  var emailField = document.getElementById("email") ? document.getElementById("email").closest(".field") : null;
-  var passwordField = document.getElementById("password") ? document.getElementById("password").closest(".field") : null;
-  var emailInput = document.getElementById("email");
+        document.title="Healora | AI Health Assistant";
 
-  if (emailInput && emailField) {
-    emailInput.addEventListener("blur", function () {
-      if (!emailInput.value.trim()) return; // don't nag before they've typed anything
-      if (validateEmail(emailInput.value)) {
-        setFieldState(emailField, "valid");
-      } else {
-        setFieldState(emailField, "invalid", "Enter a valid email address.");
-      }
-    });
-    emailInput.addEventListener("input", function () {
-      if (emailField.classList.contains("is-invalid") && validateEmail(emailInput.value)) {
-        setFieldState(emailField, "valid");
-      }
-    });
-  }
+    }
 
-  if (passwordInput && passwordField) {
-    passwordInput.addEventListener("blur", function () {
-      if (!passwordInput.value) return;
-      if (passwordInput.value.length >= 8) {
-        setFieldState(passwordField, "valid");
-      } else {
-        setFieldState(passwordField, "invalid", "Password must be at least 8 characters.");
-      }
-    });
-    passwordInput.addEventListener("input", function () {
-      if (passwordField.classList.contains("is-invalid") && passwordInput.value.length >= 8) {
-        setFieldState(passwordField, "valid");
-      }
-    });
-  }
+});
 
-  /* ---------------------------------------------------------------------
-     Form submit — validation + simulated loading/success button states
-  --------------------------------------------------------------------- */
-  var form = document.getElementById("loginForm");
-  var loginBtn = document.getElementById("loginBtn");
-  var status = document.getElementById("formStatus");
 
-  function runFakeLogin() {
-    // Simulates a network round trip. Replace with a real fetch() to your
-    // auth endpoint; resolve/reject accordingly.
-    return new Promise(function (resolve) {
-      setTimeout(resolve, 1400);
-    });
-  }
+/* ========= BUTTON HOVER SOUND PLACEHOLDER ========= */
 
-  if (form && loginBtn && status) {
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
+document.querySelectorAll(".btn").forEach(btn=>{
 
-      var emailValid = validateEmail(emailInput.value);
-      var passwordValid = passwordInput.value.length >= 8;
+btn.addEventListener("mouseenter",()=>{
 
-      setFieldState(emailField, emailValid ? "valid" : "invalid",
-        emailInput.value.trim() ? "Enter a valid email address." : "Email is required.");
-      setFieldState(passwordField, passwordValid ? "valid" : "invalid",
-        passwordInput.value ? "Password must be at least 8 characters." : "Password is required.");
+btn.style.transition=".3s";
 
-      if (!emailValid || !passwordValid) {
-        status.textContent = "Please fix the highlighted fields.";
-        status.classList.add("is-error");
-        (emailValid ? passwordInput : emailInput).focus();
-        return;
-      }
+});
 
-      status.classList.remove("is-error");
-      status.textContent = "";
-      loginBtn.classList.add("is-loading");
-      loginBtn.disabled = true;
+});
 
-      runFakeLogin().then(function () {
-        loginBtn.classList.remove("is-loading");
-        loginBtn.classList.add("is-success");
-        loginBtn.querySelector(".btn__label").textContent = "Logged in";
-        status.textContent = "Welcome back — redirecting to your dashboard...";
-      });
-    });
-  }
 
-  /* ---------------------------------------------------------------------
-     OAuth buttons (visual only — wire these up to real providers)
-  --------------------------------------------------------------------- */
-  ["googleBtn", "appleBtn"].forEach(function (id) {
-    var btn = document.getElementById(id);
-    if (!btn) return;
-    btn.addEventListener("click", function () {
-      if (status) {
-        status.classList.remove("is-error");
-        status.textContent = "Redirecting to " + (id === "googleBtn" ? "Google" : "Apple") + "...";
-      }
-    });
-  });
-})();
+/* ========= LOADING COMPLETE ========= */
+
+window.addEventListener("load",()=>{
+
+document.body.classList.add("loaded");
+
+});
+
+
+/* ========= YEAR ========= */
+
+const year=document.querySelector("#year");
+
+if(year){
+
+year.textContent=new Date().getFullYear();
+
+}
+
+
+/* ========= PERFORMANCE ========= */
+
+window.requestIdleCallback?.(()=>{
+
+console.log("Healora Loaded Successfully");
+
+});
+
+
+/* ========= WELCOME ========= */
+
+console.log(
+
+"%c❤️ Healora",
+
+"font-size:32px;font-weight:bold;color:#14B8A6"
+
+);
+
+console.log(
+
+"%cDesigned by Team Healora",
+
+"font-size:16px;color:#0B4F6C"
+
+);

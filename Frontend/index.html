@@ -1,1073 +1,1327 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Healora — AI Health Assistant</title>
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  
-  <!-- Main Stylesheets (Ensure these match your actual CSS file names) -->
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="footer.css" />
-  <link rel="stylesheet" href="login.css" />
 
-  <style>
-    /* Logic to switch between Landing and Login pages */
-    .hidden-view {
-      display: none !important;
-    }
-    .back-link {
-      display: inline-block;
-      margin: 20px;
-      color: #0B3D66;
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 100;
-      position: relative;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-  </style>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Healora | AI Healthcare Companion</title>
+
+<meta name="description"
+content="Healora is an AI-powered healthcare companion helping users manage reports, medicines, appointments and health records securely.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+/>
+
+<link rel="stylesheet" href="css/style.css">
+
 </head>
+
 <body>
 
-  <!-- ============================================================
-       VIEW 1: FULL LANDING PAGE + FAQ + PREMIUM FOOTER
-       ============================================================ -->
-  <div id="landingView">
+<!-- ===============================
+     PAGE LOADER
+================================ -->
 
-    <!-- ============ PREMIUM NAVBAR ============ -->
-    <header class="navbar" id="navbar">
-      <div class="navbar__inner">
-        <a href="#" class="navbar__brand" aria-label="Healora home">
-          <span class="navbar__logo" aria-hidden="true">
-            <svg viewBox="0 0 32 32" width="28" height="28">
-              <path d="M16 27s-9.6-6.1-12.7-12.2C1.2 10.5 3 5.8 7.3 4.6c2.6-.7 5.3.3 6.9 2.4l1.8 2.3 1.8-2.3c1.6-2.1 4.3-3.1 6.9-2.4 4.3 1.2 6.1 5.9 4 10.2C25.6 20.9 16 27 16 27z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
-              <path d="M8 16h4l2-4 3 7 2-4h5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </span>
-          <span class="navbar__wordmark">Healora</span>
-        </a>
+<div class="loader">
 
-        <nav class="navbar__links" aria-label="Primary">
-          <a href="#product">Product</a>
-          <a href="#ai-assistant">AI Assistant</a>
-          <a href="#families">For Families</a>
-          <a href="#pricing">Pricing</a>
-          <a href="#about">About</a>
-        </nav>
+    <div class="loader-logo">
 
-        <div class="navbar__actions">
-          <!-- Login button triggers the view switch -->
-          <button class="btn btn--ghost js-trigger-login" type="button">Login</button>
-          <button class="btn btn--primary" type="button">Get Started</button>
-          <button class="navbar__burger" id="burgerBtn" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
-            <span></span><span></span><span></span>
-          </button>
-        </div>
-      </div>
+        <i class="fa-solid fa-heart-pulse"></i>
 
-      <!-- Mobile menu overlay -->
-      <div class="mobile-menu" id="mobileMenu">
-        <a href="#product">Product</a>
-        <a href="#ai-assistant">AI Assistant</a>
-        <a href="#families">For Families</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#about">About</a>
-        <div class="mobile-menu__actions">
-          <button class="btn btn--ghost btn--block js-trigger-login" type="button">Login</button>
-          <button class="btn btn--primary btn--block" type="button">Get Started</button>
-        </div>
-      </div>
-    </header>
+        <span>Healora</span>
 
-    <!-- ============ MAIN CONTENT AREA ============ -->
-    <main>
-      
-      <!-- Hero Section -->
-      <section class="hero" id="hero">
-        <!-- Animated ambient background -->
-        <div class="hero__bg" aria-hidden="true">
-          <div class="hero__blob hero__blob--one"></div>
-          <div class="hero__blob hero__blob--two"></div>
-          <div class="hero__blob hero__blob--three"></div>
-          <svg class="hero__pulseline" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,60 L220,60 L245,10 L270,110 L295,60 L1200,60" fill="none" stroke="currentColor" stroke-width="1.5"/>
-          </svg>
-        </div>
-
-        <!-- Floating medical icons -->
-        <div class="floaters" aria-hidden="true">
-          <span class="floater floater--1">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="18" height="6" rx="3"/><path d="M8 9v6M16 9v6" transform="rotate(45 12 12)"/></svg>
-          </span>
-          <span class="floater floater--2">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 8.6c0 5.2-8.8 10.4-8.8 10.4S3.2 13.8 3.2 8.6a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/></svg>
-          </span>
-          <span class="floater floater--3">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-4l-3 8-6-16-3 8H2"/></svg>
-          </span>
-          <span class="floater floater--4">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
-          </span>
-          <span class="floater floater--5">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          </span>
-        </div>
-
-        <div class="hero__inner">
-          <!-- Left column: copy + CTAs -->
-          <div class="hero__content">
-            <span class="eyebrow">AI-POWERED HEALTH ASSISTANT</span>
-            <h1 class="hero__headline">
-              Understand your health
-              <span class="hero__typewriter-wrap">
-                as easily as <span id="typewriter" class="hero__typewriter"></span><span class="hero__caret" aria-hidden="true"></span>
-              </span>
-            </h1>
-            <p class="hero__body">
-              Healora combines a conversational AI companion with your personal health
-              record, medication reminders, and family care coordination —
-              so you always know what to do next, between doctor visits.
-            </p>
-            <div class="hero__cta-row">
-              <button class="btn btn--primary btn--lg" type="button">
-                Get Started Free
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </button>
-              <button class="btn btn--ghost btn--lg" type="button">See How It Works</button>
-            </div>
-            <ul class="hero__trust-row">
-              <li>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5z"/></svg>
-                Private &amp; encrypted
-              </li>
-              <li>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
-                Not a replacement for your doctor
-              </li>
-              <li>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c0-3 2.7-5 6-5s6 2 6 5M14 19c.3-2.4 2.3-4 5-4s4.5 1.6 4.7 3.6"/></svg>
-                Built for every generation
-              </li>
-            </ul>
-          </div>
-
-          <!-- Right column: glassmorphic AI illustration -->
-          <div class="hero__visual">
-            <div class="ai-card">
-              <div class="ai-card__header">
-                <span class="ai-card__dot"></span>
-                <span class="ai-card__title">Healora Assistant</span>
-                <span class="ai-card__status">
-                  <span class="ai-card__status-dot"></span> Online
-                </span>
-              </div>
-              <div class="ai-card__thread">
-                <div class="bubble bubble--user">
-                  I've had a headache for two days and feel a bit dizzy.
-                </div>
-                <div class="bubble bubble--ai">
-                  I'm sorry you're feeling this way. Have you had trouble sleeping
-                  or noticed any changes in vision along with the dizziness?
-                </div>
-                <div class="bubble bubble--ai bubble--typing" aria-hidden="true">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-              <div class="triage-preview">
-                <span class="triage-preview__bar"></span>
-                <div class="triage-preview__body">
-                  <p class="triage-preview__label">Recommended</p>
-                  <p class="triage-preview__text">See a doctor within 24 hours</p>
-                </div>
-              </div>
-              <p class="ai-card__disclaimer">Healora does not replace professional medical advice.</p>
-            </div>
-            <div class="ai-card__glow" aria-hidden="true"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Features Section -->
-      <section class="features" id="features">
-        <div class="features__inner">
-          <header class="features__header" data-reveal>
-            <span class="eyebrow">WHY HEALORA</span>
-            <h2 class="features__title">Everything your health needs, in one place</h2>
-            <p class="features__subtitle">
-              Six connected tools that work together as one calm, trustworthy
-              health companion — not six separate apps to juggle.
-            </p>
-          </header>
-
-          <div class="features__grid">
-            <!-- Card 1 -->
-            <article class="feature-card" data-reveal style="--delay: 0ms">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <div class="feature-card__icon feature-card__icon--primary" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12c0 4.4-4 8-9 8-1.2 0-2.4-.2-3.4-.6L3 20l1.1-4.2C3.4 14.6 3 13.3 3 12c0-4.4 4-8 9-8s9 3.6 9 8z"/>
-                </svg>
-              </div>
-              <h3 class="feature-card__title">AI Symptom Chat</h3>
-              <p class="feature-card__text">
-                Describe how you feel in plain language and get calm, clarifying
-                questions plus a structured triage recommendation — day or night.
-              </p>
-              <a class="feature-card__link" href="#">
-                Learn more
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </a>
-            </article>
-
-            <!-- Card 2 -->
-            <article class="feature-card" data-reveal style="--delay: 80ms">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <div class="feature-card__icon feature-card__icon--secondary" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20.8 8.6c0 5.2-8.8 10.4-8.8 10.4S3.2 13.8 3.2 8.6a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/>
-                  <path d="M7 11h2l1.5-2.5L12 13l1-2h2.5"/>
-                </svg>
-              </div>
-              <h3 class="feature-card__title">Personal Health Record</h3>
-              <p class="feature-card__text">
-                One private, structured place for your conditions, allergies,
-                vitals, and documents — so every answer is grounded in your history.
-              </p>
-              <a class="feature-card__link" href="#">
-                Learn more
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </a>
-            </article>
-
-            <!-- Card 3 -->
-            <article class="feature-card" data-reveal style="--delay: 160ms">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <div class="feature-card__icon feature-card__icon--warning" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(45 12 12)"/>
-                  <path d="M9 9l6 6" transform="rotate(45 12 12)"/>
-                </svg>
-              </div>
-              <h3 class="feature-card__title">Medication Reminders</h3>
-              <p class="feature-card__text">
-                Never miss a dose — smart, scheduled reminders with one-tap
-                "Taken" logging and automatic adherence tracking.
-              </p>
-              <a class="feature-card__link" href="#">
-                Learn more
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </a>
-            </article>
-
-            <!-- Card 4 -->
-            <article class="feature-card" data-reveal style="--delay: 0ms">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <div class="feature-card__icon feature-card__icon--primary" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2"/>
-                  <path d="M8 2v4M16 2v4M3 10h18"/>
-                  <path d="M8 15l2 2 4-4"/>
-                </svg>
-              </div>
-              <h3 class="feature-card__title">Appointment Care</h3>
-              <p class="feature-card__text">
-                Schedule visits, get reminded before they happen, and keep a
-                running history of every appointment in one calendar.
-              </p>
-              <a class="feature-card__link" href="#">
-                Learn more
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </a>
-            </article>
-
-            <!-- Card 5 -->
-            <article class="feature-card" data-reveal style="--delay: 80ms">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <div class="feature-card__icon feature-card__icon--secondary" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="8" cy="8" r="3"/>
-                  <circle cx="17" cy="9" r="2.5"/>
-                  <path d="M2 20c0-3 2.7-5 6-5s6 2 6 5M14 19c.3-2.4 2.3-4 5-4s4.5 1.6 4.7 3.6"/>
-                </svg>
-              </div>
-              <h3 class="feature-card__title">Family &amp; Dependent Care</h3>
-              <p class="feature-card__text">
-                Manage medications and appointments for children or aging
-                parents from one account, with alerts if a dose is missed.
-              </p>
-              <a class="feature-card__link" href="#">
-                Learn more
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </a>
-            </article>
-
-            <!-- Card 6 -->
-            <article class="feature-card" data-reveal style="--delay: 160ms">
-              <div class="feature-card__glow" aria-hidden="true"></div>
-              <div class="feature-card__icon feature-card__icon--success" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M4 20V10M12 20V4M20 20v-7"/>
-                </svg>
-              </div>
-              <h3 class="feature-card__title">Insights &amp; Reports</h3>
-              <p class="feature-card__text">
-                Trend dashboards for symptoms, adherence, and vitals — plus a
-                doctor-ready summary you can download before every visit.
-              </p>
-              <a class="feature-card__link" href="#">
-                Learn more
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              </a>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- How It Works Section -->
-      <section class="how" id="how-it-works">
-        <!-- Floating background icons -->
-        <div class="how__floaters" aria-hidden="true">
-          <span class="how-floater how-floater--1">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          </span>
-          <span class="how-floater how-floater--2">
-            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.8 8.6c0 5.2-8.8 10.4-8.8 10.4S3.2 13.8 3.2 8.6a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/></svg>
-          </span>
-          <span class="how-floater how-floater--3">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="9" width="18" height="6" rx="3" transform="rotate(45 12 12)"/></svg>
-          </span>
-          <span class="how-floater how-floater--4">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
-          </span>
-        </div>
-
-        <div class="how__inner">
-          <header class="how__header" data-reveal>
-            <span class="eyebrow">GETTING STARTED</span>
-            <h2 class="how__title">Get started in three simple steps</h2>
-            <p class="how__subtitle">
-              From sign-up to your first AI conversation in under three minutes —
-              no complicated setup, no confusing forms.
-            </p>
-          </header>
-
-          <!-- Timeline -->
-          <div class="timeline">
-            <!-- Connecting SVG line + arrows (desktop) -->
-            <svg class="timeline__track" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true">
-              <path id="trackPath" class="timeline__track-path" d="M 90 20 L 500 20 L 910 20" />
-              <path class="timeline__arrowhead" d="M 486 12 L 500 20 L 486 28" />
-              <path class="timeline__arrowhead" d="M 896 12 L 910 20 L 896 28" />
-            </svg>
-
-            <!-- Step 1 -->
-            <div class="step" data-reveal style="--delay: 0ms">
-              <div class="step__badge">
-                <span class="step__number">1</span>
-                <span class="step__pulse" aria-hidden="true"></span>
-              </div>
-              <div class="step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                  <circle cx="12" cy="7" r="4"/>
-                </svg>
-              </div>
-              <div class="step__content">
-                <h3 class="step__title">Create your free account</h3>
-                <p class="step__text">
-                  A simple 5-field sign-up — name, email, and a few basics.
-                  Ready in under a minute.
-                </p>
-              </div>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="step" data-reveal style="--delay: 150ms">
-              <div class="step__badge">
-                <span class="step__number">2</span>
-                <span class="step__pulse" aria-hidden="true"></span>
-              </div>
-              <div class="step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20.8 8.6c0 5.2-8.8 10.4-8.8 10.4S3.2 13.8 3.2 8.6a4.8 4.8 0 0 1 8.8-2.7 4.8 4.8 0 0 1 8.8 2.7z"/>
-                  <path d="M8 8.5h2l1-1.5 2 3 1-1.5h1.5"/>
-                </svg>
-              </div>
-              <div class="step__content">
-                <h3 class="step__title">Tell us about your health</h3>
-                <p class="step__text">
-                  An optional 3-step wizard for conditions, allergies, and
-                  medications — so the AI has context from day one.
-                </p>
-              </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="step" data-reveal style="--delay: 300ms">
-              <div class="step__badge">
-                <span class="step__number">3</span>
-                <span class="step__pulse" aria-hidden="true"></span>
-              </div>
-              <div class="step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12c0 4.4-4 8-9 8-1.2 0-2.4-.2-3.4-.6L3 20l1.1-4.2C3.4 14.6 3 13.3 3 12c0-4.4 4-8 9-8s9 3.6 9 8z"/>
-                </svg>
-              </div>
-              <div class="step__content">
-                <h3 class="step__title">Chat, track, and stay ahead</h3>
-                <p class="step__text">
-                  Start your first AI conversation and set up your first
-                  medication or appointment reminder.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Statistics Section -->
-      <section class="stats" id="stats">
-        <div class="stats__bg" aria-hidden="true">
-          <div class="stats__glow stats__glow--one"></div>
-          <div class="stats__glow stats__glow--two"></div>
-        </div>
-
-        <div class="stats__inner">
-          <header class="stats__header" data-reveal>
-            <span class="eyebrow">WHY IT MATTERS</span>
-            <h2 class="stats__title">Built for trust, from day one</h2>
-            <p class="stats__subtitle">
-              Every number below is a product commitment, not a vanity metric.
-            </p>
-          </header>
-
-          <div class="stats__grid">
-            <!-- Stat 1 -->
-            <article class="stat-card" data-reveal style="--delay: 0ms">
-              <div class="stat-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/>
-                </svg>
-              </div>
-              <p class="stat-card__number">
-                <span class="stat-card__prefix">&lt;</span><span class="js-counter" data-target="3" data-suffix=" min">0</span>
-              </p>
-              <p class="stat-card__label">To your first AI health conversation</p>
-            </article>
-
-            <!-- Stat 2 -->
-            <article class="stat-card" data-reveal style="--delay: 100ms">
-              <div class="stat-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5z"/>
-                  <path d="M9 12l2 2 4-4"/>
-                </svg>
-              </div>
-              <p class="stat-card__number">
-                <span class="js-counter" data-target="100" data-suffix="%">0</span>
-              </p>
-              <p class="stat-card__label">Emergency symptoms flagged for urgent care</p>
-            </article>
-
-            <!-- Stat 3 -->
-            <article class="stat-card" data-reveal style="--delay: 200ms">
-              <div class="stat-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/>
-                  <path d="M2 20c0-3 2.7-5 6-5s6 2 6 5M14 19c.3-2.4 2.3-4 5-4s4.5 1.6 4.7 3.6"/>
-                </svg>
-              </div>
-              <p class="stat-card__number">
-                <span class="js-counter" data-target="4" data-suffix="">0</span>
-              </p>
-              <p class="stat-card__label">Family members supported on one account</p>
-            </article>
-
-            <!-- Stat 4 -->
-            <article class="stat-card" data-reveal style="--delay: 300ms">
-              <div class="stat-card__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 12c0 4.4-4 8-9 8-1.2 0-2.4-.2-3.4-.6L3 20l1.1-4.2C3.4 14.6 3 13.3 3 12c0-4.4 4-8 9-8s9 3.6 9 8z"/>
-                </svg>
-              </div>
-              <p class="stat-card__number">
-                <span class="js-counter" data-target="24" data-suffix="/7">0</span>
-              </p>
-              <p class="stat-card__label">AI health guidance, always available</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <!-- Testimonials Section -->
-      <section class="testimonials" id="testimonials">
-        <div class="testimonials__inner">
-          <header class="testimonials__header" data-reveal>
-            <span class="eyebrow">TRUSTED ACROSS GENERATIONS</span>
-            <h2 class="testimonials__title">Trusted across every generation</h2>
-            <p class="testimonials__subtitle">
-              From busy students to caregivers managing a whole household —
-              Healora meets people where they are.
-            </p>
-          </header>
-
-          <div class="carousel" data-reveal style="--delay: 100ms">
-            <button class="carousel__arrow carousel__arrow--prev" id="prevBtn" aria-label="Previous testimonial">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            </button>
-
-            <div class="carousel__viewport" id="viewport">
-              <div class="carousel__track" id="track">
-                <!-- Card 1 -->
-                <article class="t-card">
-                  <div class="t-card__quote-bar" aria-hidden="true"></div>
-                  <p class="t-card__text">
-                    Between lectures I don't have time to sit in a clinic queue.
-                    Healora asked the right follow-up questions and told me it was
-                    safe to wait until morning — that alone saved my evening.
-                  </p>
-                  <div class="t-card__person">
-                    <span class="t-card__avatar t-card__avatar--a" aria-hidden="true">
-                      <svg viewBox="0 0 40 40" width="44" height="44"><circle cx="20" cy="20" r="20" fill="currentColor" opacity="0.15"/><circle cx="20" cy="16" r="7" fill="currentColor"/><path d="M6 34c1-8 8-12 14-12s13 4 14 12" fill="currentColor"/></svg>
-                    </span>
-                    <span class="t-card__meta">
-                      <span class="t-card__name">Ananya S.</span>
-                      <span class="t-card__role">Busy Student</span>
-                    </span>
-                  </div>
-                </article>
-
-                <!-- Card 2 -->
-                <article class="t-card">
-                  <div class="t-card__quote-bar" aria-hidden="true"></div>
-                  <p class="t-card__text">
-                    I forget to take my own medication constantly with an 11-hour
-                    workday. The reminders and adherence tracker finally gave me
-                    data instead of vague guilt.
-                  </p>
-                  <div class="t-card__person">
-                    <span class="t-card__avatar t-card__avatar--b" aria-hidden="true">
-                      <svg viewBox="0 0 40 40" width="44" height="44"><circle cx="20" cy="20" r="20" fill="currentColor" opacity="0.15"/><circle cx="20" cy="16" r="7" fill="currentColor"/><path d="M6 34c1-8 8-12 14-12s13 4 14 12" fill="currentColor"/></svg>
-                    </span>
-                    <span class="t-card__meta">
-                      <span class="t-card__name">Rohit V.</span>
-                      <span class="t-card__role">Working Professional</span>
-                    </span>
-                  </div>
-                </article>
-
-                <!-- Card 3 -->
-                <article class="t-card">
-                  <div class="t-card__quote-bar" aria-hidden="true"></div>
-                  <p class="t-card__text">
-                    I manage medications for four people in my family. Switching
-                    profiles and getting alerted the moment my father misses a
-                    dose has changed how I sleep at night.
-                  </p>
-                  <div class="t-card__person">
-                    <span class="t-card__avatar t-card__avatar--c" aria-hidden="true">
-                      <svg viewBox="0 0 40 40" width="44" height="44"><circle cx="20" cy="20" r="20" fill="currentColor" opacity="0.15"/><circle cx="20" cy="16" r="7" fill="currentColor"/><path d="M6 34c1-8 8-12 14-12s13 4 14 12" fill="currentColor"/></svg>
-                    </span>
-                    <span class="t-card__meta">
-                      <span class="t-card__name">Meera N.</span>
-                      <span class="t-card__role">Family Coordinator</span>
-                    </span>
-                  </div>
-                </article>
-
-                <!-- Card 4 -->
-                <article class="t-card">
-                  <div class="t-card__quote-bar" aria-hidden="true"></div>
-                  <p class="t-card__text">
-                    The large text and simple steps mean I can manage my five
-                    medications myself. My daughter can still check in on me
-                    without either of us feeling like I'm being watched.
-                  </p>
-                  <div class="t-card__person">
-                    <span class="t-card__avatar t-card__avatar--d" aria-hidden="true">
-                      <svg viewBox="0 0 40 40" width="44" height="44"><circle cx="20" cy="20" r="20" fill="currentColor" opacity="0.15"/><circle cx="20" cy="16" r="7" fill="currentColor"/><path d="M6 34c1-8 8-12 14-12s13 4 14 12" fill="currentColor"/></svg>
-                    </span>
-                    <span class="t-card__meta">
-                      <span class="t-card__name">Prakash R.</span>
-                      <span class="t-card__role">Retired Bank Officer</span>
-                    </span>
-                  </div>
-                </article>
-              </div>
-            </div>
-
-            <button class="carousel__arrow carousel__arrow--next" id="nextBtn" aria-label="Next testimonial">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-            </button>
-          </div>
-
-          <div class="carousel__dots" id="dots" role="tablist" aria-label="Testimonial slides"></div>
-        </div>
-      </section>
-
-      <!-- ============ FAQ SECTION ============ -->
-      <section class="faq" id="faq">
-        <div class="faq__inner">
-          <header class="faq__header" data-reveal>
-            <span class="eyebrow">FAQ</span>
-            <h2 class="faq__title">Common questions</h2>
-            <p class="faq__subtitle">
-              Straight answers about what Healora does — and just as
-              importantly, what it doesn't.
-            </p>
-          </header>
-
-          <div class="accordion" id="accordion" data-reveal style="--delay:100ms">
-            <!-- Item 1 -->
-            <div class="accordion__item">
-              <h3 class="accordion__heading">
-                <button class="accordion__trigger" id="faq-trigger-1" aria-expanded="false" aria-controls="faq-panel-1">
-                  <span>Does Healora diagnose or prescribe medication?</span>
-                  <svg class="accordion__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </button>
-              </h3>
-              <div class="accordion__panel" id="faq-panel-1" role="region" aria-labelledby="faq-trigger-1">
-                <div class="accordion__panel-inner">
-                  <p>
-                    No. Healora only triages and informs—it never diagnoses or prescribes medication.
-                    Every AI response includes guidance and a reminder that it does not replace
-                    professional medical advice.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 2 -->
-            <div class="accordion__item">
-              <h3 class="accordion__heading">
-                <button class="accordion__trigger" id="faq-trigger-2" aria-expanded="false" aria-controls="faq-panel-2">
-                  <span>Is my health data private?</span>
-                  <svg class="accordion__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </button>
-              </h3>
-              <div class="accordion__panel" id="faq-panel-2" role="region" aria-labelledby="faq-trigger-2">
-                <div class="accordion__panel-inner">
-                  <p>
-                    Yes. Your records are encrypted and securely stored.
-                    Personal information is never shared with the AI model.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 3 -->
-            <div class="accordion__item">
-              <h3 class="accordion__heading">
-                <button class="accordion__trigger" id="faq-trigger-3" aria-expanded="false" aria-controls="faq-panel-3">
-                  <span>Can I manage my family's health?</span>
-                  <svg class="accordion__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </button>
-              </h3>
-              <div class="accordion__panel" id="faq-panel-3" role="region" aria-labelledby="faq-trigger-3">
-                <div class="accordion__panel-inner">
-                  <p>
-                    Absolutely. Healora allows you to manage health records,
-                    appointments, and medications for children and elderly parents.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 4 -->
-            <div class="accordion__item">
-              <h3 class="accordion__heading">
-                <button class="accordion__trigger" id="faq-trigger-4" aria-expanded="false" aria-controls="faq-panel-4">
-                  <span>What if the AI detects an emergency?</span>
-                  <svg class="accordion__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </button>
-              </h3>
-              <div class="accordion__panel" id="faq-panel-4" role="region" aria-labelledby="faq-trigger-4">
-                <div class="accordion__panel-inner">
-                  <p>
-                    Healora immediately advises you to seek emergency medical care
-                    or contact local emergency services when serious symptoms are detected.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Item 5 -->
-            <div class="accordion__item">
-              <h3 class="accordion__heading">
-                <button class="accordion__trigger" id="faq-trigger-5" aria-expanded="false" aria-controls="faq-panel-5">
-                  <span>Is Healora free?</span>
-                  <svg class="accordion__chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </button>
-              </h3>
-              <div class="accordion__panel" id="faq-panel-5" role="region" aria-labelledby="faq-trigger-5">
-                <div class="accordion__panel-inner">
-                  <p>
-                    Yes. Healora is currently free to use.
-                    Premium features will be introduced in a future release.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- ============================================================
-         PREMIUM FOOTER
-         ============================================================ -->
-    <footer class="pf" id="pf">
-      <!-- Animated gradient line -->
-      <div class="pf__gradient-line" aria-hidden="true"></div>
-
-      <!-- Floating decorative background elements -->
-      <div class="pf__bg" aria-hidden="true">
-        <span class="pf__blob pf__blob--1"></span>
-        <span class="pf__blob pf__blob--2"></span>
-        <span class="pf__blob pf__blob--3"></span>
-      </div>
-
-      <div class="pf__container">
-        <!-- Top: brand + newsletter -->
-        <div class="pf__top">
-          <div class="pf__brand">
-            <a href="#top" class="pf__logo" aria-label="Healora home">
-              <span class="pf__logo-mark" aria-hidden="true">
-                <svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="9" fill="#fff"/><path d="M9 17h4l2-5 3 10 2-5h3" stroke="#0B3D66" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-              </span>
-              <span class="pf__logo-word">Healora</span>
-            </a>
-            <p class="pf__desc">
-              Healora pairs a conversational AI health assistant with a personal health
-              record, medication reminders, and family care coordination — one calm,
-              private place to understand your health between doctor visits.
-            </p>
-
-            <ul class="pf__social" aria-label="Healora on social media">
-              <li>
-                <a href="https://x.com/healora" class="pf__social-link" aria-label="Healora on X (Twitter)">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 2H22l-7.6 8.7L23 22h-7l-5.5-6.9L4.1 22H1l8.1-9.3L1 2h7.2l5 6.3L18.9 2Zm-1.2 18h1.7L7.4 4H5.6l12.1 16Z"/></svg>
-                </a>
-              </li>
-              <li>
-                <a href="https://linkedin.com/company/healora" class="pf__social-link" aria-label="Healora on LinkedIn">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.94 8.5H3.56V20H6.94V8.5Zm-1.69-5.5A1.94 1.94 0 1 0 5.27 7 1.94 1.94 0 0 0 5.25 3ZM20.44 20h-3.37v-5.6c0-1.34-.02-3.06-1.87-3.06-1.87 0-2.16 1.46-2.16 2.96V20H9.68V8.5h3.23v1.57h.05a3.54 3.54 0 0 1 3.19-1.75c3.41 0 4.04 2.24 4.04 5.16V20Z"/></svg>
-                </a>
-              </li>
-              <li>
-                <a href="https://instagram.com/healora" class="pf__social-link" aria-label="Healora on Instagram">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
-                </a>
-              </li>
-              <li>
-                <a href="https://facebook.com/healora" class="pf__social-link" aria-label="Healora on Facebook">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.6h2.6l.4-3h-3V8.4c0-.87.24-1.46 1.5-1.46h1.6V4.2C15.9 4.1 15 4 13.9 4c-2.3 0-3.9 1.4-3.9 4v2.4H7.4v3H10V21h3.5Z"/></svg>
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div class="pf__newsletter">
-            <h3>Health tips, once a month</h3>
-            <p>No spam — just useful, plain-language health guidance and product updates.</p>
-            <form class="pf__newsletter-form" id="pfNewsletterForm" novalidate>
-              <label class="pf__visually-hidden" for="pfEmail">Email address</label>
-              <div class="pf__input-row">
-                <input type="email" id="pfEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
-                <button type="submit" class="pf__subscribe-btn">
-                  <span>Subscribe</span>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                </button>
-              </div>
-              <p class="pf__newsletter-msg" id="pfNewsletterMsg" role="status" aria-live="polite"></p>
-            </form>
-          </div>
-        </div>
-
-        <!-- Middle: link columns -->
-        <div class="pf__links">
-          <nav class="pf__col" aria-labelledby="pf-quicklinks">
-            <h3 id="pf-quicklinks">Quick Links</h3>
-            <ul>
-              <li><a href="#top">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#how-it-works">How it works</a></li>
-              <li><a href="#trust">Trust &amp; safety</a></li>
-              <li><a href="#faq">FAQ</a></li>
-            </ul>
-          </nav>
-
-          <nav class="pf__col" aria-labelledby="pf-features">
-            <h3 id="pf-features">Features</h3>
-            <ul>
-              <li><a href="#features">AI Health Assistant</a></li>
-              <li><a href="#features">Personal Health Record</a></li>
-              <li><a href="#features">Care Coordination</a></li>
-              <li><a href="#features">Insights &amp; Reports</a></li>
-              <li><a href="#accessibility">Elder Mode</a></li>
-            </ul>
-          </nav>
-
-          <nav class="pf__col" aria-labelledby="pf-resources">
-            <h3 id="pf-resources">Resources</h3>
-            <ul>
-              <li><a href="blog.html">Blog</a></li>
-              <li><a href="help.html">Help Center</a></li>
-              <li><a href="security.html">Security Overview</a></li>
-              <li><a href="accessibility.html">Accessibility Statement</a></li>
-              <li><a href="changelog.html">Changelog</a></li>
-            </ul>
-          </nav>
-
-          <div class="pf__col pf__col--contact">
-            <h3 id="pf-contact">Contact</h3>
-            <ul>
-              <li>
-                <a href="mailto:hello@healora.app">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-                  hello@healora.app
-                </a>
-              </li>
-              <li>
-                <a href="tel:+18005551234">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.9.3 1.8.6 2.7a2 2 0 0 1-.4 2.1L8 9.9a16 16 0 0 0 6 6l1.4-1.4a2 2 0 0 1 2.1-.4c.9.3 1.8.5 2.7.6a2 2 0 0 1 1.8 2Z"/></svg>
-                  +1 (800) 555-1234
-                </a>
-              </li>
-              <li class="pf__address">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span>148 Harbor Lane, Suite 400<br>Boston, MA 02110</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom bar -->
-      <div class="pf__bottom">
-        <div class="pf__container pf__bottom-inner">
-          <p class="pf__copyright">© <span id="pfYear">2026</span> Healora. All rights reserved.</p>
-          <ul class="pf__legal">
-            <li><a href="privacy.html">Privacy Policy</a></li>
-            <li><a href="terms.html">Terms</a></li>
-            <li><a href="cookies.html">Cookie Policy</a></li>
-          </ul>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Scroll-to-top button -->
-    <button type="button" class="pf__to-top" id="pfToTop" aria-label="Scroll back to top" hidden>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-    </button>
-  </div>
-
-
-  <!-- ============================================================
-       VIEW 2: FULL LOGIN PAGE (Hidden by default)
-       ============================================================ -->
-  <div id="loginView" class="hidden-view">
-    <a class="skip-link" href="#loginForm">Skip to login form</a>
-    
-    <!-- Added back button so you aren't trapped! -->
-    <a class="back-link js-trigger-home">← Back to Home</a>
-
-    <div class="login-page" id="top">
-      <!-- LEFT: illustration panel -->
-      <section class="illustration-panel" aria-hidden="true">
-        <div class="blob blob--1"></div>
-        <div class="blob blob--2"></div>
-        <div class="blob blob--3"></div>
-        <div class="particles" id="particles"></div>
-
-        <div class="illustration-panel__content">
-          <a href="#top" class="brand brand--light js-trigger-home">
-            <span class="brand__mark">
-              <svg viewBox="0 0 32 32" width="30" height="30"><rect width="32" height="32" rx="9" fill="#fff"/><path d="M9 17h4l2-5 3 10 2-5h3" stroke="#0B3D66" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span class="brand__word">Healora</span>
-          </a>
-
-          <div class="medical-illustration">
-            <svg viewBox="0 0 360 300" width="100%" height="100%" role="presentation">
-              <defs>
-                <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#9FD4CC" stop-opacity="0.9"/>
-                  <stop offset="100%" stop-color="#ffffff" stop-opacity="0.15"/>
-                </linearGradient>
-              </defs>
-
-              <!-- Orbiting ring -->
-              <circle cx="180" cy="150" r="108" fill="none" stroke="url(#ringGrad)" stroke-width="1.5" stroke-dasharray="4 8" class="orbit-ring"/>
-
-              <!-- Floating cross badge -->
-              <g class="float-slow" style="transform-origin: 82px 90px;">
-                <circle cx="82" cy="90" r="26" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-                <path d="M82 78v24M70 90h24" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-              </g>
-
-              <!-- Floating pill capsule -->
-              <g class="float-med" style="transform-origin: 278px 200px;">
-                <rect x="256" y="188" width="46" height="24" rx="12" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
-                <line x1="279" y1="188" x2="279" y2="212" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"/>
-              </g>
-
-              <!-- Floating shield -->
-              <g class="float-fast" style="transform-origin: 285px 95px;">
-                <path d="M285 80c8 3 15 4 15 4v14c0 11-7 18-15 21-8-3-15-10-15-21V84s7-1 15-4Z" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)" stroke-width="1.4"/>
-                <path d="m278 98 4 4 8-8" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              </g>
-
-              <!-- Central pulse card -->
-              <rect x="70" y="170" width="220" height="70" rx="16" fill="rgba(255,255,255,0.10)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
-              <polyline
-                points="82,205 108,205 118,185 132,222 144,196 156,205 278,205"
-                fill="none" stroke="#fff" stroke-width="2.5"
-                stroke-linecap="round" stroke-linejoin="round"
-                class="pulse-line" pathLength="1"/>
-              <circle r="4" fill="#fff" class="pulse-dot">
-                <animateMotion dur="3.2s" repeatCount="indefinite"
-                  path="M82,205 108,205 118,185 132,222 144,196 156,205 278,205"/>
-              </circle>
-            </svg>
-          </div>
-
-          <h1>Your health, understood.</h1>
-          <p>Log in to pick up where you left off — your assistant, your records, and your family's care, all in one calm place.</p>
-        </div>
-      </section>
-
-      <!-- RIGHT: glass login card -->
-      <section class="form-panel">
-        <div class="form-panel__bg" aria-hidden="true">
-          <div class="blob blob--soft-1"></div>
-          <div class="blob blob--soft-2"></div>
-        </div>
-
-        <div class="login-card" role="region" aria-label="Log in to Healora">
-          <a href="#top" class="brand brand--card-only js-trigger-home" aria-label="Healora home">
-            <span class="brand__mark">
-              <svg viewBox="0 0 32 32" width="28" height="28"><rect width="32" height="32" rx="9" fill="#0B3D66"/><path d="M9 17h4l2-5 3 10 2-5h3" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </span>
-            <span class="brand__word brand__word--dark">Healora</span>
-          </a>
-
-          <h2>Welcome back</h2>
-          <p class="login-card__sub">Log in to continue to your dashboard.</p>
-
-          <div class="oauth-row">
-            <button type="button" class="btn btn--oauth" id="googleBtn">
-              <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62Z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.55-1.85.87-3.04.87-2.34 0-4.32-1.58-5.03-3.7H.98v2.33A9 9 0 0 0 9 18Z"/><path fill="#FBBC05" d="M3.97 10.73A5.4 5.4 0 0 1 3.68 9c0-.6.1-1.19.29-1.73V4.94H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.06l2.99-2.33Z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.9 11.43 0 9 0A9 9 0 0 0 .98 4.94l2.99 2.33C4.68 5.16 6.66 3.58 9 3.58Z"/></svg>
-              Continue with Google
-            </button>
-            <button type="button" class="btn btn--oauth btn--oauth-dark" id="appleBtn">
-              <svg width="16" height="18" viewBox="0 0 16 18" fill="currentColor" aria-hidden="true"><path d="M13.1 9.5c0-2 1.6-3 1.7-3.1-1-1.4-2.5-1.6-3-1.6-1.3-.1-2.5.8-3.1.8-.6 0-1.6-.8-2.7-.7-1.4 0-2.6.8-3.3 2-1.4 2.5-.4 6.1 1 8.1.7 1 1.5 2.1 2.6 2 1-.1 1.4-.7 2.7-.7 1.2 0 1.6.7 2.7.7 1.1 0 1.8-1 2.5-2 .8-1.1 1.1-2.2 1.1-2.3-.1 0-2.1-.8-2.2-3.2ZM11 3.3c.6-.7 1-1.7.9-2.7-.9 0-2 .6-2.6 1.3-.6.6-1.1 1.6-1 2.6 1 .1 2-.5 2.7-1.2Z"/></svg>
-              Continue with Apple
-            </button>
-          </div>
-
-          <div class="divider"><span>or log in with email</span></div>
-
-          <form id="loginForm" novalidate onsubmit="event.preventDefault();">
-            <div class="field">
-              <label for="email">Email address</label>
-              <div class="field__control">
-                <svg class="field__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-                <input type="email" id="email" name="email" autocomplete="email" placeholder="you@example.com" aria-describedby="emailError" required>
-                <svg class="field__check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-              </div>
-              <p class="field__error" id="emailError" role="alert"></p>
-            </div>
-
-            <div class="field">
-              <label for="password">Password</label>
-              <div class="field__control">
-                <svg class="field__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
-                <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Enter your password" aria-describedby="passwordError" required>
-                <button type="button" class="field__toggle" id="passwordToggle" aria-pressed="false" aria-label="Show password">
-                  <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <svg class="eye-closed" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M17.9 17.9A10.6 10.6 0 0 1 12 20c-7 0-11-8-11-8a19.7 19.7 0 0 1 5-5.9M9.9 4.2A10 10 0 0 1 12 4c7 0 11 8 11 8a19.6 19.6 0 0 1-2.2 3.1M14.1 14.1a3 3 0 1 1-4.2-4.2"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                </button>
-              </div>
-              <p class="field__error" id="passwordError" role="alert"></p>
-            </div>
-
-            <div class="field-row">
-              <label class="checkbox">
-                <input type="checkbox" id="remember" name="remember">
-                <span class="checkbox__box" aria-hidden="true">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
-                </span>
-                Remember me
-              </label>
-              <a href="forgot-password.html" class="link-muted">Forgot password?</a>
-            </div>
-
-            <button type="submit" class="btn btn--primary btn--block btn--submit" id="loginBtn">
-              <span class="btn__label">Log in</span>
-              <span class="btn__spinner" aria-hidden="true"></span>
-            </button>
-
-            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
-          </form>
-
-          <p class="signup-line">Don’t have an account? <a href="register.html">Sign up free</a></p>
-        </div>
-      </section>
     </div>
-  </div>
 
-  <!-- Scripts (Ensure these files are in the same folder or update paths) -->
-  <script src="js/script.js" defer></script>
-  <script src="footer.js" defer></script>
-  <script src="login.js" defer></script>
+</div>
 
-  <!-- Navigation Toggle Script -->
-  <script>
-    const landingView = document.getElementById('landingView');
-    const loginView = document.getElementById('loginView');
-    const loginBtns = document.querySelectorAll('.js-trigger-login');
-    const homeBtns = document.querySelectorAll('.js-trigger-home');
+<!-- ===============================
+     BACKGROUND
+================================ -->
 
-    // When clicking 'Login', hide landing page and show login page
-    loginBtns.forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        landingView.classList.add('hidden-view');
-        loginView.classList.remove('hidden-view');
-        window.scrollTo(0, 0); // scroll to top
-      });
-    });
+<div class="background">
 
-    // When clicking 'Back to Home' (or the logo), hide login page and show landing page
-    homeBtns.forEach(btn => {
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        loginView.classList.add('hidden-view');
-        landingView.classList.remove('hidden-view');
-        window.scrollTo(0, 0); // scroll to top
-      });
-    });
-  </script>
+    <div class="gradient gradient-1"></div>
+
+    <div class="gradient gradient-2"></div>
+
+    <div class="gradient gradient-3"></div>
+
+</div>
+
+<!-- ===============================
+     HEADER
+================================ -->
+
+<header class="header" id="header">
+
+<div class="container">
+
+<nav class="navbar">
+
+<a href="index.html" class="logo">
+
+<i class="fa-solid fa-heart-pulse"></i>
+
+Healora
+
+</a>
+
+<ul class="nav-links">
+
+<li><a href="#features">Features</a></li>
+
+<li><a href="#ai">AI Assistant</a></li>
+
+<li><a href="#analytics">Analytics</a></li>
+
+<li><a href="#faq">FAQ</a></li>
+
+</ul>
+
+<div class="nav-buttons">
+
+<a href="pages/login.html" class="btn btn-outline">
+
+Login
+
+</a>
+
+<a href="pages/signup.html" class="btn btn-primary">
+
+Get Started
+
+</a>
+
+</div>
+
+<div class="menu-btn">
+
+<i class="fa-solid fa-bars"></i>
+
+</div>
+
+</nav>
+
+</div>
+
+</header>
+
+<!-- ===============================
+     HERO SECTION
+================================ -->
+
+<section class="hero">
+
+<div class="container hero-container">
+
+<div class="hero-left">
+
+<div class="hero-badge">
+
+<span class="pulse-dot"></span>
+
+AI Powered Healthcare Platform
+
+</div>
+
+<h1>
+
+Healthcare,
+
+<span>Reimagined</span>
+
+with Artificial Intelligence.
+
+</h1>
+
+<p>
+
+Manage reports, medicine reminders, appointments,
+AI consultations and family health records from one
+beautiful dashboard.
+
+</p>
+
+<div class="hero-buttons">
+
+<a href="pages/signup.html" class="btn btn-primary btn-lg">
+
+Start Your Journey
+
+</a>
+
+<a href="#features" class="btn btn-secondary btn-lg">
+
+Explore Features
+
+</a>
+
+</div>
+
+<div class="hero-stats">
+
+<div class="stat-card">
+
+<h2>50K+</h2>
+
+<p>Users</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2>98%</h2>
+
+<p>Accuracy</p>
+
+</div>
+
+<div class="stat-card">
+
+<h2>24/7</h2>
+
+<p>AI Support</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="hero-right">
+
+<div class="dashboard-preview">
+
+<div class="dashboard-top">
+
+<div class="dashboard-user">
+
+<div class="avatar">
+
+<i class="fa-solid fa-user"></i>
+
+</div>
+
+<div>
+
+<h4>Welcome Back</h4>
+
+<p>Stay Healthy ❤️</p>
+
+</div>
+
+</div>
+
+<div class="notification">
+
+<i class="fa-solid fa-bell"></i>
+
+</div>
+
+</div>
+
+<div class="health-card">
+
+<div>
+
+<h3>Heart Rate</h3>
+
+<h2>76 BPM</h2>
+
+</div>
+
+<i class="fa-solid fa-heart-circle-check"></i>
+
+</div>
+
+<div class="mini-cards">
+
+<div class="mini-card">
+
+<i class="fa-solid fa-pills"></i>
+
+<p>Medicine</p>
+
+<strong>3 Today</strong>
+
+</div>
+
+<div class="mini-card">
+
+<i class="fa-solid fa-robot"></i>
+
+<p>AI Chat</p>
+
+<strong>Ready</strong>
+
+</div>
+
+</div>
+
+<div class="progress-card">
+
+<div class="progress-title">
+
+<span>Daily Health Score</span>
+
+<span>92%</span>
+
+</div>
+
+<div class="progress-bar">
+
+<div class="progress-fill"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<!-- ==========================================
+     WHY HEALORA
+========================================== -->
+
+<section class="features" id="features">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+Why Healora
+</span>
+
+<h2>
+Designed for Modern Healthcare
+</h2>
+
+<p>
+Everything you need to manage your health in one intelligent platform.
+</p>
+
+</div>
+
+<div class="feature-grid">
+
+<div class="feature-card">
+
+<div class="feature-icon">
+<i class="fa-solid fa-robot"></i>
+</div>
+
+<h3>AI Health Assistant</h3>
+
+<p>
+Ask symptoms, understand reports and receive safe health guidance powered by AI.
+</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">
+<i class="fa-solid fa-pills"></i>
+</div>
+
+<h3>Medicine Reminder</h3>
+
+<p>
+Never miss a dose with smart reminders and daily schedules.
+</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">
+<i class="fa-solid fa-file-waveform"></i>
+</div>
+
+<h3>Medical Reports</h3>
+
+<p>
+Upload and organize prescriptions, blood tests and medical records securely.
+</p>
+
+</div>
+
+<div class="feature-card">
+
+<div class="feature-icon">
+<i class="fa-solid fa-user-group"></i>
+</div>
+
+<h3>Family Profiles</h3>
+
+<p>
+Manage your parents' and children's healthcare from one dashboard.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+     AI SECTION
+========================================== -->
+
+<section class="ai-section" id="ai">
+
+<div class="container ai-container">
+
+<div class="ai-left">
+
+<span class="section-tag">
+
+AI Companion
+
+</span>
+
+<h2>
+
+Healthcare Conversations
+That Feel Natural.
+
+</h2>
+
+<p>
+
+Ask questions, upload reports and receive easy-to-understand explanations with Healora AI.
+
+</p>
+
+<ul class="ai-list">
+
+<li>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Symptom Guidance
+
+</li>
+
+<li>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Medicine Information
+
+</li>
+
+<li>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Health Report Explanation
+
+</li>
+
+<li>
+
+<i class="fa-solid fa-circle-check"></i>
+
+Emergency Suggestions
+
+</li>
+
+</ul>
+
+<a href="pages/signup.html" class="btn btn-primary">
+
+Try Healora AI
+
+</a>
+
+</div>
+
+<div class="ai-right">
+
+<div class="chat-window">
+
+<div class="chat-header">
+
+<div class="chat-avatar">
+
+<i class="fa-solid fa-heart-pulse"></i>
+
+</div>
+
+<div>
+
+<h4>Healora AI</h4>
+
+<p>Online</p>
+
+</div>
+
+</div>
+
+<div class="chat-body">
+
+<div class="chat user">
+
+I've had a headache since morning.
+
+</div>
+
+<div class="chat ai">
+
+I understand. Can you tell me if you have fever, nausea, or sensitivity to light?
+
+</div>
+
+<div class="chat user">
+
+No fever.
+
+</div>
+
+<div class="chat ai">
+
+Based on your symptoms, it may be due to dehydration or stress. Drink water, rest, and consult a doctor if it worsens.
+
+</div>
+
+</div>
+
+<div class="typing">
+
+<span></span>
+
+<span></span>
+
+<span></span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<!-- ==========================================
+     HEALTH ANALYTICS
+========================================== -->
+
+<section class="analytics" id="analytics">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+Health Analytics
+</span>
+
+<h2>Your Health at a Glance</h2>
+
+<p>
+Visualize your health journey with beautiful statistics and personalized insights.
+</p>
+
+</div>
+
+<div class="analytics-grid">
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-heart-pulse"></i>
+</div>
+
+<h3>92%</h3>
+
+<p>Overall Health Score</p>
+
+</div>
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-pills"></i>
+</div>
+
+<h3>28</h3>
+
+<p>Medicines Taken This Month</p>
+
+</div>
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-file-medical"></i>
+</div>
+
+<h3>14</h3>
+
+<p>Reports Uploaded</p>
+
+</div>
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-calendar-check"></i>
+</div>
+
+<h3>11</h3>
+
+<p>Appointments Managed</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+     TESTIMONIALS
+========================================== -->
+
+<section class="testimonials">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+Testimonials
+</span>
+
+<h2>Trusted by Families</h2>
+
+<p>
+People use Healora every day to simplify healthcare management.
+</p>
+
+</div>
+
+<div class="testimonial-grid">
+
+<div class="testimonial-card">
+
+<div class="stars">
+
+★★★★★
+
+</div>
+
+<p>
+
+"Healora reminds me about my medicines every day. The AI assistant also explains my reports in simple language."
+
+</p>
+
+<div class="user">
+
+<div class="user-avatar">
+
+A
+
+</div>
+
+<div>
+
+<h4>Ananya Sharma</h4>
+
+<span>Student</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="testimonial-card">
+
+<div class="stars">
+
+★★★★★
+
+</div>
+
+<p>
+
+"Managing my parents' medicines has become much easier with Healora."
+
+</p>
+
+<div class="user">
+
+<div class="user-avatar">
+
+R
+
+</div>
+
+<div>
+
+<h4>Rahul Mehta</h4>
+
+<span>Software Engineer</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="testimonial-card">
+
+<div class="stars">
+
+★★★★★
+
+</div>
+
+<p>
+
+"The dashboard is clean, fast and incredibly easy to use."
+
+</p>
+
+<div class="user">
+
+<div class="user-avatar">
+
+P
+
+</div>
+
+<div>
+
+<h4>Priya Kapoor</h4>
+
+<span>Teacher</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+     FAQ
+========================================== -->
+
+<section class="faq" id="faq">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+FAQs
+</span>
+
+<h2>Frequently Asked Questions</h2>
+
+</div>
+
+<div class="faq-container">
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Is Healora a replacement for doctors?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+No. Healora assists you with health management and AI guidance but never replaces qualified medical professionals.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Is my medical data secure?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+Yes. Your data is encrypted and securely stored with privacy as our highest priority.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Can I manage my family's health?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+Absolutely. Healora allows multiple family profiles under one account.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Does Healora send medicine reminders?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+Yes. You'll receive smart reminders for medicines, appointments and health checkups.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<!-- ==========================================
+     HEALTH ANALYTICS
+========================================== -->
+
+<section class="analytics" id="analytics">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+Health Analytics
+</span>
+
+<h2>Your Health at a Glance</h2>
+
+<p>
+Visualize your health journey with beautiful statistics and personalized insights.
+</p>
+
+</div>
+
+<div class="analytics-grid">
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-heart-pulse"></i>
+</div>
+
+<h3>92%</h3>
+
+<p>Overall Health Score</p>
+
+</div>
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-pills"></i>
+</div>
+
+<h3>28</h3>
+
+<p>Medicines Taken This Month</p>
+
+</div>
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-file-medical"></i>
+</div>
+
+<h3>14</h3>
+
+<p>Reports Uploaded</p>
+
+</div>
+
+<div class="analytics-card">
+
+<div class="analytics-icon">
+<i class="fa-solid fa-calendar-check"></i>
+</div>
+
+<h3>11</h3>
+
+<p>Appointments Managed</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+     TESTIMONIALS
+========================================== -->
+
+<section class="testimonials">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+Testimonials
+</span>
+
+<h2>Trusted by Families</h2>
+
+<p>
+People use Healora every day to simplify healthcare management.
+</p>
+
+</div>
+
+<div class="testimonial-grid">
+
+<div class="testimonial-card">
+
+<div class="stars">
+
+★★★★★
+
+</div>
+
+<p>
+
+"Healora reminds me about my medicines every day. The AI assistant also explains my reports in simple language."
+
+</p>
+
+<div class="user">
+
+<div class="user-avatar">
+
+A
+
+</div>
+
+<div>
+
+<h4>Ananya Sharma</h4>
+
+<span>Student</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="testimonial-card">
+
+<div class="stars">
+
+★★★★★
+
+</div>
+
+<p>
+
+"Managing my parents' medicines has become much easier with Healora."
+
+</p>
+
+<div class="user">
+
+<div class="user-avatar">
+
+R
+
+</div>
+
+<div>
+
+<h4>Rahul Mehta</h4>
+
+<span>Software Engineer</span>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="testimonial-card">
+
+<div class="stars">
+
+★★★★★
+
+</div>
+
+<p>
+
+"The dashboard is clean, fast and incredibly easy to use."
+
+</p>
+
+<div class="user">
+
+<div class="user-avatar">
+
+P
+
+</div>
+
+<div>
+
+<h4>Priya Kapoor</h4>
+
+<span>Teacher</span>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ==========================================
+     FAQ
+========================================== -->
+
+<section class="faq" id="faq">
+
+<div class="container">
+
+<div class="section-header">
+
+<span class="section-tag">
+FAQs
+</span>
+
+<h2>Frequently Asked Questions</h2>
+
+</div>
+
+<div class="faq-container">
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Is Healora a replacement for doctors?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+No. Healora assists you with health management and AI guidance but never replaces qualified medical professionals.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Is my medical data secure?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+Yes. Your data is encrypted and securely stored with privacy as our highest priority.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Can I manage my family's health?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+Absolutely. Healora allows multiple family profiles under one account.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="faq-item">
+
+<button class="faq-question">
+
+Does Healora send medicine reminders?
+
+<i class="fa-solid fa-chevron-down"></i>
+
+</button>
+
+<div class="faq-answer">
+
+<p>
+
+Yes. You'll receive smart reminders for medicines, appointments and health checkups.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+<!-- ==========================================
+     CALL TO ACTION
+========================================== -->
+
+<section class="cta">
+
+    <div class="container">
+
+        <div class="cta-box">
+
+            <span class="section-tag">
+                Get Started Today
+            </span>
+
+            <h2>
+                Your Health Deserves a Smarter Companion.
+            </h2>
+
+            <p>
+                Join thousands of users managing medicines, reports, appointments,
+                and AI-powered healthcare in one secure platform.
+            </p>
+
+            <div class="cta-buttons">
+
+                <a href="pages/signup.html" class="btn btn-primary btn-lg">
+
+                    Create Free Account
+
+                </a>
+
+                <a href="pages/login.html" class="btn btn-secondary btn-lg">
+
+                    Login
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ==========================================
+     FOOTER
+========================================== -->
+
+<footer class="footer">
+
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <!-- Brand -->
+
+            <div class="footer-column">
+
+                <a href="#" class="footer-logo">
+
+                    <i class="fa-solid fa-heart-pulse"></i>
+
+                    Healora
+
+                </a>
+
+                <p>
+
+                    AI-powered healthcare companion designed to simplify
+                    medicines, reports, appointments and health management.
+
+                </p>
+
+                <div class="social-links">
+
+                    <a href="#"><i class="fab fa-github"></i></a>
+
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+
+                    <a href="#"><i class="fab fa-x-twitter"></i></a>
+
+                </div>
+
+            </div>
+
+            <!-- Quick Links -->
+
+            <div class="footer-column">
+
+                <h3>Quick Links</h3>
+
+                <a href="#features">Features</a>
+
+                <a href="#ai">AI Assistant</a>
+
+                <a href="#analytics">Analytics</a>
+
+                <a href="#faq">FAQ</a>
+
+            </div>
+
+            <!-- Pages -->
+
+            <div class="footer-column">
+
+                <h3>Platform</h3>
+
+                <a href="pages/login.html">Login</a>
+
+                <a href="pages/signup.html">Signup</a>
+
+                <a href="pages/dashboard.html">Dashboard</a>
+
+            </div>
+
+            <!-- Contact -->
+
+            <div class="footer-column">
+
+                <h3>Contact</h3>
+
+                <p>Email</p>
+
+                <span>support@healora.ai</span>
+
+                <br><br>
+
+                <p>Location</p>
+
+                <span>India</span>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+
+            <div class="ecg-line"></div>
+
+            <p>
+
+                © 2026 Healora. All Rights Reserved.
+
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
 
 </body>
+
 </html>

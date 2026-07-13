@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Healora | Medical Reports</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+<link rel="stylesheet" href="../css/reports.css">
+
+</head>
+
+<body>
+
+<div class="background-blobs">
+
+<div class="blob blob1"></div>
+
+<div class="blob blob2"></div>
+
+<div class="blob blob3"></div>
+
+</div>
+
+<div class="reports-layout">
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+<div class="logo">
+
+<div class="logo-circle">
+
+<i class="fa-solid fa-file-medical"></i>
+
+</div>
+
+<h2>Healora</h2>
+
+</div>
+
+<nav>
+
+<a href="dashboard.html">
+
+<i class="fa-solid fa-house"></i>
+
+<span>Dashboard</span>
+
+</a>
+
+<a href="chatbot.html">
+
+<i class="fa-solid fa-robot"></i>
+
+<span>AI Assistant</span>
+
+</a>
+
+<a class="active" href="reports.html">
+
+<i class="fa-solid fa-file-waveform"></i>
+
+<span>Medical Reports</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-pills"></i>
+
+<span>Medicines</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-calendar-check"></i>
+
+<span>Appointments</span>
+
+</a>
+
+<a href="#">
+
+<i class="fa-solid fa-user"></i>
+
+<span>Profile</span>
+
+</a>
+
+</nav>
+
+<div class="logout">
+
+<i class="fa-solid fa-right-from-bracket"></i>
+
+<span>Logout</span>
+
+</div>
+
+</aside>
+
+<!-- ================= MAIN ================= -->
+
+<main class="content">
+
+<header class="topbar">
+
+<div>
+
+<h1>
+
+Medical <span>Reports</span>
+
+</h1>
+
+<p>
+
+Upload, organize and analyze your health reports using AI.
+
+</p>
+
+</div>
+
+<div class="top-actions">
+
+<button class="icon-btn">
+
+<i class="fa-solid fa-bell"></i>
+
+</button>
+
+<button class="icon-btn">
+
+<i class="fa-solid fa-moon"></i>
+
+</button>
+
+<div class="profile">
+
+<img src="https://ui-avatars.com/api/?name=Gurpreet&background=0B4F6C&color=fff">
+
+</div>
+
+</div>
+
+</header>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero-card">
+
+<div class="hero-text">
+
+<h2>
+
+📄 Smart Medical Report Manager
+
+</h2>
+
+<p>
+
+Securely upload prescriptions, blood tests, X-rays, MRI scans, and let Healora AI organize and summarize them for you.
+
+</p>
+
+<button class="upload-btn">
+
+<i class="fa-solid fa-cloud-arrow-up"></i>
+
+Upload New Report
+
+</button>
+
+</div>
+
+<div class="hero-icon">
+
+<i class="fa-solid fa-file-medical"></i>
+
+</div>
+
+</section>
+
+<!-- ================= REPORT STATS ================= -->
+
+<section class="stats-grid">
+
+<div class="stat-card">
+
+<h3>Total Reports</h3>
+
+<h2>28</h2>
+
+<p>Uploaded</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>AI Analysed</h3>
+
+<h2>24</h2>
+
+<p>Completed</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Pending</h3>
+
+<h2>4</h2>
+
+<p>Waiting</p>
+
+</div>
+
+<div class="stat-card">
+
+<h3>Storage</h3>
+
+<h2>310 MB</h2>
+
+<p>Used</p>
+
+</div>
+
+</section>
+<!-- ================= SEARCH & FILTER ================= -->
+
+<section class="search-section">
+
+<div class="search-box">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input
+type="text"
+placeholder="Search reports by name, doctor or date...">
+
+</div>
+
+<div class="filter-buttons">
+
+<button class="active">All</button>
+
+<button>Blood Test</button>
+
+<button>Prescription</button>
+
+<button>X-Ray</button>
+
+<button>MRI</button>
+
+<button>ECG</button>
+
+</div>
+
+</section>
+
+<!-- ================= UPLOAD AREA ================= -->
+
+<section class="upload-area">
+
+<div class="upload-box">
+
+<i class="fa-solid fa-cloud-arrow-up"></i>
+
+<h2>Drag & Drop Medical Report</h2>
+
+<p>
+
+Upload PDF, JPG, PNG or Prescription
+
+</p>
+
+<input type="file">
+
+<button>
+
+Choose File
+
+</button>
+
+</div>
+
+</section>
+
+<!-- ================= REPORTS ================= -->
+
+<section class="reports-grid">
+
+<div class="report-card">
+
+<div class="report-icon">
+
+📄
+
+</div>
+
+<h3>
+
+Blood Report.pdf
+
+</h3>
+
+<p>
+
+Uploaded: 15 July 2026
+
+</p>
+
+<div class="report-tags">
+
+<span>Blood Test</span>
+
+<span>PDF</span>
+
+</div>
+
+<div class="report-actions">
+
+<button>
+
+View
+
+</button>
+
+<button>
+
+Download
+
+</button>
+
+<button class="danger">
+
+Delete
+
+</button>
+
+</div>
+
+</div>
+
+<div class="report-card">
+
+<div class="report-icon">
+
+🩻
+
+</div>
+
+<h3>
+
+Chest X-Ray.png
+
+</h3>
+
+<p>
+
+Uploaded: 10 July 2026
+
+</p>
+
+<div class="report-tags">
+
+<span>X-Ray</span>
+
+<span>Image</span>
+
+</div>
+
+<div class="report-actions">
+
+<button>
+
+View
+
+</button>
+
+<button>
+
+Download
+
+</button>
+
+<button class="danger">
+
+Delete
+
+</button>
+
+</div>
+
+</div>
+
+<div class="report-card">
+
+<div class="report-icon">
+
+💊
+
+</div>
+
+<h3>
+
+Prescription.pdf
+
+</h3>
+
+<p>
+
+Uploaded: 5 July 2026
+
+</p>
+
+<div class="report-tags">
+
+<span>Prescription</span>
+
+<span>PDF</span>
+
+</div>
+
+<div class="report-actions">
+
+<button>
+
+View
+
+</button>
+
+<button>
+
+Download
+
+</button>
+
+<button class="danger">
+
+Delete
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ================= AI ANALYSIS ================= -->
+
+<section class="analysis-card">
+
+<div class="analysis-header">
+
+<h2>
+
+🤖 AI Report Summary
+
+</h2>
+
+<span class="status">
+
+AI Analysed
+
+</span>
+
+</div>
+
+<div class="analysis-grid">
+
+<div>
+
+<h4>🩸 Hemoglobin</h4>
+
+<p>Normal (13.8 g/dL)</p>
+
+</div>
+
+<div>
+
+<h4>🍬 Blood Sugar</h4>
+
+<p>Slightly High (118 mg/dL)</p>
+
+</div>
+
+<div>
+
+<h4>💓 Cholesterol</h4>
+
+<p>Normal</p>
+
+</div>
+
+<div>
+
+<h4>🦴 Vitamin D</h4>
+
+<p>Low — Consider consulting your doctor.</p>
+
+</div>
+
+</div>
+
+</section>
+<!-- ================= HEALTH INSIGHTS ================= -->
+
+<section class="insights-grid">
+
+<div class="insight-card">
+
+<div class="insight-icon">❤️</div>
+
+<h3>Heart Health</h3>
+
+<p>Stable</p>
+
+<span class="green">Excellent</span>
+
+</div>
+
+<div class="insight-card">
+
+<div class="insight-icon">🩸</div>
+
+<h3>Blood Sugar</h3>
+
+<p>118 mg/dL</p>
+
+<span class="orange">Monitor</span>
+
+</div>
+
+<div class="insight-card">
+
+<div class="insight-icon">🦴</div>
+
+<h3>Vitamin D</h3>
+
+<p>Low Level</p>
+
+<span class="red">Needs Attention</span>
+
+</div>
+
+</section>
+
+<!-- ================= TIMELINE ================= -->
+
+<section class="timeline-card">
+
+<h2>
+
+📅 Report Timeline
+
+</h2>
+
+<div class="timeline">
+
+<div class="timeline-item">
+
+<div class="dot"></div>
+
+<div>
+
+<h4>Blood Report</h4>
+
+<p>15 July 2026</p>
+
+</div>
+
+</div>
+
+<div class="timeline-item">
+
+<div class="dot"></div>
+
+<div>
+
+<h4>Chest X-Ray</h4>
+
+<p>10 July 2026</p>
+
+</div>
+
+</div>
+
+<div class="timeline-item">
+
+<div class="dot"></div>
+
+<div>
+
+<h4>Prescription</h4>
+
+<p>05 July 2026</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ================= AI RECOMMENDATIONS ================= -->
+
+<section class="recommendation-card">
+
+<h2>
+
+💡 Healora AI Recommendations
+
+</h2>
+
+<ul>
+
+<li>✅ Drink at least 2–3 litres of water daily.</li>
+
+<li>🥗 Increase Vitamin D rich foods.</li>
+
+<li>🚶 Walk for 30 minutes every day.</li>
+
+<li>🩺 Schedule a follow-up blood test next month.</li>
+
+<li>😴 Maintain 7–8 hours of sleep.</li>
+
+</ul>
+
+</section>
+
+<footer class="reports-footer">
+
+<p>
+
+© 2026 Healora • Smart Healthcare Platform
+
+</p>
+
+</footer>
+
+</main>
+
+</div>
+
+<script src="../js/reports.js"></script>
+
+</body>
+
+</html>
