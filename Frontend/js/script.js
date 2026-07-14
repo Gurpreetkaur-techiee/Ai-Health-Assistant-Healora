@@ -109,9 +109,19 @@ if (heroBtn) {
 
     heroBtn.addEventListener("click", () => {
 
+    const token = localStorage.getItem("token");
+
+    if (token) {
+
+        window.location.href = "pages/dashboard.html";
+
+    } else {
+
         window.location.href = "pages/signup.html";
 
-    });
+    }
+
+});
 
 }
 
@@ -723,3 +733,31 @@ console.log(
 "font-size:16px;color:#0B4F6C"
 
 );
+
+/* ==========================================
+   LANDING PAGE AUTH CHECK
+========================================== */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const loginBtn = document.getElementById("loginBtn");
+    const getStartedBtn = document.getElementById("getStartedBtn");
+
+    if (!loginBtn || !getStartedBtn) return;
+
+    if (token) {
+
+        loginBtn.textContent = "Dashboard";
+        loginBtn.href = "pages/dashboard.html";
+
+        getStartedBtn.textContent =
+            `Welcome ${user?.name || "User"}`;
+
+        getStartedBtn.href = "pages/dashboard.html";
+
+    }
+
+});

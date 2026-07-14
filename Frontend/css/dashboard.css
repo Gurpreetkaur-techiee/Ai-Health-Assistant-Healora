@@ -1408,7 +1408,8 @@ margin-top:20px;
 
 }
 
-.quick-grid button{
+.quick-grid button,
+.quick-grid a{
 
 border:none;
 
@@ -1426,6 +1427,8 @@ flex-direction:column;
 
 align-items:center;
 
+justify-content:center;
+
 gap:10px;
 
 font-size:26px;
@@ -1434,9 +1437,14 @@ font-weight:600;
 
 transition:.35s;
 
+text-decoration:none;
+
+color:inherit;
+
 }
 
-.quick-grid button span{
+.quick-grid button span,
+.quick-grid a span{
 
 font-size:14px;
 
@@ -1444,7 +1452,8 @@ color:var(--primary);
 
 }
 
-.quick-grid button:hover{
+.quick-grid button:hover,
+.quick-grid a:hover{
 
 background:linear-gradient(
 135deg,
@@ -1458,12 +1467,12 @@ transform:translateY(-6px);
 
 }
 
-.quick-grid button:hover span{
+.quick-grid button:hover span,
+.quick-grid a:hover span{
 
 color:white;
 
 }
-
 /* ===========================================
    FOOTER
 =========================================== */

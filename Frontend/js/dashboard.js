@@ -45,6 +45,16 @@ document.addEventListener("DOMContentLoaded", () => {
         greeting.innerHTML =
         `${message}, <span>${userName} 👋</span>`;
 
+
+        const profileImage = document.querySelector(".profile img");
+
+        if (profileImage && storedUser) {
+
+            profileImage.src =
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(storedUser.name)}&background=0B4F6C&color=fff`;
+
+        }
+
         async function loadDashboard() {
 
             try {
@@ -62,6 +72,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 console.log(JSON.stringify(result, null, 2));
 
+                const summary = result.data;
+
+                const healthScore =
+                    document.querySelector(".value");
+
+                if (healthScore && summary.healthScore) {
+
+                    healthScore.textContent =
+                        summary.healthScore + "%";
+
+                }
+
+                const healthStatus =
+                    document.querySelector(".health-score p");
+
+                if (healthStatus && summary.healthStatus) {
+
+                    healthStatus.textContent =
+                        summary.healthStatus;
+
+                }
+
             } catch (err) {
 
             console.error(err);
@@ -78,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
        HEALTH SCORE ANIMATION
     ====================================== */
 
-    const score =
+    /*const score =
         document.querySelector(".value");
 
     if (score) {
@@ -101,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }, 20);
 
-    }
+    }*/
 
 
     /* ======================================
@@ -196,17 +228,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 /* ==========================================
-   AI ASSISTANT
+   DASHBOARD AI → CHATBOT
 ========================================== */
 
-const aiInput = document.querySelector(".ai-input input");
-const aiButton = document.querySelector(".ai-input button");
+const aiInput = document.getElementById("dashboardAIInput");
+const aiButton = document.getElementById("dashboardAISendBtn");
 
 if (aiButton && aiInput) {
 
     aiButton.addEventListener("click", () => {
 
-        if (aiInput.value.trim() === "") {
+        const message = aiInput.value.trim();
+
+        if (!message) {
 
             alert("Please enter your symptoms.");
 
@@ -214,14 +248,15 @@ if (aiButton && aiInput) {
 
         }
 
-        alert("🤖 Healora AI: Your request has been received. AI integration will be connected soon.");
+        // Save message for chatbot
+        localStorage.setItem("dashboardAIMessage", message);
 
-        aiInput.value = "";
+        // Open chatbot
+        window.location.href = "chatbot.html";
 
     });
 
 }
-
 
 /* ==========================================
    WATER TRACKER
@@ -271,7 +306,7 @@ document.querySelectorAll(".quick-grid button").forEach(btn => {
    NOTIFICATION
 ========================================== */
 
-const bell = document.querySelector(".fa-bell");
+/*const bell = document.querySelector(".fa-bell");
 
 if (bell) {
 
@@ -281,7 +316,7 @@ if (bell) {
 
     });
 
-}
+}*/
 
 
 /* ==========================================
@@ -375,3 +410,80 @@ if (topbar) {
 
 console.log("%c❤️ Healora Dashboard Loaded",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
+
+
+/* ==========================================
+   TOP ACTIONS
+========================================== */
+
+const notificationBtn = document.getElementById("notificationBtn");
+
+if (notificationBtn) {
+
+    notificationBtn.addEventListener("click", () => {
+
+        window.location.href = "notifications.html";
+
+    });
+
+}
+
+/* ==========================================
+   DARK MODE (COMING SOON)
+========================================== */
+
+const themeToggleBtn = document.getElementById("themeToggleBtn");
+
+if (themeToggleBtn) {
+
+    themeToggleBtn.addEventListener("click", () => {
+
+        alert("🌙 Dark Mode is coming soon! Stay tuned for a future update.");
+
+    });
+
+}
+
+/* ==========================================
+   DASHBOARD AI QUICK ACTIONS
+========================================== */
+
+const dashboardAIInput = document.getElementById("dashboardAIInput");
+
+const quickButtons = document.querySelectorAll(".quick-actions button");
+
+if (dashboardAIInput && quickButtons.length > 0) {
+
+    quickButtons.forEach((button) => {
+
+        button.addEventListener("click", () => {
+
+            const text = button.innerText.trim();
+
+            switch (text) {
+
+                case "🤒 Fever":
+                    dashboardAIInput.value = "I have fever.";
+                    break;
+
+                case "🤧 Cold":
+                    dashboardAIInput.value = "I have cold.";
+                    break;
+
+                case "💊 Medicine":
+                    dashboardAIInput.value = "Tell me about my medicines.";
+                    break;
+
+                case "🩺 Reports":
+                    dashboardAIInput.value = "Explain my medical reports.";
+                    break;
+
+            }
+
+            dashboardAIInput.focus();
+
+        });
+
+    });
+
+}

@@ -2,6 +2,12 @@
    HEALORA AI CHATBOT
 ========================================== */
 
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
     const chatWindow = document.querySelector(".chat-window");
@@ -9,11 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sendBtn = document.getElementById("sendBtn");
     const API_BASE_URL = "http://localhost:5000/api";
 
-    const token = localStorage.getItem("token");
-
-if (!token) {
-    window.location.href = "login.html";
-}
+    
     
 
     /* ======================================

@@ -54,60 +54,39 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <nav>
 
-<a class="active">
-
-<i class="fa-solid fa-house"></i>
-
-<span>Dashboard</span>
-
+<a href="dashboard.html" class="active">
+    <i class="fa-solid fa-house"></i>
+    <span>Dashboard</span>
 </a>
 
-<a>
-
-<i class="fa-solid fa-robot"></i>
-
-<span>AI Assistant</span>
-
+<a href="chatbot.html">
+    <i class="fa-solid fa-robot"></i>
+    <span>AI Assistant</span>
 </a>
 
-<a>
-
-<i class="fa-solid fa-pills"></i>
-
-<span>Medicine</span>
-
+<a href="reminder.html">
+    <i class="fa-solid fa-pills"></i>
+    <span>Medicine</span>
 </a>
 
-<a>
-
-<i class="fa-solid fa-chart-line"></i>
-
-<span>Reports</span>
-
+<a href="reports.html">
+    <i class="fa-solid fa-chart-line"></i>
+    <span>Reports</span>
 </a>
 
-<a>
-
-<i class="fa-solid fa-calendar-check"></i>
-
-<span>Appointments</span>
-
+<a href="appointments.html">
+    <i class="fa-solid fa-calendar-check"></i>
+    <span>Appointments</span>
 </a>
 
-<a>
-
-<i class="fa-solid fa-user"></i>
-
-<span>Profile</span>
-
+<a href="profile.html">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
 </a>
 
-<a>
-
-<i class="fa-solid fa-gear"></i>
-
-<span>Settings</span>
-
+<a href="settings.html">
+    <i class="fa-solid fa-gear"></i>
+    <span>Settings</span>
 </a>
 
 </nav>
@@ -132,9 +111,9 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 <h1>
 
-Good Afternoon,
+Welcome,
 
-<span>Gurpreet 👋</span>
+<span>User 👋</span>
 
 </h1>
 
@@ -148,13 +127,13 @@ Your AI Healthcare Companion
 
 <div class="top-actions">
 
-<button class="icon-btn">
+<button class="icon-btn" id="notificationBtn">
 
 <i class="fa-solid fa-bell"></i>
 
 </button>
 
-<button class="icon-btn">
+<button class="icon-btn" id="themeToggleBtn">
 
 <i class="fa-solid fa-moon"></i>
 
@@ -192,17 +171,13 @@ Track medicines, monitor reports, consult AI and manage your complete health jou
 
 <div class="hero-buttons">
 
-<button class="primary-btn">
+<a href="chatbot.html" class="primary-btn">
+    Ask Healora AI
+</a>
 
-Ask Healora AI
-
-</button>
-
-<button class="secondary-btn">
-
-View Reports
-
-</button>
+<a href="reports.html" class="secondary-btn">
+    View Reports
+</a>
 
 </div>
 
@@ -351,9 +326,10 @@ Describe your symptoms or ask any health-related question.
 
 <input
 type="text"
+id="dashboardAIInput"
 placeholder="How are you feeling today?">
 
-<button>
+<button id="dashboardAISendBtn">
 
 <i class="fa-solid fa-paper-plane"></i>
 
@@ -784,53 +760,35 @@ Yesterday
 
 <div class="quick-grid">
 
-<button>
+<a href="chatbot.html" class="quick-action">
+    🤖
+    <span>Ask AI</span>
+</a>
 
-🤖
+<a href="reminder.html" class="quick-action">
+    💊
+    <span>Add Medicine</span>
+</a>
 
-<span>Ask AI</span>
+<a href="reports.html" class="quick-action">
+    📄
+    <span>Upload Report</span>
+</a>
 
-</button>
+<a href="appointments.html" class="quick-action">
+    📅
+    <span>Appointment</span>
+</a>
 
-<button>
+<a href="emergency.html" class="quick-action">
+    🚑
+    <span>Emergency</span>
+</a>
 
-💊
-
-<span>Add Medicine</span>
-
-</button>
-
-<button>
-
-📄
-
-<span>Upload Report</span>
-
-</button>
-
-<button>
-
-📅
-
-<span>Appointment</span>
-
-</button>
-
-<button>
-
-🚑
-
-<span>Emergency</span>
-
-</button>
-
-<button>
-
-⚙️
-
-<span>Settings</span>
-
-</button>
+<a href="settings.html" class="quick-action">
+    ⚙️
+    <span>Settings</span>
+</a>
 
 </div>
 

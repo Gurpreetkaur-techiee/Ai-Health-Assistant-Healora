@@ -4,6 +4,14 @@
 ========================================== */
 const API_BASE_URL = "http://localhost:5000/api";
 
+const token = localStorage.getItem("token");
+
+if (
+    token &&
+    window.location.pathname.includes("login.html")
+) {
+    window.location.href = "dashboard.html";
+}
 document.addEventListener("DOMContentLoaded", () => {
 
     /* ===========================
@@ -324,7 +332,7 @@ if (signupForm) {
 
     }
 
-    signupForm.addEventListener("submit", function (e) {
+    signupForm.addEventListener("submit", async function (e) {
 
         e.preventDefault();
 
@@ -372,19 +380,52 @@ if (signupForm) {
 
         button.classList.add("loading");
 
-        setTimeout(() => {
+try {
 
-            button.classList.remove("loading");
+    const response = await fetch(`${API_BASE_URL}/auth/register`, {
 
-            showMessage("Account Created Successfully!", "success");
+        method: "POST",
 
-            setTimeout(() => {
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-                window.location.href = "login.html";
+        body: JSON.stringify({
+            name,
+            email,
+            password
+        })
 
-            }, 1500);
+    });
 
-        }, 1800);
+    const result = await response.json();
+
+    button.classList.remove("loading");
+
+    if (!response.ok) {
+
+        showMessage(result.message || "Registration failed.", "error");
+        return;
+
+    }
+
+    showMessage("Account created successfully!", "success");
+
+    setTimeout(() => {
+
+        window.location.href = "login.html";
+
+    }, 1200);
+
+} catch (error) {
+
+    button.classList.remove("loading");
+
+    console.error(error);
+
+    showMessage("Unable to connect to backend.", "error");
+
+}
 
     });
 

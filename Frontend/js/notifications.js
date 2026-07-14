@@ -1,7 +1,11 @@
 /* ==========================================
         HEALORA NOTIFICATIONS
 ========================================== */
+const token = localStorage.getItem("token");
 
+if (!token) {
+    window.location.href = "login.html";
+}
 document.addEventListener("DOMContentLoaded",()=>{
 
 const markReadBtn=document.querySelector(".mark-read-btn");
