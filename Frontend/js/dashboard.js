@@ -47,13 +47,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         const profileImage = document.querySelector(".profile img");
+        const profileAvatar = document.getElementById("profileAvatar");
 
+        
         if (profileImage && storedUser) {
 
             profileImage.src =
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(storedUser.name)}&background=0B4F6C&color=fff`;
 
         }
+
+        if (profileAvatar) {
+
+            profileAvatar.style.cursor = "pointer";
+
+            profileAvatar.addEventListener("click", () => {
+
+            window.location.href = "profile.html";
+
+        });
+
+}
 
         async function loadDashboard() {
 

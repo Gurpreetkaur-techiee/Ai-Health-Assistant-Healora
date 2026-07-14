@@ -1610,3 +1610,17 @@ font-size:32px;
 }
 
 }
+
+.profile{
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+}
+
+.profile:hover{
+
+    transform:scale(1.08);
+
+}
