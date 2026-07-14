@@ -1,213 +1,153 @@
-/* ==========================================
-              HEALORA PROFILE
-========================================== */
+const token = localStorage.getItem("token");
 
+    if (!token) {
+        window.location.href = "login.html";
+    }
+    
 document.addEventListener("DOMContentLoaded", () => {
 
-const form = document.querySelectorAll("input, select, textarea");
+    const API_BASE_URL = "http://localhost:5000/api";
 
-const saveBtn = document.querySelector(".save-btn");
 
-const cancelBtn = document.querySelector(".cancel-btn");
+    const saveBtn = document.querySelector(".save-btn");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-const editBtn = document.querySelector(".edit-profile-btn");
+const fullName = document.getElementById("fullName");
+const dateOfBirth = document.getElementById("dateOfBirth");
+const gender = document.getElementById("gender");
+const bloodGroup = document.getElementById("bloodGroup");;
 
-const moonBtn = document.querySelector(".fa-moon");
+    loadProfile();
 
-const profileImage = document.querySelector(".profile-image img");
+    async function loadProfile() {
 
-const editPhoto = document.querySelector(".edit-photo");
+        try {
 
-/* ==========================================
-        LOAD SAVED PROFILE
-========================================== */
+            const response = await fetch(
+                `${API_BASE_URL}/auth/me`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
 
-loadProfile();
+            const result = await response.json();
 
-function loadProfile(){
+            const user = result.data.user;
 
-const data = JSON.parse(localStorage.getItem("healoraProfile"));
+            document.getElementById("profileName").textContent = user.name;
 
-if(!data) return;
+            document.getElementById("profileImage").src =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0B4F6C&color=fff`;
 
-form.forEach(field=>{
+            document.getElementById("fullName").value = user.name || "";
 
-if(data[field.placeholder])
+            document.getElementById("email").value = user.email || "";
 
-field.value=data[field.placeholder];
+            document.getElementById("dateOfBirth").value =
+                user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "";
 
-});
+            document.getElementById("gender").value = user.gender || "";
 
-}
+            document.getElementById("bloodGroup").value = user.bloodGroup || "";
 
-/* ==========================================
-          ENABLE EDITING
-========================================== */
+            console.log(user);
 
-editBtn.addEventListener("click",()=>{
+        }
 
-form.forEach(field=>{
+        catch (err) {
 
-field.removeAttribute("readonly");
+            console.error(err);
 
-field.removeAttribute("disabled");
+        }
 
-});
+    }
 
-showToast("✏️ Edit mode enabled");
+saveBtn.addEventListener("click", updateProfile);
 
-});
+async function updateProfile() {
 
-/* ==========================================
-          SAVE PROFILE
-========================================== */
+    try {
 
-saveBtn.addEventListener("click",()=>{
+        const response = await fetch(
+            `${API_BASE_URL}/auth/me`,
+            {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
 
-const profileData={};
+                    name: fullName.value.trim(),
+                    dateOfBirth: dateOfBirth.value || null,
+                    gender: gender.value || null,
+                    bloodGroup: bloodGroup.value || null
 
-form.forEach(field=>{
+                })
+            }
+        );
 
-const key=field.placeholder || field.type || field.tagName;
+        const result = await response.json();
 
-profileData[key]=field.value;
+        console.log(result);
 
-});
+        if (result.success) {
 
-localStorage.setItem(
+            alert("✅ Profile updated successfully!");
 
-"healoraProfile",
+            loadProfile();
 
-JSON.stringify(profileData)
+        } else {
 
-);
+            alert(result.message);
 
-showToast("✅ Profile Saved Successfully");
+        }
 
-});
-/* ==========================================
-        CANCEL CHANGES
-========================================== */
+    } catch (err) {
 
-if(cancelBtn){
+        console.error(err);
+        alert("Failed to update profile.");
 
-cancelBtn.addEventListener("click",()=>{
-
-loadProfile();
-
-showToast("↩️ Changes reverted");
-
-});
-
-}
-
-/* ==========================================
-        DARK MODE
-========================================== */
-
-if(moonBtn){
-
-moonBtn.parentElement.addEventListener("click",()=>{
-
-document.body.classList.toggle("dark");
-
-localStorage.setItem(
-
-"profileDarkMode",
-
-document.body.classList.contains("dark")
-
-);
-
-});
+    }
 
 }
 
-if(localStorage.getItem("profileDarkMode")==="true"){
+logoutBtn.addEventListener("click", logout);
 
-document.body.classList.add("dark");
+async function logout() {
 
-}
+    try {
 
-/* ==========================================
-      CHANGE PROFILE PHOTO
-========================================== */
+        const response = await fetch(
+            `${API_BASE_URL}/auth/logout`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
 
-if(editPhoto){
+        const result = await response.json();
 
-editPhoto.addEventListener("click",()=>{
+        console.log(result);
 
-const url=prompt("Enter profile image URL");
+        localStorage.removeItem("token");
 
-if(url){
+        window.location.href = "login.html";
 
-profileImage.src=url;
+    }
 
-localStorage.setItem(
+    catch (err) {
 
-"profileImage",
+        console.error(err);
 
-url
+        alert("Logout failed.");
 
-);
-
-showToast("📷 Profile photo updated");
-
-}
-
-});
-
-}
-
-const savedImage=localStorage.getItem("profileImage");
-
-if(savedImage){
-
-profileImage.src=savedImage;
+    }
 
 }
-
-/* ==========================================
-        TOAST NOTIFICATION
-========================================== */
-
-function showToast(message){
-
-const toast=document.createElement("div");
-
-toast.className="profile-toast";
-
-toast.innerHTML=message;
-
-document.body.appendChild(toast);
-
-setTimeout(()=>{
-
-toast.classList.add("show");
-
-},100);
-
-setTimeout(()=>{
-
-toast.classList.remove("show");
-
-setTimeout(()=>{
-
-toast.remove();
-
-},300);
-
-},2500);
-
-}
-
-/* ==========================================
-        INITIALIZE
-========================================== */
-
-showToast("👋 Welcome back!");
-
-console.log("%cHealora Profile Loaded",
-"color:#14B8A6;font-size:18px;font-weight:bold;");
 
 });

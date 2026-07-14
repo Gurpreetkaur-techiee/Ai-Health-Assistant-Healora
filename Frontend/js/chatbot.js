@@ -7,6 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatWindow = document.querySelector(".chat-window");
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
+    const API_BASE_URL = "http://localhost:5000/api";
+
+    const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+    
 
     /* ======================================
        SEND MESSAGE
@@ -94,78 +102,75 @@ document.addEventListener("DOMContentLoaded", () => {
        SIMPLE AI RESPONSES
     ====================================== */
 
-    function botReply(text) {
+    async function botReply(text) {
 
-        text = text.toLowerCase();
+    try {
 
-        let reply =
-        "I understand your concern. Please consult a healthcare professional if symptoms persist.";
+        const response = await fetch(
+            `${API_BASE_URL}/symptoms/analyze`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
 
-        if (text.includes("fever")) {
+                    message: text
 
-            reply =
-            "🌡️ For fever: Stay hydrated, rest well, and monitor your temperature. If it exceeds 102°F or lasts more than 2–3 days, consult a doctor.";
+                })
+            }
+        );
 
-        }
+        const result = await response.json();
 
-        else if (text.includes("headache")) {
+        console.log(result);
 
-            reply =
-            "🤕 Headaches may occur due to stress, dehydration, or lack of sleep. Drink water, rest, and seek medical advice if the pain is severe.";
+        if(!result.success){
 
-        }
-
-        else if (text.includes("cold")) {
-
-            reply =
-            "🤧 Common cold usually improves with rest, fluids, and warm drinks. Consult a doctor if symptoms worsen.";
-
-        }
-
-        else if (text.includes("cough")) {
-
-            reply =
-            "😷 A persistent cough can have many causes. Stay hydrated and seek medical advice if it lasts more than 2 weeks.";
+            return;
 
         }
 
-        else if (text.includes("medicine")) {
+        const aiMessage=document.createElement("div");
 
-            reply =
-            "💊 Please take medicines only as prescribed by your doctor. Never self-medicate without proper guidance.";
+        aiMessage.className="message ai";
 
-        }
+        aiMessage.innerHTML=`
 
-        else if (text.includes("report")) {
+        <div class="avatar">
 
-            reply =
-            "📄 Upload your medical report and Healora AI will help explain the findings in simple language.";
+        🤖
 
-        }
+        </div>
 
-        const aiMessage = document.createElement("div");
+        <div class="bubble">
 
-        aiMessage.className = "message ai";
+        ${result.data.response}
 
-        aiMessage.innerHTML = `
-
-            <div class="avatar">🤖</div>
-
-            <div class="bubble">
-
-                ${reply}
-
-            </div>
+        </div>
 
         `;
 
         chatWindow.appendChild(aiMessage);
 
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatWindow.scrollTop=chatWindow.scrollHeight;
+
+   
 
     }
 
-});
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
+
+       
+
+       
 /* ==========================================
    SUGGESTION BUTTONS
 ========================================== */
@@ -397,3 +402,4 @@ alert("🚑 In a real application, this button will immediately call emergency s
 
 console.log("%c🤖 Healora AI Ready",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
+});

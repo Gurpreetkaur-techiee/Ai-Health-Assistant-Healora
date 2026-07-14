@@ -2,7 +2,15 @@
             HEALORA REMINDERS
 ========================================== */
 
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
+
 document.addEventListener("DOMContentLoaded",()=>{
+const API_BASE_URL = "http://localhost:5000/api";
+
 
 const form=document.getElementById("reminderForm");
 
@@ -36,103 +44,72 @@ statCards[0].querySelector("h2").textContent=cards.length;
         ADD NEW REMINDER
 ========================================== */
 
-form.addEventListener("submit",(e)=>{
+form.addEventListener("submit", async (e) => {
 
-e.preventDefault();
+    e.preventDefault();
 
-const inputs=form.querySelectorAll("input,select,textarea");
+    const inputs = form.querySelectorAll("input,select,textarea");
 
-const medicine=inputs[0].value;
+    const medicine = inputs[0].value;
+    const dosage = inputs[1].value;
+    const time = inputs[2].value;
+    const repeat = inputs[3].value;
+    const notes = inputs[4].value;
 
-const dosage=inputs[1].value;
+    try {
 
-const time=inputs[2].value;
+        const response = await fetch(`${API_BASE_URL}/reminders`, {
 
-const repeat=inputs[3].value;
+            method: "POST",
 
-const notes=inputs[4].value;
+            headers: {
 
-if(medicine.trim()===""){
+                "Content-Type": "application/json",
 
-alert("Please enter medicine name.");
+                Authorization: `Bearer ${token}`
 
-return;
+            },
 
-}
+            body: JSON.stringify({
 
-const card=document.createElement("div");
+                medicineName: medicine,
 
-card.className="medicine-card";
+                dosage: dosage,
 
-card.innerHTML=`
+                frequency: repeat,
 
-<div class="card-top">
+                times: [time],
 
-<div class="medicine-icon">
+                notes: notes
 
-💊
+            })
 
-</div>
+        });
 
-<span class="badge morning">
+        const result = await response.json();
 
-Custom
+        if (result.success) {
+                alert("Reminder created successfully!");
+                form.reset();
 
-</span>
+                // Next we'll replace this with loadReminders()
+        }
 
-</div>
+        
 
-<h3>${medicine}</h3>
+    }
 
-<p>${notes || dosage}</p>
+    catch (err) {
 
-<div class="medicine-details">
+        console.error(err);
 
-<p>
-
-<i class="fa-regular fa-clock"></i>
-
-${time}
-
-</p>
-
-<p>
-
-<i class="fa-solid fa-repeat"></i>
-
-${repeat}
-
-</p>
-
-</div>
-
-<div class="card-actions">
-
-<button class="taken-btn">
-
-✅ Taken
-
-</button>
-
-<button class="skip-btn">
-
-❌ Skip
-
-</button>
-
-</div>
-
-`;
-
-medicineGrid.prepend(card);
-
-form.reset();
-
-updateStats();
-
-saveReminders();
+    }
 
 });
+
+
+
+
 
 /* ==========================================
           SEARCH
@@ -257,7 +234,7 @@ document.body.classList.add("dark");
         LOCAL STORAGE
 ========================================== */
 
-function saveReminders(){
+/*function saveReminders(){
 
 localStorage.setItem(
 
@@ -268,8 +245,9 @@ medicineGrid.innerHTML
 );
 
 }
+*/
 
-function loadReminders(){
+/*function loadReminders(){
 
 const data=localStorage.getItem(
 
@@ -284,8 +262,9 @@ medicineGrid.innerHTML=data;
 }
 
 }
+*/
 
-loadReminders();
+loadRemindersFromBackend();
 
 updateStats();
 
@@ -318,6 +297,97 @@ icon:"https://cdn-icons-png.flaticon.com/512/4320/4320337.png"
 /* ==========================================
         TOAST MESSAGE
 ========================================== */
+
+async function loadRemindersFromBackend(){
+
+    try{
+
+        const response = await fetch(
+            `${API_BASE_URL}/reminders`,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        medicineGrid.innerHTML = "";
+
+    result.data.reminders.forEach(reminder => {
+
+    medicineGrid.innerHTML += `
+
+    <div class="medicine-card">
+
+        <div class="card-top">
+
+            <div class="medicine-icon">
+
+                💊
+
+            </div>
+
+            <span class="badge morning">
+
+                ${reminder.frequency.replaceAll("_"," ")}
+
+            </span>
+
+        </div>
+
+        <h3>${reminder.medicineName}</h3>
+
+        <p>${reminder.notes || reminder.dosage}</p>
+
+        <div class="medicine-details">
+
+            <p>
+
+                <i class="fa-regular fa-clock"></i>
+
+                ${reminder.times[0]}
+
+            </p>
+
+            <p>
+
+                <i class="fa-solid fa-repeat"></i>
+
+                ${reminder.frequency.replaceAll("_"," ")}
+
+            </p>
+
+        </div>
+
+        <div class="card-actions">
+
+            <button class="taken-btn">
+
+                ${reminder.isActive ? "✅ Active" : "⏸ Paused"}
+
+            </button>
+
+        </div>
+
+    </div>
+
+    `;
+
+});
+
+updateStats();
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
 
 function showToast(message){
 

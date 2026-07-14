@@ -1,0 +1,783 @@
+{
+  "info": {
+    "name": "AI Health Assistant API",
+    "description": "Complete API collection for the AI Health Assistant backend.\n\nSETUP:\n1. Set {{baseUrl}} = http://localhost:5000\n2. Run 'Register' or 'Login' first — token is auto-saved\n3. All protected routes use {{authToken}} automatically\n\nAUTH FLOW:\nRegister → Login → (token saved) → use any protected endpoint",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl",   "value": "http://localhost:5000", "type": "string" },
+    { "key": "authToken", "value": "",                      "type": "string" },
+    { "key": "reminderId",    "value": "", "type": "string" },
+    { "key": "appointmentId", "value": "", "type": "string" },
+    { "key": "readingId",     "value": "", "type": "string" },
+    { "key": "contactId",     "value": "", "type": "string" },
+    { "key": "reportId",      "value": "", "type": "string" },
+    { "key": "sessionId",     "value": "", "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "00 — Health Check",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health",
+            "description": "Public. Verifies the server is running. Used by Docker and AWS App Runner healthchecks."
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('success true', () => pm.expect(pm.response.json().success).to.be.true);",
+            "pm.test('Has timestamp', () => pm.expect(pm.response.json().timestamp).to.exist);"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "01 — Authentication",
+      "item": [
+        {
+          "name": "POST /api/auth/register",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"testuser@example.com\",\n  \"password\": \"TestPass1\"\n}"
+            },
+            "description": "Creates a new user. Returns JWT token in data.token."
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Has token', () => { const r=pm.response.json(); pm.expect(r.data.token).to.exist; pm.collectionVariables.set('authToken', r.data.token); });",
+            "pm.test('Has user object', () => pm.expect(pm.response.json().data.user).to.exist);",
+            "pm.test('No password in response', () => pm.expect(pm.response.json().data.user.password).to.be.undefined);"
+          ]}}]
+        },
+        {
+          "name": "POST /api/auth/login",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"TestPass1\"\n}"
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Token saved', () => { const t=pm.response.json().data.token; pm.collectionVariables.set('authToken',t); pm.expect(t).to.exist; });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/auth/login — Wrong Password (expect 401)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"testuser@example.com\",\n  \"password\": \"WrongPassword\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 401', () => pm.response.to.have.status(401));",
+            "pm.test('Generic message (no email enumeration)', () => pm.expect(pm.response.json().message).to.include('Invalid'));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/auth/register — Validation fail (expect 422)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"A\",\n  \"email\": \"not-an-email\",\n  \"password\": \"short\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422', () => pm.response.to.have.status(422));",
+            "pm.test('Has errors array', () => pm.expect(pm.response.json().errors).to.be.an('array'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/auth/me",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('User object returned', () => pm.expect(pm.response.json().data.user).to.exist);",
+            "pm.test('No password field', () => pm.expect(pm.response.json().data.user.password).to.be.undefined);"
+          ]}}]
+        },
+        {
+          "name": "GET /api/auth/me — No token (expect 401)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/auth/me"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 401 without token', () => pm.response.to.have.status(401));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/auth/logout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/auth/logout",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "02 — Symptom Checker",
+      "item": [
+        {
+          "name": "POST /api/symptoms/analyze — New session",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/symptoms/analyze",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"I have had a persistent headache and mild fever for 2 days\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "const d = pm.response.json().data;",
+            "pm.test('Has sessionId', () => { pm.expect(d.sessionId).to.exist; pm.collectionVariables.set('sessionId', d.sessionId); });",
+            "pm.test('isNewSession true', () => pm.expect(d.isNewSession).to.be.true);",
+            "pm.test('Has response', () => pm.expect(d.response).to.be.a('string').with.lengthOf.above(10));",
+            "pm.test('Has messageCount', () => pm.expect(d.messageCount).to.equal(2));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/symptoms/analyze — Continue session",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/symptoms/analyze",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"The headache is mostly on the left side, throbbing\",\n  \"sessionId\": \"{{sessionId}}\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('isNewSession false (continued)', () => pm.expect(pm.response.json().data.isNewSession).to.be.false);",
+            "pm.test('messageCount increased to 4', () => pm.expect(pm.response.json().data.messageCount).to.equal(4));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/symptoms/analyze — Empty message (expect 422)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/symptoms/analyze",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422 on empty message', () => pm.response.to.have.status(422));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/symptoms/sessions",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/symptoms/sessions",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has sessions array', () => pm.expect(pm.response.json().data.sessions).to.be.an('array'));",
+            "pm.test('Has count', () => pm.expect(pm.response.json().data.count).to.be.a('number'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/symptoms/sessions/:sessionId",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/symptoms/sessions/{{sessionId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has messages array', () => pm.expect(pm.response.json().data.session.messages).to.be.an('array'));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "03 — Diet Recommendations",
+      "item": [
+        {
+          "name": "POST /api/diet/recommend",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/diet/recommend",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"fitnessGoal\": \"weight_loss\",\n  \"dietaryPreference\": \"vegetarian\",\n  \"healthConditions\": \"mild hypertension\",\n  \"allergies\": [\"peanuts\"],\n  \"mealsPerDay\": 3,\n  \"additionalNotes\": \"I prefer simple meals and dislike raw onions\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has recommendation', () => pm.expect(pm.response.json().data.recommendation).to.be.a('string'));",
+            "pm.test('Has sessionId', () => pm.expect(pm.response.json().data.sessionId).to.exist);"
+          ]}}]
+        },
+        {
+          "name": "POST /api/diet/recommend — Missing required field (expect 422)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/diet/recommend",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"dietaryPreference\": \"vegan\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422 — missing fitnessGoal', () => pm.response.to.have.status(422));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/diet/history",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/diet/history",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has history array', () => pm.expect(pm.response.json().data.history).to.be.an('array'));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "04 — Medical Reports",
+      "item": [
+        {
+          "name": "POST /api/reports/upload",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reports/upload",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "report", "type": "file", "src": "/path/to/medical_report.pdf", "description": "Replace with actual PDF path" }]
+            },
+            "description": "Content-Type: multipart/form-data. Field name must be 'report'. Max 5MB PDF only."
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "const r = pm.response.json().data.report;",
+            "pm.test('Has _id', () => { pm.expect(r._id).to.exist; pm.collectionVariables.set('reportId', r._id); });",
+            "pm.test('Has aiSummary', () => pm.expect(r.aiSummary).to.be.a('string'));",
+            "pm.test('Has keyFindings array', () => pm.expect(r.keyFindings).to.be.an('array'));",
+            "pm.test('Has urgencyLevel', () => pm.expect(['low','medium','high']).to.include(r.urgencyLevel));",
+            "pm.test('No binary PDF stored', () => pm.expect(r.fileBuffer).to.be.undefined);"
+          ]}}]
+        },
+        {
+          "name": "POST /api/reports/upload — Wrong field name (expect 400)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reports/upload",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [{ "key": "file", "type": "file", "src": "/path/to/report.pdf", "description": "Wrong field name — should be 'report'" }]
+            }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 — wrong field name', () => pm.response.to.have.status(400));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/reports",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reports",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has reports array', () => pm.expect(pm.response.json().data.reports).to.be.an('array'));",
+            "pm.test('extractedText excluded from list', () => { const r=pm.response.json().data.reports; if(r.length>0) pm.expect(r[0].extractedText).to.be.undefined; });"
+          ]}}]
+        },
+        {
+          "name": "GET /api/reports/:id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reports/{{reportId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has extractedText (full view)', () => pm.expect(pm.response.json().data.report.extractedText).to.exist);"
+          ]}}]
+        },
+        {
+          "name": "GET /api/reports/:id — Invalid ID (expect 400)",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reports/not-a-real-id",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 400 — invalid ObjectId', () => pm.response.to.have.status(400));"
+          ]}}]
+        },
+        {
+          "name": "DELETE /api/reports/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/reports/{{reportId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "05 — Medicine Reminders",
+      "item": [
+        {
+          "name": "POST /api/reminders",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reminders",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"medicineName\": \"Metformin\",\n  \"dosage\": \"500mg\",\n  \"frequency\": \"twice_daily\",\n  \"times\": [\"08:00\", \"20:00\"],\n  \"startDate\": \"2024-01-15\",\n  \"notes\": \"Take with food\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Reminder created', () => { const r=pm.response.json().data.reminder; pm.collectionVariables.set('reminderId', r._id); pm.expect(r.isActive).to.be.true; });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/reminders — Invalid time format (expect 422)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/reminders",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"medicineName\": \"Aspirin\",\n  \"dosage\": \"100mg\",\n  \"frequency\": \"once_daily\",\n  \"times\": [\"8am\", \"bad-time\"]\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422 — invalid time format', () => pm.response.to.have.status(422));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/reminders",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/reminders", "query": [{ "key": "active", "value": "true", "disabled": true }] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+            "description": "Add ?active=true to get only active reminders (dashboard use)"
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has reminders array', () => pm.expect(pm.response.json().data.reminders).to.be.an('array'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/reminders/:id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/reminders/{{reminderId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "PUT /api/reminders/:id",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/reminders/{{reminderId}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"notes\": \"Take with food and plenty of water\",\n  \"times\": [\"07:30\", \"19:30\"]\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Notes updated', () => pm.expect(pm.response.json().data.reminder.notes).to.include('water'));"
+          ]}}]
+        },
+        {
+          "name": "PATCH /api/reminders/:id/toggle",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/reminders/{{reminderId}}/toggle",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('isActive toggled', () => pm.expect(pm.response.json().data.reminder.isActive).to.be.a('boolean'));"
+          ]}}]
+        },
+        {
+          "name": "DELETE /api/reminders/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/reminders/{{reminderId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('data is null', () => pm.expect(pm.response.json().data).to.be.null);"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "06 — Appointments",
+      "item": [
+        {
+          "name": "POST /api/appointments",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/appointments",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"doctorName\": \"Dr. Sarah Johnson\",\n  \"specialty\": \"Cardiologist\",\n  \"appointmentDate\": \"2025-03-15\",\n  \"appointmentTime\": \"10:30\",\n  \"location\": \"City Heart Clinic, Block 4\",\n  \"notes\": \"Discuss latest ECG results\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Status is upcoming', () => { const a=pm.response.json().data.appointment; pm.collectionVariables.set('appointmentId',a._id); pm.expect(a.status).to.equal('upcoming'); });"
+          ]}}]
+        },
+        {
+          "name": "GET /api/appointments",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/appointments?upcoming=true", "query": [{ "key": "upcoming", "value": "true" }, { "key": "status", "value": "upcoming", "disabled": true }] },
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has appointments array', () => pm.expect(pm.response.json().data.appointments).to.be.an('array'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/appointments/:id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "PUT /api/appointments/:id",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"appointmentTime\": \"11:00\",\n  \"notes\": \"Bring previous ECG printout and blood reports\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "PATCH /api/appointments/:id/status",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}/status",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"completed\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Status updated to completed', () => pm.expect(pm.response.json().data.appointment.status).to.equal('completed'));"
+          ]}}]
+        },
+        {
+          "name": "PATCH /api/appointments/:id/status — Invalid status (expect 422)",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}/status",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"pending\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422 — invalid status value', () => pm.response.to.have.status(422));"
+          ]}}]
+        },
+        {
+          "name": "DELETE /api/appointments/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/appointments/{{appointmentId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "07 — Health Readings",
+      "item": [
+        {
+          "name": "POST /api/health/readings — Blood Pressure",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/health/readings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"type\": \"blood_pressure\",\n  \"bloodPressure\": {\n    \"systolic\": 118,\n    \"diastolic\": 76\n  },\n  \"recordedAt\": \"2024-06-10T09:00:00Z\",\n  \"notes\": \"Morning reading before breakfast\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Reading saved', () => { const r=pm.response.json().data.reading; pm.collectionVariables.set('readingId',r._id); pm.expect(r.type).to.equal('blood_pressure'); });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/health/readings — Weight",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/health/readings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"type\": \"weight\",\n  \"weight\": {\n    \"value\": 72.5,\n    \"unit\": \"kg\"\n  },\n  \"recordedAt\": \"2024-06-10T07:30:00Z\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/health/readings — Blood Sugar",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/health/readings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"type\": \"blood_sugar\",\n  \"bloodSugar\": {\n    \"value\": 95,\n    \"unit\": \"mg/dL\",\n    \"mealContext\": \"fasting\"\n  },\n  \"recordedAt\": \"2024-06-10T07:00:00Z\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));"
+          ]}}]
+        },
+        {
+          "name": "POST /api/health/readings — Missing required sub-field (expect 422)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/health/readings",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"type\": \"blood_pressure\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422 — missing systolic/diastolic', () => pm.response.to.have.status(422));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/health/summary",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/health/summary",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "const d = pm.response.json().data;",
+            "pm.test('Has latestReadings', () => pm.expect(d.latestReadings).to.exist);",
+            "pm.test('Has all 3 metric types', () => { pm.expect(d.latestReadings.blood_pressure).to.not.be.undefined; pm.expect(d.latestReadings.weight).to.not.be.undefined; pm.expect(d.latestReadings.blood_sugar).to.not.be.undefined; });",
+            "pm.test('Has readingCounts', () => pm.expect(d.readingCounts).to.exist);",
+            "pm.test('Has totalReadings', () => pm.expect(d.totalReadings).to.be.a('number'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/health/readings",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/health/readings?type=blood_pressure&limit=10", "query": [
+              { "key": "type",  "value": "blood_pressure" },
+              { "key": "limit", "value": "10" }
+            ]},
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Has readings array', () => pm.expect(pm.response.json().data.readings).to.be.an('array'));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/health/readings/:id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/health/readings/{{readingId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "DELETE /api/health/readings/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/health/readings/{{readingId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    },
+
+    {
+      "name": "08 — Emergency Contacts",
+      "item": [
+        {
+          "name": "POST /api/emergency",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/emergency",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Sarah Johnson\",\n  \"relationship\": \"Spouse\",\n  \"phone\": \"+1-555-0123\",\n  \"email\": \"sarah@example.com\",\n  \"isPrimary\": true\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 201', () => pm.response.to.have.status(201));",
+            "pm.test('Contact created', () => { const c=pm.response.json().data.contact; pm.collectionVariables.set('contactId',c._id); pm.expect(c.isPrimary).to.be.true; });"
+          ]}}]
+        },
+        {
+          "name": "POST /api/emergency — Invalid phone (expect 422)",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/emergency",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Bob\",\n  \"relationship\": \"Friend\",\n  \"phone\": \"abc\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 422 — invalid phone', () => pm.response.to.have.status(422));"
+          ]}}]
+        },
+        {
+          "name": "GET /api/emergency",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/emergency",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Primary contact first', () => { const c=pm.response.json().data.contacts; if(c.length>1) pm.expect(c[0].isPrimary).to.be.true; });"
+          ]}}]
+        },
+        {
+          "name": "GET /api/emergency/:id",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/emergency/{{contactId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "PUT /api/emergency/:id",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/api/emergency/{{contactId}}",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{authToken}}" },
+              { "key": "Content-Type",  "value": "application/json" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"+1-555-9999\",\n  \"email\": \"sarah.updated@example.com\"\n}" }
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        },
+        {
+          "name": "PATCH /api/emergency/:id/primary",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/api/emergency/{{contactId}}/primary",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));",
+            "pm.test('Contact is now primary', () => pm.expect(pm.response.json().data.contact.isPrimary).to.be.true);"
+          ]}}]
+        },
+        {
+          "name": "DELETE /api/emergency/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/emergency/{{contactId}}",
+            "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }]
+          },
+          "event": [{ "listen": "test", "script": { "exec": [
+            "pm.test('Status 200', () => pm.response.to.have.status(200));"
+          ]}}]
+        }
+      ]
+    }
+  ]
+}

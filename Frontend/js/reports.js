@@ -1,8 +1,15 @@
 /* ==========================================
    HEALORA REPORTS
 ========================================== */
+const token = localStorage.getItem("token");
+
+if (!token) {
+    window.location.href = "login.html";
+}
 
 document.addEventListener("DOMContentLoaded", () => {
+
+const API_BASE_URL = "http://localhost:5000/api";
 
 const uploadInput = document.querySelector(".upload-box input");
 
@@ -34,77 +41,46 @@ statCards[0].querySelector("h2").textContent=reports.length;
    FILE UPLOAD
 ========================================== */
 
-uploadInput.addEventListener("change",(e)=>{
+uploadInput.addEventListener("change", async (e) => {
 
-const file=e.target.files[0];
+    const file = e.target.files[0];
 
-if(!file) return;
+    if (!file) return;
 
-const extension=file.name.split(".").pop().toUpperCase();
+    const formData = new FormData();
 
-let icon="📄";
+    formData.append("report", file);
 
-if(extension==="PDF") icon="📄";
+    try {
 
-else if(["PNG","JPG","JPEG"].includes(extension)) icon="🖼️";
+        const response = await fetch(
+            `${API_BASE_URL}/reports/upload`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                body: formData
+            }
+        );
 
-const card=document.createElement("div");
+        const result = await response.json();
 
-card.className="report-card";
+        console.log(result);
 
-card.innerHTML=`
+        if(result.success){
 
-<div class="report-icon">
+            alert("Report uploaded successfully!");
 
-${icon}
+        }
 
-</div>
+    }
 
-<h3>${file.name}</h3>
+    catch(err){
 
-<p>
+        console.error(err);
 
-Uploaded: ${new Date().toLocaleDateString()}
-
-</p>
-
-<div class="report-tags">
-
-<span>New</span>
-
-<span>${extension}</span>
-
-</div>
-
-<div class="report-actions">
-
-<button class="view-btn">
-
-View
-
-</button>
-
-<button>
-
-Download
-
-</button>
-
-<button class="danger delete-btn">
-
-Delete
-
-</button>
-
-</div>
-
-`;
-
-reportsGrid.prepend(card);
-
-updateStats();
-
-saveReports();
+    }
 
 });
 
@@ -241,7 +217,7 @@ document.body.classList.add("dark");
    SAVE REPORTS
 ========================================== */
 
-function saveReports(){
+/*function saveReports(){
 
 localStorage.setItem(
 
@@ -266,8 +242,8 @@ reportsGrid.innerHTML=saved;
 }
 
 }
-
-loadReports();
+*/
+loadReportsFromBackend();
 
 updateStats();
 
@@ -293,6 +269,82 @@ alert("🤖 AI analysis completed successfully.");
 });
 
 });
+
+async function loadReportsFromBackend(){
+
+    try{
+
+        const response = await fetch(
+            `${API_BASE_URL}/reports`,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        const result = await response.json();
+
+        reportsGrid.innerHTML = "";
+
+      result.data.reports.forEach(report => {
+
+         reportsGrid.innerHTML += `
+
+         <div class="report-card">
+
+            <div class="report-icon">
+            📄
+            </div>
+
+            <h3>
+               ${report.originalFileName}
+            </h3>
+
+            <p>
+               Uploaded:
+               ${new Date(report.createdAt).toLocaleDateString()}
+            </p>
+
+            <div class="report-tags">
+
+               <span>
+                  ${report.urgencyLevel}
+               </span>
+
+               <span>
+                  PDF
+               </span>
+
+            </div>
+
+            <div class="report-actions">
+
+               <button class="view-btn">
+
+                  View
+
+               </button>
+
+            </div>
+
+      </div>
+
+    `;
+
+});
+
+updateStats();
+
+    }
+
+    catch(err){
+
+        console.error(err);
+
+    }
+
+}
 
 
 console.log("%c📄 Healora Reports Ready",

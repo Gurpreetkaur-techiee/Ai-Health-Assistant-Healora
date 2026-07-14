@@ -1,8 +1,19 @@
 /* ==========================================
    HEALORA DASHBOARD
 ========================================== */
+const API_BASE_URL = "http://localhost:5000/api";
+
+const token = localStorage.getItem("token");
+
+if (!token) {
+
+    window.location.href = "login.html";
+
+}
 
 document.addEventListener("DOMContentLoaded", () => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
 
     /* ======================================
        AUTO GREETING
@@ -29,7 +40,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
-        greeting.innerHTML = `${message}, <span>Gurpreet 👋</span>`;
+        const userName = storedUser?.name || "User";
+
+        greeting.innerHTML =
+        `${message}, <span>${userName} 👋</span>`;
+
+        async function loadDashboard() {
+
+            try {
+
+                const response = await fetch(
+                    `${API_BASE_URL}/health/summary`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                const result = await response.json();
+
+                console.log(JSON.stringify(result, null, 2));
+
+            } catch (err) {
+
+            console.error(err);
+
+        }
+
+    }
+    loadDashboard();
 
     }
 
@@ -274,6 +314,9 @@ if (logout) {
     logout.addEventListener("click", () => {
 
         if (confirm("Do you want to logout?")) {
+
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
 
             window.location.href = "login.html";
 

@@ -112,7 +112,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 </nav>
 
-<div class="logout">
+<div class="logout" id="logoutBtn">
 
 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -174,8 +174,9 @@ Manage your personal information and healthcare details.
 
 <div class="profile-image">
 
-<img src="https://ui-avatars.com/api/?name=Gurpreet&size=220&background=0B4F6C&color=fff">
-
+<img
+    id="profileImage"
+    src="https://ui-avatars.com/api/?name=User&background=0B4F6C&color=fff">
 <button class="edit-photo">
 
 <i class="fa-solid fa-camera"></i>
@@ -186,7 +187,7 @@ Manage your personal information and healthcare details.
 
 <div class="profile-info">
 
-<h2>Gurpreet Kaur</h2>
+<h2 id="profileName">Loading...</h2>
 
 <p>
 
@@ -279,7 +280,7 @@ Edit Profile
 
 <label>Full Name</label>
 
-<input type="text" value="Gurpreet Kaur">
+<input id="fullName" type="text">
 
 </div>
 
@@ -287,7 +288,7 @@ Edit Profile
 
 <label>Email</label>
 
-<input type="email" value="gurpreet@email.com">
+<input id="email" type="email">
 
 </div>
 
@@ -302,16 +303,14 @@ Edit Profile
 <div class="input-group">
 
 <label>Date of Birth</label>
-
-<input type="date" value="2007-01-15">
+<input id="dateOfBirth" type="date">
 
 </div>
 
 <div class="input-group">
 
 <label>Gender</label>
-
-<select>
+<select id="gender">
 
 <option selected>Female</option>
 
@@ -327,7 +326,7 @@ Edit Profile
 
 <label>Blood Group</label>
 
-<select>
+<select id="bloodGroup">
 
 <option>A+</option>
 
@@ -450,147 +449,11 @@ placeholder="Enter your current medicines..."></textarea>
 
 </div>
 
-</div>
-
-</section>
-<!-- ================= PERSONAL INFORMATION ================= -->
-
-<section class="profile-grid">
-
-<div class="info-card">
-
-<h2>
-
-📝 Personal Information
-
-</h2>
-
-<div class="form-grid">
-
-<div class="input-group">
-
-<label>Full Name</label>
-
-<input type="text" value="Gurpreet Kaur">
-
-</div>
-
-<div class="input-group">
-
-<label>Email</label>
-
-<input type="email" value="gurpreet@email.com">
-
-</div>
-
-<div class="input-group">
-
-<label>Phone Number</label>
-
-<input type="tel" value="+91 98765 43210">
-
-</div>
-
-<div class="input-group">
-
-<label>Date of Birth</label>
-
-<input type="date" value="2007-01-15">
-
-</div>
-
-<div class="input-group">
-
-<label>Gender</label>
-
-<select>
-
-<option selected>Female</option>
-
-<option>Male</option>
-
-<option>Other</option>
-
-</select>
-
-</div>
-
-<div class="input-group">
-
-<label>Blood Group</label>
-
-<select>
-
-<option>A+</option>
-
-<option>B+</option>
-
-<option>AB+</option>
-
-<option selected>O+</option>
-
-<option>O-</option>
-
-</select>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- ================= MEDICAL INFORMATION ================= -->
-
-<div class="info-card">
-
-<h2>
-
-🩺 Medical Information
-
-</h2>
-
-<div class="form-grid">
-
-<div class="input-group">
-
-<label>Height</label>
-
-<input type="text" value="150 cm">
-
-</div>
-
-<div class="input-group">
-
-<label>Weight</label>
-
-<input type="text" value="50 kg">
-
-</div>
-
-<div class="input-group">
-
-<label>Allergies</label>
-
-<input type="text" placeholder="No known allergies">
-
-</div>
-
-<div class="input-group">
-
-<label>Chronic Disease</label>
-
-<input type="text" placeholder="None">
-
-</div>
-
-<div class="input-group full-width">
-
-<label>Current Medications</label>
-
-<textarea rows="4"
-placeholder="Enter your current medicines..."></textarea>
-
-</div>
+<div class="profile-actions">
+
+    <button class="save-btn">
+        💾 Save Profile
+    </button>
 
 </div>
 
@@ -598,50 +461,8 @@ placeholder="Enter your current medicines..."></textarea>
 
 </section>
 
-<!-- ================= EMERGENCY CONTACT ================= -->
 
-<section class="emergency-card">
+<script src="../js/profile.js"></script>
 
-<h2>
-
-🚨 Emergency Contact
-
-</h2>
-
-<div class="form-grid">
-
-<div class="input-group">
-
-<label>Contact Name</label>
-
-<input type="text" placeholder="Family Member">
-
-</div>
-
-<div class="input-group">
-
-<label>Relationship</label>
-
-<input type="text" placeholder="Mother">
-
-</div>
-
-<div class="input-group">
-
-<label>Phone Number</label>
-
-<input type="tel" placeholder="+91 XXXXX XXXXX">
-
-</div>
-
-<div class="input-group">
-
-<label>Email</label>
-
-<input type="email" placeholder="example@email.com">
-
-</div>
-
-</div>
-
-</section>
+</body>
+</html>

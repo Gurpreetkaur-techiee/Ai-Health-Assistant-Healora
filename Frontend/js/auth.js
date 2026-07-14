@@ -2,6 +2,7 @@
    HEALORA AUTHENTICATION
    auth.js
 ========================================== */
+const API_BASE_URL = "http://localhost:5000/api";
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (loginForm) {
 
-        loginForm.addEventListener("submit", function (e) {
+        loginForm.addEventListener("submit", async function (e) {
 
             e.preventDefault();
 
@@ -61,23 +62,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-            const loginButton = this.querySelector(".auth-btn");
+           const loginButton = this.querySelector(".auth-btn");
 
-            loginButton.classList.add("loading");
+loginButton.classList.add("loading");
 
-            setTimeout(() => {
+try {
 
-                loginButton.classList.remove("loading");
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
 
-                showMessage("Login Successful!", "success");
+        method: "POST",
 
-                setTimeout(() => {
+        headers: {
+            "Content-Type": "application/json"
+        },
 
-                    window.location.href = "dashboard.html";
+        body: JSON.stringify({
+            email,
+            password
+        })
 
-                }, 1200);
+    });
 
-            }, 1800);
+    const result = await response.json();
+
+    loginButton.classList.remove("loading");
+
+    if (!response.ok) {
+
+        showMessage(result.message || "Login failed", "error");
+        return;
+
+    }
+
+    localStorage.setItem("token", result.data.token);
+
+    localStorage.setItem(
+        "user",
+        JSON.stringify(result.data.user)
+    );
+
+    showMessage("Login Successful!", "success");
+
+    setTimeout(() => {
+
+        window.location.href = "dashboard.html";
+
+    }, 1000);
+
+} catch (error) {
+
+    loginButton.classList.remove("loading");
+
+    showMessage(
+        "Unable to connect to backend.",
+        "error"
+    );
+
+    console.error(error);
+
+}
 
         });
 
