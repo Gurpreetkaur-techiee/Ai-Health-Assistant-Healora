@@ -697,3 +697,345 @@ font-size:55px;
 }
 
 }
+/* ================= HOSPITALS ================= */
+
+.hospital-section{
+
+background:#fff;
+padding:35px;
+border-radius:28px;
+box-shadow:var(--shadow);
+margin-bottom:35px;
+
+}
+
+.hospital-section h2{
+
+margin-bottom:25px;
+color:var(--primary);
+
+}
+
+.hospital-grid{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:22px;
+
+}
+
+.hospital-card{
+
+background:#F8FCFD;
+padding:25px;
+border-radius:20px;
+transition:.3s;
+
+}
+
+.hospital-card:hover{
+
+transform:translateY(-6px);
+
+}
+
+.hospital-card h3{
+
+margin-bottom:15px;
+color:var(--primary);
+
+}
+
+.hospital-card p{
+
+margin:10px 0;
+color:var(--muted);
+
+}
+
+.hospital-btn{
+
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,var(--primary),var(--secondary));
+color:white;
+font-weight:700;
+cursor:pointer;
+transition:.3s;
+
+}
+
+.hospital-btn:hover{
+
+transform:translateY(-3px);
+
+}
+
+/* ================= MEDICAL INFO ================= */
+
+.medical-info{
+
+background:white;
+padding:35px;
+border-radius:28px;
+box-shadow:var(--shadow);
+margin-bottom:35px;
+
+}
+
+.medical-info h2{
+
+margin-bottom:25px;
+color:var(--primary);
+
+}
+
+.info-grid{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+
+}
+
+.info-card{
+
+background:#F8FCFD;
+padding:24px;
+border-radius:18px;
+text-align:center;
+
+}
+
+.info-card h4{
+
+margin-bottom:12px;
+color:var(--muted);
+
+}
+
+.info-card p{
+
+font-size:22px;
+font-weight:700;
+color:var(--primary);
+
+}
+
+/* ================= FIRST AID ================= */
+
+.first-aid{
+
+background:white;
+padding:35px;
+border-radius:28px;
+box-shadow:var(--shadow);
+margin-bottom:35px;
+
+}
+
+.first-aid h2{
+
+margin-bottom:25px;
+color:var(--primary);
+
+}
+
+.tips-grid{
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:20px;
+
+}
+
+.tip-card{
+
+background:#FFF7ED;
+padding:22px;
+border-radius:18px;
+transition:.3s;
+
+}
+
+.tip-card:hover{
+
+transform:translateY(-5px);
+
+}
+
+.tip-card h3{
+
+margin-bottom:12px;
+color:#B45309;
+
+}
+
+.tip-card p{
+
+line-height:1.7;
+color:#7C5A14;
+
+}
+
+/* ================= TOAST ================= */
+
+.toast{
+
+position:fixed;
+right:30px;
+bottom:30px;
+padding:16px 24px;
+background:linear-gradient(135deg,#DC2626,#EF4444);
+color:white;
+border-radius:16px;
+font-weight:600;
+opacity:0;
+transform:translateY(20px);
+transition:.35s;
+box-shadow:0 20px 40px rgba(0,0,0,.2);
+z-index:9999;
+
+}
+
+.toast.show{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+/* ================= DARK MODE ================= */
+
+body.dark{
+
+background:#071A23;
+color:white;
+
+}
+
+body.dark .sidebar,
+body.dark .hospital-section,
+body.dark .medical-info,
+body.dark .first-aid,
+body.dark .quick-card{
+
+background:#12212B;
+color:white;
+
+}
+
+body.dark .hospital-card,
+body.dark .info-card{
+
+background:#1A2C37;
+
+}
+
+body.dark .tip-card{
+
+background:#3A2C1F;
+
+}
+
+body.dark .hospital-card p,
+body.dark .topbar p{
+
+color:#CBD5E1;
+
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:1200px){
+
+.emergency-layout{
+
+grid-template-columns:1fr;
+
+}
+
+.sidebar{
+
+display:none;
+
+}
+
+.hero-card{
+
+grid-template-columns:1fr;
+text-align:center;
+
+}
+
+.hero-icon{
+
+display:none;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.content{
+
+padding:20px;
+
+}
+
+.topbar{
+
+flex-direction:column;
+align-items:flex-start;
+gap:20px;
+
+}
+
+.action-buttons{
+
+flex-direction:column;
+
+}
+
+.quick-grid,
+.hospital-grid,
+.info-grid,
+.tips-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:500px){
+
+.topbar h1{
+
+font-size:30px;
+
+}
+
+.hero-text h2{
+
+font-size:30px;
+
+}
+
+.sos-btn{
+
+width:100%;
+
+}
+
+.profile-small img{
+
+width:48px;
+height:48px;
+
+}
+
+}
