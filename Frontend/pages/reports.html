@@ -104,7 +104,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 </nav>
 
-<div class="logout">
+<div class="logout" id="logoutBtn">
 
 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -138,10 +138,8 @@ Upload, organize and analyze your health reports using AI.
 
 <div class="top-actions">
 
-<button class="icon-btn">
-
-<i class="fa-solid fa-bell"></i>
-
+<button id="notificationBtn" class="icon-btn">
+    <i class="fa-solid fa-bell"></i>
 </button>
 
 <button class="icon-btn">
@@ -150,10 +148,8 @@ Upload, organize and analyze your health reports using AI.
 
 </button>
 
-<div class="profile">
-
-<img src="https://ui-avatars.com/api/?name=Gurpreet&background=0B4F6C&color=fff">
-
+<div class="profile" id="profileAvatar">
+    <img id="profileImage" src="" alt="Profile">
 </div>
 
 </div>
@@ -289,12 +285,10 @@ Upload PDF, JPG, PNG or Prescription
 
 </p>
 
-<input type="file">
+<input type="file" accept=".pdf,.jpg,.jpeg,.png,image/*">
 
-<button>
-
-Choose File
-
+<button id="chooseFileBtn">
+    Choose File
 </button>
 
 </div>
@@ -413,57 +407,11 @@ AI Analysed
 
 <section class="timeline-card">
 
-<h2>
+    <h2>📅 Report Timeline</h2>
 
-📅 Report Timeline
+    <div class="timeline" id="timeline">
 
-</h2>
-
-<div class="timeline">
-
-<div class="timeline-item">
-
-<div class="dot"></div>
-
-<div>
-
-<h4>Blood Report</h4>
-
-<p>15 July 2026</p>
-
-</div>
-
-</div>
-
-<div class="timeline-item">
-
-<div class="dot"></div>
-
-<div>
-
-<h4>Chest X-Ray</h4>
-
-<p>10 July 2026</p>
-
-</div>
-
-</div>
-
-<div class="timeline-item">
-
-<div class="dot"></div>
-
-<div>
-
-<h4>Prescription</h4>
-
-<p>05 July 2026</p>
-
-</div>
-
-</div>
-
-</div>
+    </div>
 
 </section>
 
