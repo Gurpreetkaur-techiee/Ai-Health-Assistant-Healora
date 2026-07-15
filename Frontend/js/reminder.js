@@ -9,10 +9,11 @@ if (!token) {
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:5001/api";
 
 
 const form=document.getElementById("reminderForm");
+
 
 const medicineGrid=document.querySelector(".medicine-grid");
 
@@ -45,6 +46,7 @@ statCards[0].querySelector("h2").textContent=cards.length;
 ========================================== */
 
 form.addEventListener("submit", async (e) => {
+    
 
     e.preventDefault();
 
@@ -87,19 +89,19 @@ form.addEventListener("submit", async (e) => {
         });
 
         const result = await response.json();
+       
 
         if (result.success) {
                 alert("Reminder created successfully!");
                 form.reset();
 
-                // Next we'll replace this with loadReminders()
-        }
+                await loadRemindersFromBackend();
 
         
 
     }
 
-    catch (err) {
+ } catch (err) {
 
         console.error(err);
 
@@ -135,6 +137,21 @@ card.innerText.toLowerCase().includes(value)
 ========================================== */
 
 medicineGrid.addEventListener("click",(e)=>{
+    
+    if (e.target.classList.contains("delete-btn")) {
+        
+
+    const card = e.target.closest(".medicine-card");
+   
+
+
+
+    const reminderId = card.dataset.id;
+   
+
+    deleteReminder(reminderId);
+
+}
 
 if(e.target.classList.contains("taken-btn")){
 
@@ -146,7 +163,7 @@ e.target.style.color="white";
 
 showToast("✅ Medicine marked as taken");
 
-saveReminders();
+
 
 }
 
@@ -160,7 +177,7 @@ e.target.style.color="white";
 
 showToast("⚠ Medicine skipped");
 
-saveReminders();
+
 
 }
 
@@ -319,7 +336,7 @@ async function loadRemindersFromBackend(){
 
     medicineGrid.innerHTML += `
 
-    <div class="medicine-card">
+    <div class="medicine-card" data-id="${reminder._id}">
 
         <div class="card-top">
 
@@ -363,11 +380,13 @@ async function loadRemindersFromBackend(){
 
         <div class="card-actions">
 
-            <button class="taken-btn">
-
-                ${reminder.isActive ? "✅ Active" : "⏸ Paused"}
-
-            </button>
+            
+    <button class="edit-btn">
+        ✏️ Edit
+    </button>
+            <button class="delete-btn">
+        🗑 Delete
+    </button>
 
         </div>
 
@@ -388,6 +407,46 @@ updateStats();
     }
 
 }
+async function deleteReminder(id) {
+    console.log(API_BASE_URL);
+console.log(id);
+
+    try {
+
+        const response = await fetch(
+
+            `${API_BASE_URL}/reminders/${id}`,
+
+            {
+                method: "DELETE",
+
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            showToast("🗑 Reminder deleted");
+
+            await loadRemindersFromBackend();
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
+
+
+
 
 function showToast(message){
 
