@@ -20,57 +20,130 @@ const selects=document.querySelectorAll("select");
 
 const switches=document.querySelectorAll(".switch input");
 
-const moonBtn=document.querySelector(".fa-moon");
+const themeBtn = document.getElementById("themeBtn");
+const notificationBtn = document.getElementById("notificationBtn");
+const topProfileImage = document.getElementById("topProfileImage");
+const themeStatus = document.getElementById("themeStatus");
+const themeSubStatus = document.getElementById("themeSubStatus");
+
+const API_BASE_URL = "http://localhost:5000/api";
+
+function updateThemeCard(isDark) {
+
+    themeStatus.textContent = isDark ? "Dark" : "Light";
+
+    themeSubStatus.textContent = isDark ? "Enabled" : "Disabled";
+
+    themeSubStatus.classList.toggle("enabled", isDark);
+    themeSubStatus.classList.toggle("disabled", !isDark);
+
+}
+
+async function loadProfile() {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) return;
+
+        const result = await response.json();
+        const user = result.data.user;
+
+        const avatarUrl =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0B4F6C&color=fff`;
+
+        const savedImage = localStorage.getItem("profileImage");
+
+        topProfileImage.src = savedImage || avatarUrl;
+
+    } catch (err) {
+
+        console.error("Failed to load profile:", err);
+
+    }
+
+}
+
+/* ==========================================
+        NOTIFICATION PAGE
+========================================== */
+
+if (notificationBtn) {
+
+    notificationBtn.addEventListener("click", () => {
+
+        window.location.href = "notifications.html";
+
+    });
+
+}
+
+/* ==========================================
+        PROFILE PAGE
+========================================== */
+
+if (topProfileImage) {
+
+    topProfileImage.style.cursor = "pointer";
+
+    topProfileImage.addEventListener("click", () => {
+
+        window.location.href = "profile.html";
+
+    });
+
+}
 
 /* ==========================================
         LOAD SETTINGS
 ========================================== */
 
 loadSettings();
+loadProfile();
 
-function loadSettings(){
+function loadSettings() {
 
-const settings=JSON.parse(
+    const settings = JSON.parse(
+        localStorage.getItem("healoraSettings")
+    );
 
-localStorage.getItem("healoraSettings")
+    // Load theme (same as Profile page)
+    const isDark = localStorage.getItem("theme") === "dark";
 
-);
+    document.body.classList.toggle("dark-mode", isDark);
+    updateThemeCard(isDark);
 
-if(!settings) return;
+    if (darkMode) {
+        darkMode.checked = isDark;
+    }
 
-if(darkMode){
+    const icon = themeBtn?.querySelector("i");
+    if (icon) {
+        if (isDark) {
+            icon.classList.replace("fa-moon", "fa-sun");
+        } else {
+            icon.classList.replace("fa-sun", "fa-moon");
+        }
+    }
 
-darkMode.checked=settings.darkMode;
+    if (!settings) return;
 
-document.body.classList.toggle(
+    selects.forEach((select, index) => {
+        if (settings.selects) {
+            select.value = settings.selects[index];
+        }
+    });
 
-"dark",
-
-settings.darkMode
-
-);
-
-}
-
-selects.forEach((select,index)=>{
-
-if(settings.selects){
-
-select.value=settings.selects[index];
-
-}
-
-});
-
-switches.forEach((toggle,index)=>{
-
-if(settings.switches){
-
-toggle.checked=settings.switches[index];
-
-}
-
-});
+    switches.forEach((toggle, index) => {
+        if (settings.switches) {
+            toggle.checked = settings.switches[index];
+        }
+    });
 
 }
 
@@ -118,35 +191,56 @@ showToast("✅ Settings Saved");
         DARK MODE
 ========================================== */
 
-if(darkMode){
+if (darkMode) {
 
-darkMode.addEventListener("change",()=>{
+    darkMode.addEventListener("change", () => {
 
-document.body.classList.toggle(
+        document.body.classList.toggle("dark-mode", darkMode.checked);
+        updateThemeCard(darkMode.checked);
 
-"dark",
+        localStorage.setItem(
+            "theme",
+            darkMode.checked ? "dark" : "light"
+        );
 
-darkMode.checked
+        const icon = themeBtn.querySelector("i");
 
-);
+        if (darkMode.checked) {
+            icon.classList.replace("fa-moon", "fa-sun");
+        } else {
+            icon.classList.replace("fa-sun", "fa-moon");
+        }
 
-});
+        saveSettings();
 
-}
-
-if(moonBtn){
-
-moonBtn.parentElement.addEventListener("click",()=>{
-
-document.body.classList.toggle("dark");
-
-if(darkMode){
-
-darkMode.checked=document.body.classList.contains("dark");
+    });
 
 }
 
-});
+if (themeBtn) {
+
+    themeBtn.addEventListener("click", () => {
+
+        document.body.classList.toggle("dark-mode");
+
+        const isDark = document.body.classList.contains("dark-mode");
+
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        darkMode.checked = isDark;
+
+        const icon = themeBtn.querySelector("i");
+        updateThemeCard(isDark);
+
+        if (isDark) {
+            icon.classList.replace("fa-moon", "fa-sun");
+        } else {
+            icon.classList.replace("fa-sun", "fa-moon");
+        }
+
+        saveSettings();
+
+    });
 
 }
 

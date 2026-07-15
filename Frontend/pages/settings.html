@@ -60,54 +60,45 @@ href="../css/settings.css">
 
 <nav>
 
-<a href="dashboard.html">
+    <a href="dashboard.html">
+        <i class="fa-solid fa-house"></i>
+        <span>Dashboard</span>
+    </a>
 
-<i class="fa-solid fa-house"></i>
+    <a href="chatbot.html">
+        <i class="fa-solid fa-robot"></i>
+        <span>AI Assistant</span>
+    </a>
 
-<span>Dashboard</span>
+    <a href="reports.html">
+        <i class="fa-solid fa-file-medical"></i>
+        <span>Reports</span>
+    </a>
 
-</a>
+    <a href="reminder.html">
+        <i class="fa-solid fa-pills"></i>
+        <span>Medicine</span>
+    </a>
 
-<a href="chatbot.html">
+    <a href="appointments.html">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span>Appointments</span>
+    </a>
 
-<i class="fa-solid fa-robot"></i>
+    <a href="symptom-checker.html">
+        <i class="fa-solid fa-stethoscope"></i>
+        <span>Symptom Checker</span>
+    </a>
 
-<span>AI Assistant</span>
+    <a href="profile.html">
+        <i class="fa-solid fa-user"></i>
+        <span>Profile</span>
+    </a>
 
-</a>
-
-<a href="reports.html">
-
-<i class="fa-solid fa-file-medical"></i>
-
-<span>Reports</span>
-
-</a>
-
-<a href="reminder.html">
-
-<i class="fa-solid fa-bell"></i>
-
-<span>Reminders</span>
-
-</a>
-
-<a href="profile.html">
-
-<i class="fa-solid fa-user"></i>
-
-<span>Profile</span>
-
-</a>
-
-<a href="settings.html"
-class="active">
-
-<i class="fa-solid fa-gear"></i>
-
-<span>Settings</span>
-
-</a>
+    <a href="settings.html" class="active">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+    </a>
 
 </nav>
 
@@ -145,22 +136,19 @@ Customize your Healora experience.
 
 <div class="top-actions">
 
-<button class="icon-btn">
-
-<i class="fa-solid fa-bell"></i>
-
+<button id="notificationBtn" class="icon-btn">
+    <i class="fa-solid fa-bell"></i>
 </button>
 
-<button class="icon-btn">
-
-<i class="fa-solid fa-moon"></i>
-
+<button id="themeBtn" class="icon-btn">
+    <i class="fa-solid fa-moon"></i>
 </button>
 
 <div class="profile-small">
-
-<img src="https://ui-avatars.com/api/?name=Gurpreet&background=0B4F6C&color=fff">
-
+    <img
+        id="topProfileImage"
+        src="https://ui-avatars.com/api/?name=User&background=0B4F6C&color=fff"
+        alt="Profile">
 </div>
 
 </div>
@@ -200,13 +188,11 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 <section class="stats-grid">
 
 <div class="stat-card">
+    <h3>Theme</h3>
 
-<h3>Theme</h3>
+    <h2 id="themeStatus">Light</h2>
 
-<h2>Dark</h2>
-
-<p>Enabled</p>
-
+    <p id="themeSubStatus">Disabled</p>
 </div>
 
 <div class="stat-card">

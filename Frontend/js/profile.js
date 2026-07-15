@@ -1,23 +1,95 @@
-const token = localStorage.getItem("token");
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const token = localStorage.getItem("token");
 
     if (!token) {
-        window.location.href = "login.html";
+        window.location.replace("login.html");
+        return;
     }
     
-document.addEventListener("DOMContentLoaded", () => {
-
     const API_BASE_URL = "http://localhost:5000/api";
 
+    let redirecting = false;
 
-    const saveBtn = document.querySelector(".save-btn");
+    function redirectToLogin() {
+        if (redirecting) return;
+    
+        redirecting = true;
+        localStorage.removeItem("token");
+        window.location.replace("login.html");
+    }
+    const cameraBtn = document.querySelector(".edit-photo");
+    const profileUpload = document.getElementById("profileUpload");
+    const notificationBtn = document.getElementById("notificationBtn");
+    const themeBtn = document.getElementById("themeBtn");
     const logoutBtn = document.getElementById("logoutBtn");
 
-const fullName = document.getElementById("fullName");
-const dateOfBirth = document.getElementById("dateOfBirth");
-const gender = document.getElementById("gender");
-const bloodGroup = document.getElementById("bloodGroup");;
+    const editProfileBtn = document.querySelector(".edit-profile-btn");
 
-    loadProfile();
+    const fullName = document.getElementById("fullName");
+    const dateOfBirth = document.getElementById("dateOfBirth");
+    const gender = document.getElementById("gender");
+    const bloodGroup = document.getElementById("bloodGroup");
+
+    // Personal
+    const phoneNumber = document.getElementById("phoneNumber");
+
+    // Medical
+    const height = document.getElementById("height");
+    const weight = document.getElementById("weight");
+    const allergies = document.getElementById("allergies");
+    const chronicDisease = document.getElementById("chronicDisease");
+    const currentMedications = document.getElementById("currentMedications");
+
+    // Emergency
+    const contactName = document.getElementById("contactName");
+    const relationship = document.getElementById("relationship");
+    const contactPhone = document.getElementById("contactPhone");
+    const contactEmail = document.getElementById("contactEmail");
+
+    const profileName = document.getElementById("profileName");
+    const profileSubtitle = document.getElementById("profileSubtitle");
+    const profileImage = document.getElementById("profileImage");
+    const topProfileImage = document.getElementById("topProfileImage");
+    const email = document.getElementById("email");
+    const reportsCount = document.getElementById("reportsCount");
+    const appointmentCount = document.getElementById("appointmentCount");
+    const medicineCount = document.getElementById("medicineCount");
+
+    let editing = false;
+
+    const editableFields = [
+        // Personal
+        fullName,
+        phoneNumber,
+        dateOfBirth,
+        gender,
+        bloodGroup,
+
+        // Medical
+        height,
+        weight,
+        allergies,
+        chronicDisease,
+        currentMedications,
+
+        // Emergency
+        contactName,
+        relationship,
+        contactPhone,
+        contactEmail
+    ];
+
+    await loadProfile();
+
+    await Promise.all([
+        loadReportCount(),
+        loadMedicineCount(),
+        loadAppointmentCount(),
+        loadEmergencyContact()
+    ]).catch(err => {
+        console.error("Initialization failed:", err);
+    });
 
     async function loadProfile() {
 
@@ -32,121 +104,404 @@ const bloodGroup = document.getElementById("bloodGroup");;
                 }
             );
 
+            if (response.status === 401 || response.status === 403) {
+                redirectToLogin();
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Failed to load profile.");
+            }
+            
             const result = await response.json();
 
             const user = result.data.user;
 
-            document.getElementById("profileName").textContent = user.name;
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                user.name
+            )}&background=0B4F6C&color=fff`;
 
-            document.getElementById("profileImage").src =
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0B4F6C&color=fff`;
+            profileName.textContent = user.name;
+            
+            const subtitle = [];
 
-            document.getElementById("fullName").value = user.name || "";
+            if (user.gender) {
+                subtitle.push(
+                    user.gender
+                        .replaceAll("_", " ")
+                        .replace(/\b\w/g, c => c.toUpperCase())
+                );
+            }
 
-            document.getElementById("email").value = user.email || "";
+            if (user.bloodGroup) {
+                subtitle.push(user.bloodGroup);
+            }
 
-            document.getElementById("dateOfBirth").value =
+            profileSubtitle.textContent =
+                subtitle.length
+                    ? subtitle.join(" • ")
+                    : "Welcome to Healora";
+
+            const savedImage = localStorage.getItem("profileImage");
+
+            if (savedImage) {
+                profileImage.src = savedImage;
+                topProfileImage.src = savedImage;
+            } else {
+                profileImage.src = avatarUrl;
+                topProfileImage.src = avatarUrl;
+            }
+
+            fullName.value = user.name || "";
+            email.value = user.email || "";
+            dateOfBirth.value =
                 user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "";
-
-            document.getElementById("gender").value = user.gender || "";
-
-            document.getElementById("bloodGroup").value = user.bloodGroup || "";
-
-            console.log(user);
-
-        }
+            gender.value = user.gender || "";
+            bloodGroup.value = user.bloodGroup || "";
+            if (user.phoneNumber) {
+                phoneNumber.value = user.phoneNumber;
+            }
+            }
 
         catch (err) {
-
-            console.error(err);
-
+            console.error("Failed to load profile:", err);
+            alert("Unable to connect to the server.");
         }
 
     }
 
-saveBtn.addEventListener("click", updateProfile);
-
-async function updateProfile() {
+async function loadEmergencyContact() {
 
     try {
 
-        const response = await fetch(
-            `${API_BASE_URL}/auth/me`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
-                },
-                body: JSON.stringify({
-
-                    name: fullName.value.trim(),
-                    dateOfBirth: dateOfBirth.value || null,
-                    gender: gender.value || null,
-                    bloodGroup: bloodGroup.value || null
-
-                })
+        const response = await fetch(`${API_BASE_URL}/emergency`, {
+            headers: {
+                Authorization: `Bearer ${token}`
             }
-        );
+        });
+
+        if (!response.ok) return;
 
         const result = await response.json();
 
-        console.log(result);
+        if (!result.success || result.data.count === 0) return;
 
-        if (result.success) {
+        const contact = result.data.contacts[0];
 
-            alert("✅ Profile updated successfully!");
-
-            loadProfile();
-
-        } else {
-
-            alert(result.message);
-
-        }
+        contactName.value = contact.name || "";
+        relationship.value = contact.relationship || "";
+        contactPhone.value = contact.phone || "";
+        contactEmail.value = contact.email || "";
 
     } catch (err) {
-
         console.error(err);
-        alert("Failed to update profile.");
-
     }
 
 }
 
-logoutBtn.addEventListener("click", logout);
-
-async function logout() {
+async function loadReportCount() {
 
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/auth/logout`,
+            `${API_BASE_URL}/reports`,
             {
-                method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             }
         );
 
+        // Token expired or invalid
+        if (response.status === 401 || response.status === 403) {
+            redirectToLogin();
+            return;
+        }
+
+        if (!response.ok) {
+            return;
+        }
+
         const result = await response.json();
 
-        console.log(result);
+        if (!result.success) {
+            console.error(result.message);
+            return;
+        }
 
-        localStorage.removeItem("token");
+        reportsCount.textContent = result.data.count;
 
-        window.location.href = "login.html";
+    } catch (err) {
+
+        console.error("Failed to load reports:", err);
 
     }
 
-    catch (err) {
+}
+
+async function loadMedicineCount() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/reminders?active=true`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (response.status === 401 || response.status === 403) {
+            redirectToLogin();
+            return;
+        }
+
+        if (!response.ok) {
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            console.error(result.message);
+            return;
+        }
+
+        medicineCount.textContent = result.data.count;
+
+    } catch (err) {
+
+        console.error("Failed to load medicine count:", err);
+
+    }
+
+}
+
+async function loadAppointmentCount() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/appointments?upcoming=true`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (response.status === 401 || response.status === 403) {
+            redirectToLogin();
+            return;
+        }
+
+        if (!response.ok) {
+            return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            console.error(result.message);
+            return;
+        }
+
+        appointmentCount.textContent = result.data.count;
+
+    } catch (err) {
+
+        console.error("Failed to load appointments:", err);
+
+    }
+
+}
+
+if (editProfileBtn) {
+
+    editProfileBtn.addEventListener("click", async () => {
+
+        if (!editing) {
+
+            editableFields.forEach(field => {
+                field.disabled = false;
+            });
+
+            editProfileBtn.innerHTML =
+                '<i class="fa-solid fa-floppy-disk"></i> Save Profile';
+
+            editing = true;
+
+        } else {
+        
+            const saved = await updateProfile();
+        
+            if (saved) {
+            
+                editableFields.forEach(field => {
+                    field.disabled = true;
+                });
+            
+                editProfileBtn.innerHTML =
+                    '<i class="fa-solid fa-pen"></i> Edit Profile';
+            
+                editing = false;
+            }
+        
+        }
+
+    });
+
+}
+
+async function updateProfile() {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: fullName.value.trim(),
+                dateOfBirth: dateOfBirth.value || null,
+                gender: gender.value || null,
+                bloodGroup: bloodGroup.value || null
+            })
+        });
+
+        if (response.status === 401 || response.status === 403) {
+            redirectToLogin();
+            return false;
+        }
+
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            alert(result.message || "Failed to update profile.");
+            return false;
+        }
+
+        alert("✅ Profile updated successfully!");
+
+        await loadProfile();
+
+        return true;
+
+    } catch (err) {
 
         console.error(err);
+        alert("Failed to update profile.");
 
-        alert("Logout failed.");
+        return false;
+    }
+
+}
+
+
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", logout);
+}
+
+if (notificationBtn) {
+    notificationBtn.addEventListener("click", () => {
+        window.location.href = "notifications.html";
+    });
+}
+
+// Load saved theme
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+    themeBtn?.querySelector("i")?.classList.replace("fa-moon", "fa-sun");
+}
+
+if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+
+        const icon = themeBtn.querySelector("i");
+
+        if (document.body.classList.contains("dark-mode")) {
+            localStorage.setItem("theme", "dark");
+            icon.classList.replace("fa-moon", "fa-sun");
+        } else {
+            localStorage.setItem("theme", "light");
+            icon.classList.replace("fa-sun", "fa-moon");
+        }
+    });
+}
+
+// ================= PROFILE IMAGE =================
+
+if (cameraBtn && profileUpload) {
+
+    // Load saved profile picture
+    const savedImage = localStorage.getItem("profileImage");
+
+    if (savedImage) {
+        profileImage.src = savedImage;
+        topProfileImage.src = savedImage;
+    }
+
+    // Open file picker
+    cameraBtn.addEventListener("click", () => {
+        profileUpload.click();
+    });
+
+    // Change profile picture
+    profileUpload.addEventListener("change", (e) => {
+
+        const file = e.target.files[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            alert("Please select an image.");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function () {
+
+            profileImage.src = reader.result;
+            topProfileImage.src = reader.result;
+
+            localStorage.setItem("profileImage", reader.result);
+
+        };
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+async function logout() {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+
+        });
+
+        if (!response.ok) {
+            console.warn("Server logout failed.");
+        }
+    } catch (err) {
+
+        console.error("Logout request failed:", err);
 
     }
+
+    // Always clear local session
+    redirectToLogin();
 
 }
 
