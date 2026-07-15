@@ -2,11 +2,15 @@
             HEALORA APPOINTMENTS
 ========================================== */
 
+console.log("appointments.js loaded");
+
 const token = localStorage.getItem("token");
 
 if (!token) {
     window.location.href = "login.html";
 }
+
+const API_BASE_URL = "http://localhost:5000/api";
 
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -14,6 +18,7 @@ const searchInput=document.querySelector(".search-box input");
 const filter=document.querySelector(".filter-group select");
 const doctorCards=document.querySelectorAll(".doctor-card");
 const bookButtons=document.querySelectorAll(".book-now");
+console.log("Buttons found:", bookButtons.length);
 const cancelButtons=document.querySelectorAll(".cancel-btn");
 const rescheduleButtons=document.querySelectorAll(".reschedule-btn");
 const moonBtn=document.querySelector(".fa-moon");
@@ -72,23 +77,92 @@ card.innerText.toLowerCase().includes(value)
 
 /* ================= BOOK ================= */
 
-bookButtons.forEach(btn=>{
+bookButtons.forEach(btn => {
 
-btn.addEventListener("click",()=>{
+    btn.addEventListener("click", async () => {
 
-const doctor=
+        console.log("Book button clicked");
 
-btn.closest(".doctor-card")
+        const card = btn.closest(".doctor-card");
 
-.querySelector("h3")
+        const doctorName = card.querySelector("h3").innerText;
 
-.innerText;
+        const specialty = card.querySelector(".speciality").innerText.trim();
 
-showToast("✅ Appointment booked with "+doctor);
+        const location = card.querySelector(".hospital").innerText.trim();
 
-saveAppointment(doctor);
+        const appointmentDate = prompt("Enter appointment date (YYYY-MM-DD)");
 
-});
+        if (!appointmentDate) return;
+
+        const appointmentTime = prompt("Enter appointment time (HH:MM)");
+
+        if (!appointmentTime) return;
+
+        try {
+
+            console.log({
+                doctorName,
+                specialty,
+                location,
+                appointmentDate,
+                appointmentTime,
+                token
+            });
+
+            const response = await fetch(`${API_BASE_URL}/appointments`, {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json",
+
+                    "Authorization": `Bearer ${token}`
+
+                },
+
+                body: JSON.stringify({
+
+                    doctorName,
+
+                    specialty,
+
+                    appointmentDate,
+
+                    appointmentTime,
+
+                    location
+
+                })
+
+            });
+
+            console.log("Status:", response.status);
+
+            const result = await response.json();
+
+            console.log("Validation Errors:", result.errors);
+
+            if (response.ok) {
+
+                showToast("✅ Appointment booked successfully!");
+
+            } else {
+
+                alert(result.message || "Unable to book appointment.");
+
+            }
+
+        } catch (err) {
+
+            console.error(err);
+
+            alert("Server connection failed.");
+
+        }
+
+    });
 
 });
 

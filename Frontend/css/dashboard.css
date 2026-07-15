@@ -1624,3 +1624,140 @@ font-size:32px;
     transform:scale(1.08);
 
 }
+
+/* ==========================================
+   PROFILE DROPDOWN
+========================================== */
+
+.profile{
+
+    position:relative;
+
+    cursor:pointer;
+
+}
+
+.profile img{
+
+    border-radius:50%;
+
+    transition:.3s;
+
+}
+
+.profile img:hover{
+
+    transform:scale(1.08);
+
+}
+
+.profile-dropdown{
+
+    position:absolute;
+
+    top:70px;
+
+    right:0;
+
+    width:260px;
+
+    background:#fff;
+
+    border-radius:16px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.15);
+
+    padding:18px;
+
+    display:none;
+
+    z-index:1000;
+
+}
+
+.profile-dropdown.show{
+
+    display:block;
+
+}
+
+.profile-info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:4px;
+
+    margin-bottom:12px;
+
+}
+
+.profile-info strong{
+
+    color:#0B4F6C;
+
+    font-size:16px;
+
+}
+
+.profile-info small{
+
+    color:#666;
+
+    word-break:break-word;
+
+}
+
+.profile-dropdown hr{
+
+    border:none;
+
+    border-top:1px solid #eee;
+
+    margin:12px 0;
+
+}
+
+.profile-dropdown button{
+
+    width:100%;
+
+    border:none;
+
+    background:none;
+
+    text-align:left;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.25s;
+
+}
+
+.profile-dropdown button:hover{
+
+    background:#EEF8FA;
+
+}
+
+.profile {
+
+    cursor: pointer;
+}
+
+.profile img {
+
+    transition: transform 0.25s ease;
+}
+
+.profile img:hover {
+
+    transform: scale(1.08);
+}
