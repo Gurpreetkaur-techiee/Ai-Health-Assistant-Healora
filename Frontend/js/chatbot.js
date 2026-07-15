@@ -16,6 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE_URL = "http://localhost:5000/api";
 
     
+
+
+
+
+
+
     
 
     /* ======================================
@@ -203,6 +209,14 @@ if(newChat){
         if(confirm("Start a new conversation?")){
 
             chatWindow.innerHTML=`
+            // Clear saved chat
+localStorage.removeItem("healoraChat");
+
+// Clear input
+input.value = "";
+
+// Scroll to top
+chatWindow.scrollTop = 0;
 
             <div class="message ai">
 
@@ -370,16 +384,40 @@ subtree:true
    QUICK TOOLS
 ========================================== */
 
-document.querySelectorAll(".tool-card").forEach(card=>{
 
-card.addEventListener("click",()=>{
+document.querySelectorAll(".tool-card").forEach(card => {
 
-alert(card.querySelector("h3").innerText+" module will open soon.");
+    card.addEventListener("click", () => {
+
+        const title = card.querySelector("h3").innerText.trim();
+
+        if (title === "Medicine Reminder") {
+
+           window.location.href = "medicine.html";
+
+        }
+
+        else if (title === "Medical Reports") {
+
+            window.location.href = "medical-reports.html";
+
+        }
+
+        else if (title === "Appointments") {
+
+            window.location.href = "appointments.html";
+
+        }
+
+        else if (title === "Health Tracker") {
+
+            window.location.href = "health-tracker.html";
+
+        }
+
+    });
 
 });
-
-});
-
 
 /* ==========================================
    EMERGENCY BUTTON
@@ -404,4 +442,28 @@ alert("🚑 In a real application, this button will immediately call emergency s
 
 console.log("%c🤖 Healora AI Ready",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
+/* ===============================
+   NOTIFICATIONS
+=============================== */
+
+const notificationBtn =
+document.getElementById("notificationBtn");
+
+const notificationDropdown =
+document.getElementById("notificationDropdown");
+
+const notificationList =
+document.getElementById("notificationList");
+
+const notificationCount =
+document.getElementById("notificationCount");
+
+notificationBtn.addEventListener("click",()=>{
+
+    notificationDropdown.style.display=
+    notificationDropdown.style.display==="block"
+    ? "none"
+    : "block";
+
+});
 });
