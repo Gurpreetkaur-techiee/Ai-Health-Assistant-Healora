@@ -37,6 +37,9 @@ const bcrypt  = require('bcryptjs');
 const { User } = require('../models');
 const AppError  = require('../utils/AppError');
 
+const { generateOTP, getOTPExpiry } = require('../utils/otp');
+const { sendEmail } = require('./email.service');
+
 // OWASP-recommended bcrypt cost factor (see note above)
 const BCRYPT_SALT_ROUNDS = 12;
 
@@ -187,10 +190,171 @@ const updateMe = async (userId, data) => {
 };
 
 
+// ─────────────────────────────────────────────────────────────
+// Forgot Password
+// ─────────────────────────────────────────────────────────────
+const forgotPassword = async (email) => {
+
+  // Step 1: Find user
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new AppError("No account found with this email address.", 404);
+  }
+
+  // Step 2: Generate OTP
+  const otp = generateOTP();
+
+  // Step 3: Save OTP
+  user.resetOtp = otp;
+  user.resetOtpExpiry = getOTPExpiry();
+  user.resetOtpAttempts = 0;
+
+  await user.save();
+
+  // Step 4: Send Email
+  await sendEmail({
+
+    to: user.email,
+
+    subject: "Healora Password Reset OTP",
+
+    html: `
+      <div style="font-family:Arial,sans-serif;padding:20px;">
+
+        <h2>Healora Password Reset</h2>
+
+        <p>Your One-Time Password (OTP) is:</p>
+
+        <h1 style="letter-spacing:5px;color:#2563EB;">
+          ${otp}
+        </h1>
+
+        <p>This OTP is valid for <b>10 minutes</b>.</p>
+
+        <p>If you didn't request a password reset, you can safely ignore this email.</p>
+
+        <hr>
+
+        <p>Regards,<br><b>Healora Team</b></p>
+
+      </div>
+    `
+
+  });
+
+};
+
+// ─────────────────────────────────────────────────────────────
+// Verify OTP
+// ─────────────────────────────────────────────────────────────
+const verifyOtp = async ({ email, otp }) => {
+
+  // Find user
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new AppError("User not found.", 404);
+  }
+
+  // Check if OTP exists
+  if (!user.resetOtp) {
+    throw new AppError("No OTP request found.", 400);
+  }
+
+  // Check expiry
+  if (new Date() > user.resetOtpExpiry) {
+
+    user.resetOtp = null;
+    user.resetOtpExpiry = null;
+    user.resetOtpAttempts = 0;
+
+    await user.save();
+
+    throw new AppError("OTP has expired.", 400);
+
+  }
+
+  // Count attempts
+  if (user.resetOtpAttempts >= 5) {
+
+    user.resetOtp = null;
+    user.resetOtpExpiry = null;
+    user.resetOtpAttempts = 0;
+
+    await user.save();
+
+    throw new AppError("Too many incorrect attempts. Please request a new OTP.", 400);
+
+  }
+
+  // Verify OTP
+  if (user.resetOtp !== otp) {
+
+    user.resetOtpAttempts += 1;
+
+    await user.save();
+
+    throw new AppError("Invalid OTP.", 400);
+
+  }
+
+  return true;
+
+};
+
+// ─────────────────────────────────────────────────────────────
+// Reset Password
+// ─────────────────────────────────────────────────────────────
+const resetPassword = async ({ email, otp, newPassword }) => {
+
+  // Find user
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    throw new AppError("User not found.", 404);
+  }
+
+  // Check OTP exists
+  if (!user.resetOtp) {
+    throw new AppError("No OTP request found.", 400);
+  }
+
+  // Check expiry
+  if (new Date() > user.resetOtpExpiry) {
+    throw new AppError("OTP has expired.", 400);
+  }
+
+  // Check OTP
+  if (user.resetOtp !== otp) {
+    throw new AppError("Invalid OTP.", 400);
+  }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(
+    newPassword,
+    BCRYPT_SALT_ROUNDS
+  );
+
+  // Update password
+  user.password = hashedPassword;
+
+  // Clear OTP data
+  user.resetOtp = null;
+  user.resetOtpExpiry = null;
+  user.resetOtpAttempts = 0;
+
+  await user.save();
+
+};
 
 module.exports = {
   registerUser,
   loginUser,
   getUserById,
-  updateMe
+  updateMe,
+  forgotPassword,
+  verifyOtp,
+  resetPassword
 };
+

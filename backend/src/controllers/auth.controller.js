@@ -177,3 +177,62 @@ exports.logout = asyncWrapper(async (req, res) => {
     'Logged out successfully. Please delete your token on the client.'
   );
 });
+
+// ─────────────────────────────────────────────────────────────
+// POST /api/auth/forgot-password
+// ─────────────────────────────────────────────────────────────
+exports.forgotPassword = asyncWrapper(async (req, res) => {
+
+  const { email } = req.body;
+
+  await AuthService.forgotPassword(email);
+
+  return sendSuccess(
+    res,
+    null,
+    "OTP sent successfully. Please check your email."
+  );
+
+});
+
+// ─────────────────────────────────────────────────────────────
+// POST /api/auth/verify-otp
+// ─────────────────────────────────────────────────────────────
+exports.verifyOtp = asyncWrapper(async (req, res) => {
+
+  const { email, otp } = req.body;
+
+  await AuthService.verifyOtp({ email, otp });
+
+  return sendSuccess(
+    res,
+    null,
+    "OTP verified successfully."
+  );
+
+});
+
+// ─────────────────────────────────────────────────────────────
+// POST /api/auth/reset-password
+// ─────────────────────────────────────────────────────────────
+exports.resetPassword = asyncWrapper(async (req, res) => {
+
+  const { email, otp, newPassword } = req.body;
+
+  await AuthService.resetPassword({
+
+    email,
+    otp,
+    newPassword
+
+  });
+
+  return sendSuccess(
+
+    res,
+    null,
+    "Password reset successfully. You can now log in."
+
+  );
+
+});

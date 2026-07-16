@@ -89,12 +89,29 @@ const UserSchema = new mongoose.Schema(
       default: null
     },
 
-    // ── Account Status ────────────────────────────────────────
-    // Soft delete: set false instead of removing the document
-    isActive: {
-      type: Boolean,
-      default: true
-    }
+    // ── Password Reset (OTP) ───────────────────────────────────
+// Used for Forgot Password flow
+resetOtp: {
+  type: String,
+  default: null
+},
+
+resetOtpExpiry: {
+  type: Date,
+  default: null
+},
+
+resetOtpAttempts: {
+  type: Number,
+  default: 0
+},
+
+// ── Account Status ────────────────────────────────────────
+// Soft delete: set false instead of removing the document
+isActive: {
+  type: Boolean,
+  default: true
+}
   },
   {
     // Automatically manages createdAt and updatedAt fields

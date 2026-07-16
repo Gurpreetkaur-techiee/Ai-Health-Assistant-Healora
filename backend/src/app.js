@@ -109,6 +109,9 @@ app.get('/health', (req, res) => {
 // Phase 3: Authentication
 app.use('/api/auth', require('./routes/auth.routes'));
 
+// Test Route
+app.use('/api/test', require('./routes/test.routes'));
+
 // Phase 4: AI Module (Symptom Checker, Diet Advisor, Report Analysis)
 app.use('/api/symptoms', require('./routes/symptom.routes'));
 app.use('/api/diet',     require('./routes/diet.routes'));

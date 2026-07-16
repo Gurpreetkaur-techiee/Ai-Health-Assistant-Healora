@@ -116,6 +116,33 @@ router.post('/register', ...registerValidation, AuthController.register);
  */
 router.post('/login', ...loginValidation, AuthController.login);
 
+
+/**
+ * POST /api/auth/forgot-password
+ *
+ * Sends a 6-digit OTP to the user's registered email.
+ *
+ * Body:
+ *   { email: string }
+ *
+ * Success (200):
+ *   { success: true, message: 'OTP sent successfully.' }
+ */
+router.post('/forgot-password', AuthController.forgotPassword);
+
+
+/**
+ * POST /api/auth/verify-otp
+ *
+ * Verifies the OTP sent to the user's email.
+ */
+router.post('/verify-otp', AuthController.verifyOtp);
+/**
+ * POST /api/auth/reset-password
+ *
+ * Resets the user's password after OTP verification.
+ */
+router.post('/reset-password', AuthController.resetPassword);
 // ─────────────────────────────────────────────────────────────
 // PROTECTED ROUTES
 // Require a valid JWT in the Authorization: Bearer <token> header.
