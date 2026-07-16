@@ -1625,120 +1625,139 @@ font-size:32px;
 
 }
 
-/* ===========================================
-   DARK MODE
-=========================================== */
+/* ==========================================
+   PROFILE DROPDOWN
+========================================== */
 
-body.dark{
+.profile{
 
-background:#0F1B22;
+    position:relative;
 
-color:#E2F4F3;
-
-}
-
-body.dark .sidebar,
-body.dark .glass-card,
-body.dark .stat-card,
-body.dark .health-score,
-body.dark .icon-btn,
-body.dark .notification-dropdown{
-
-background:rgba(20,35,42,.75);
-
-border-color:rgba(255,255,255,.08);
-
-color:#E2F4F3;
+    cursor:pointer;
 
 }
 
-body.dark .medicine-item,
-body.dark .activity,
-body.dark .ai-input input,
-body.dark .notification-item{
+.profile img{
 
-background:rgba(255,255,255,.06);
+    border-radius:50%;
 
-color:#E2F4F3;
+    transition:.3s;
 
 }
 
-body.dark .sidebar nav a{
+.profile img:hover{
 
-color:#B7D3D0;
-
-}
-
-body.dark .sidebar nav a:hover{
-
-background:rgba(255,255,255,.08);
+    transform:scale(1.08);
 
 }
 
-/* ===========================================
-   NOTIFICATION DROPDOWN
-=========================================== */
+.profile-dropdown{
 
-.notification-wrapper{
+    position:absolute;
 
-position:relative;
+    top:70px;
 
-}
+    right:0;
 
-.notification-dropdown{
+    width:260px;
 
-position:absolute;
+    background:#fff;
 
-top:65px;
+    border-radius:16px;
 
-right:0;
+    box-shadow:0 12px 35px rgba(0,0,0,.15);
 
-width:280px;
+    padding:18px;
 
-background:rgba(255,255,255,.95);
+    display:none;
 
-backdrop-filter:blur(20px);
-
-border-radius:18px;
-
-box-shadow:var(--shadow);
-
-padding:18px;
-
-display:none;
-
-z-index:10;
+    z-index:1000;
 
 }
 
-.notification-dropdown.show{
+.profile-dropdown.show{
 
-display:block;
-
-}
-
-.notification-dropdown h4{
-
-color:var(--primary);
-
-margin-bottom:12px;
+    display:block;
 
 }
 
-.notification-item{
+.profile-info{
 
-padding:12px;
+    display:flex;
 
-border-radius:12px;
+    flex-direction:column;
 
-margin-bottom:10px;
+    gap:4px;
 
-font-size:14px;
+    margin-bottom:12px;
 
 }
 
-.notification-item:last-child{
+.profile-info strong{
 
-margin-bottom:0;
+    color:#0B4F6C;
 
+    font-size:16px;
+
+}
+
+.profile-info small{
+
+    color:#666;
+
+    word-break:break-word;
+
+}
+
+.profile-dropdown hr{
+
+    border:none;
+
+    border-top:1px solid #eee;
+
+    margin:12px 0;
+
+}
+
+.profile-dropdown button{
+
+    width:100%;
+
+    border:none;
+
+    background:none;
+
+    text-align:left;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.25s;
+
+}
+
+.profile-dropdown button:hover{
+
+    background:#EEF8FA;
+
+}
+
+.profile {
+
+    cursor: pointer;
+}
+
+.profile img {
+
+    transition: transform 0.25s ease;
+}
+
+.profile img:hover {
+
+    transform: scale(1.08);
 }

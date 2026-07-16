@@ -32,8 +32,22 @@ const router = express.Router();
 router.use(protect);
 
 // ── Collection routes ──────────────────────────────────────────
-router.get('/',  EmergencyController.getContacts);
-router.post('/', ...createContactValidation, EmergencyController.addContact);
+
+router.get(
+  '/nearby-hospitals',
+  EmergencyController.getNearbyHospitals
+);
+
+router.get(
+  '/',
+  EmergencyController.getContacts
+);
+
+router.post(
+  '/',
+  ...createContactValidation,
+  EmergencyController.addContact
+);
 
 // ── Document routes ────────────────────────────────────────────
 router.get(

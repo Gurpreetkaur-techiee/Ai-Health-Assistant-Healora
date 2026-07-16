@@ -10,33 +10,74 @@ if (!token) {
 document.addEventListener("DOMContentLoaded", () => {
 
 const API_BASE_URL = "http://localhost:5000/api";
+const storedUser = JSON.parse(localStorage.getItem("user"));
+
+const profileImage = document.getElementById("profileImage");
+
+if (profileImage && storedUser) {
+
+    profileImage.src =
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(storedUser.name)}&background=0B4F6C&color=fff`;
+
+}
 
 const uploadInput = document.querySelector(".upload-box input");
 
+const uploadBtn = document.querySelector(".upload-btn");
+
+if (uploadBtn) {
+
+    uploadBtn.addEventListener("click", () => {
+
+        uploadInput.click();
+
+    });
+
+}
+
+const chooseFileBtn = document.getElementById("chooseFileBtn");
+
+if (chooseFileBtn) {
+
+    chooseFileBtn.addEventListener("click", () => {
+
+        uploadInput.click();
+
+    });
+
+}
+
 const reportsGrid = document.querySelector(".reports-grid");
+const timeline = document.getElementById("timeline");
 
 const searchInput = document.querySelector(".search-box input");
 
 const statCards = document.querySelectorAll(".stat-card");
 
 const moonBtn = document.querySelector(".fa-moon");
-
 /* ==========================================
    REPORT COUNTER
 ========================================== */
 
-function updateStats(){
+function updateStats(reports) {
 
-const reports=document.querySelectorAll(".report-card");
+    statCards[0].querySelector("h2").textContent = reports.length;
 
-if(statCards.length){
+    statCards[1].querySelector("h2").textContent = reports.length;
 
-statCards[0].querySelector("h2").textContent=reports.length;
+    statCards[2].querySelector("h2").textContent = "0";
+
+    let totalBytes = 0;
+
+    reports.forEach(report => {
+        totalBytes += report.fileSizeBytes || 0;
+    });
+
+    let storageMB = (totalBytes / (1024 * 1024)).toFixed(2);
+
+    statCards[3].querySelector("h2").textContent = `${storageMB} MB`;
 
 }
-
-}
-
 /* ==========================================
    FILE UPLOAD
 ========================================== */
@@ -68,11 +109,15 @@ uploadInput.addEventListener("change", async (e) => {
 
         console.log(result);
 
-        if(result.success){
+      if (result.success) {
 
-            alert("Report uploaded successfully!");
+    alert("Report uploaded successfully!");
 
-        }
+    uploadInput.value = "";
+
+    loadReportsFromBackend();
+
+}
 
     }
 
@@ -90,17 +135,20 @@ uploadInput.addEventListener("change", async (e) => {
    LIVE SEARCH
 ========================================== */
 
-searchInput.addEventListener("keyup",()=>{
+searchInput.addEventListener("input", () => {
 
-const value=searchInput.value.toLowerCase();
+    const value = searchInput.value.toLowerCase();
 
-document.querySelectorAll(".report-card").forEach(card=>{
+    document.querySelectorAll(".report-card").forEach(card => {
 
-const text=card.innerText.toLowerCase();
+        const fileName = card.dataset.name;
 
-card.style.display=text.includes(value)?"block":"none";
+        card.style.display =
+            fileName.includes(value)
+                ? ""
+                : "none";
 
-});
+    });
 
 });
 
@@ -109,58 +157,92 @@ card.style.display=text.includes(value)?"block":"none";
    FILTER BUTTONS
 ========================================== */
 
-document.querySelectorAll(".filter-buttons button").forEach(btn=>{
+document.querySelectorAll(".filter-buttons button").forEach(btn => {
 
-btn.addEventListener("click",()=>{
+    btn.addEventListener("click", () => {
 
-document.querySelectorAll(".filter-buttons button")
+        document
+            .querySelectorAll(".filter-buttons button")
+            .forEach(b => b.classList.remove("active"));
 
-.forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
 
-btn.classList.add("active");
+        const filter =
+            btn.innerText.toLowerCase();
 
-const type=btn.innerText.toLowerCase();
+        document.querySelectorAll(".report-card").forEach(card => {
 
-document.querySelectorAll(".report-card").forEach(card=>{
+            const fileName =
+                card.dataset.name;
 
-if(type==="all"){
+            if (filter === "all") {
 
-card.style.display="block";
+                card.style.display = "";
 
-return;
+                return;
 
-}
+            }
 
-card.style.display=
+            if (fileName.includes(filter)) {
 
-card.innerText.toLowerCase().includes(type)
+                card.style.display = "";
 
-?"block":"none";
+            } else {
 
-});
+                card.style.display = "none";
 
-});
+            }
+
+        });
+
+    });
 
 });
 /* ==========================================
    DELETE REPORT
 ========================================== */
 
-reportsGrid.addEventListener("click",(e)=>{
+reportsGrid.addEventListener("click", async (e) => {
 
-if(e.target.classList.contains("delete-btn")){
+    if (!e.target.classList.contains("delete-btn")) return;
 
-if(confirm("Delete this report?")){
+    const reportId = e.target.dataset.id;
 
-e.target.closest(".report-card").remove();
+    if (!confirm("Delete this report?")) return;
 
-updateStats();
+    try {
 
-saveReports();
+        const response = await fetch(
+            `${API_BASE_URL}/reports/${reportId}`,
+            {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
 
-}
+        const result = await response.json();
 
-}
+        if (result.success) {
+
+            alert("Report deleted successfully!");
+
+            loadReportsFromBackend();
+
+        } else {
+
+            alert(result.message);
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert("Failed to delete report.");
+
+    }
 
 });
 
@@ -244,10 +326,6 @@ reportsGrid.innerHTML=saved;
 }
 */
 loadReportsFromBackend();
-
-updateStats();
-
-
 /* ==========================================
    AI ANALYSIS BUTTON
 ========================================== */
@@ -286,55 +364,79 @@ async function loadReportsFromBackend(){
         const result = await response.json();
 
         reportsGrid.innerHTML = "";
+        timeline.innerHTML = "";
 
       result.data.reports.forEach(report => {
 
-         reportsGrid.innerHTML += `
+    reportsGrid.innerHTML += `
 
-         <div class="report-card">
+    <div class="report-card"
+         data-name="${report.originalFileName.toLowerCase()}">
 
-            <div class="report-icon">
+        <div class="report-icon">
             📄
-            </div>
+        </div>
 
-            <h3>
-               ${report.originalFileName}
-            </h3>
+        <h3>
+            ${report.originalFileName}
+        </h3>
 
-            <p>
-               Uploaded:
-               ${new Date(report.createdAt).toLocaleDateString()}
-            </p>
+        <p>
+            Uploaded:
+            ${new Date(report.createdAt).toLocaleDateString()}
+        </p>
 
-            <div class="report-tags">
+        <div class="report-tags">
 
-               <span>
-                  ${report.urgencyLevel}
-               </span>
+            <span>
+                ${report.urgencyLevel}
+            </span>
 
-               <span>
-                  PDF
-               </span>
+            <span>
+                PDF
+            </span>
 
-            </div>
+        </div>
 
-            <div class="report-actions">
+        <div class="report-actions">
 
-               <button class="view-btn">
+            <button class="view-btn" data-id="${report._id}">
+                View
+            </button>
 
-                  View
+            <button class="delete-btn" data-id="${report._id}">
+                Delete
+            </button>
 
-               </button>
+        </div>
 
-            </div>
+    </div>
 
-      </div>
+    `;
+
+    // ================= Timeline =================
+
+    timeline.innerHTML += `
+
+    <div class="timeline-item">
+
+        <div class="dot"></div>
+
+        <div>
+
+            <h4>${report.originalFileName}</h4>
+
+            <p>${new Date(report.createdAt).toLocaleDateString()}</p>
+
+        </div>
+
+    </div>
 
     `;
 
 });
 
-updateStats();
+updateStats(result.data.reports);
 
     }
 
@@ -350,5 +452,61 @@ updateStats();
 console.log("%c📄 Healora Reports Ready",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
 
+const notificationBtn = document.getElementById("notificationBtn");
+
+if (notificationBtn) {
+
+    notificationBtn.addEventListener("click", () => {
+
+        window.location.href = "notifications.html";
+
+    });
+
+}
+
+
+/* ==========================================
+   PROFILE AVATAR
+========================================== */
+
+const profileAvatar = document.getElementById("profileAvatar");
+
+if (profileAvatar) {
+
+    profileAvatar.style.cursor = "pointer";
+
+    profileAvatar.addEventListener("click", () => {
+
+        window.location.href = "profile.html";
+
+    });
+
+}
 
 });
+/* ==========================================
+   LOGOUT
+========================================== */
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+
+    logoutBtn.style.cursor = "pointer";
+
+    logoutBtn.addEventListener("click", () => {
+
+        const confirmLogout = confirm("Are you sure you want to logout?");
+
+        if (!confirmLogout) return;
+
+        // Remove login information
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        // Go to login page
+        window.location.href = "login.html";
+
+    });
+
+}

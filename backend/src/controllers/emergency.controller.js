@@ -12,6 +12,7 @@
  *   PATCH  /api/emergency/:id/primary  → Set as primary contact
  */
 
+const GoogleMapsService = require("../services/googleMaps.service");
 const EmergencyService = require('../services/emergency.service');
 const { sendSuccess }  = require('../utils/response.utils');
 const asyncWrapper     = require('../utils/asyncWrapper');
@@ -38,6 +39,44 @@ exports.addContact = asyncWrapper(async (req, res) => {
     201
   );
 });
+
+const getNearbyHospitals = async (req, res, next) => {
+
+    try {
+
+        const { lat, lng } = req.query;
+
+        if (!lat || !lng) {
+
+            return res.status(400).json({
+                success: false,
+                message: "Latitude and Longitude are required."
+            });
+
+        }
+
+        const hospitals =
+            await GoogleMapsService.getNearbyHospitals(lat, lng);
+
+        res.status(200).json({
+
+            success: true,
+
+            count: hospitals.length,
+
+            hospitals
+
+        });
+
+    } catch (err) {
+
+        next(err);
+
+    }
+
+};
+
+
 
 // GET /api/emergency/:id
 exports.getContactById = asyncWrapper(async (req, res) => {
@@ -73,4 +112,36 @@ exports.setPrimary = asyncWrapper(async (req, res) => {
     { contact },
     `"${contact.name}" is now your primary emergency contact.`
   );
+});
+
+
+// GET /api/emergency/nearby-hospitals
+exports.getNearbyHospitals = asyncWrapper(async (req, res) => {
+
+    const { lat, lng } = req.query;
+
+    if (!lat || !lng) {
+
+        return res.status(400).json({
+            success: false,
+            message: "Latitude and Longitude are required."
+        });
+
+    }
+
+    const hospitals = await GoogleMapsService.getNearbyHospitals(lat, lng);
+
+    return sendSuccess(
+
+        res,
+
+        {
+            hospitals,
+            count: hospitals.length
+        },
+
+        "Nearby hospitals retrieved successfully."
+
+    );
+
 });

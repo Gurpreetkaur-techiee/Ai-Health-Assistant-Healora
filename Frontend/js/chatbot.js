@@ -16,6 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const API_BASE_URL = "http://localhost:5000/api";
 
     
+
+
+
+
+
+
     
 
     /* ======================================
@@ -194,39 +200,45 @@ document.querySelectorAll(".suggestions button").forEach(button => {
    NEW CHAT
 ========================================== */
 
+
+
 const newChat = document.querySelector(".new-chat");
 
-if(newChat){
+if (newChat) {
 
-    newChat.addEventListener("click",()=>{
+    newChat.addEventListener("click", () => {
 
-        if(confirm("Start a new conversation?")){
+        if (!confirm("Start a new conversation?")) return;
 
-            chatWindow.innerHTML=`
+        // Clear local storage
+        localStorage.removeItem("healoraChat");
 
-            <div class="message ai">
+        // Clear all messages
+        chatWindow.innerHTML = "";
 
-                <div class="avatar">🤖</div>
+        // Add welcome message
+        const welcome = document.createElement("div");
 
-                <div class="bubble">
+        welcome.className = "message ai";
 
-                    Hello 👋 I'm Healora AI.
-
-                    Tell me your symptoms and I'll try to help.
-
-                </div>
-
+        welcome.innerHTML = `
+            <div class="avatar">🤖</div>
+            <div class="bubble">
+                Hello 👋 I'm Healora AI. Tell me your symptoms and I'll try to help.
             </div>
+        `;
 
-            `;
+        chatWindow.appendChild(welcome);
 
-        }
+        // Clear input
+        input.value = "";
+
+        // Scroll to top
+        chatWindow.scrollTop = 0;
 
     });
 
 }
-
-
 /* ==========================================
    DARK MODE
 ========================================== */
@@ -370,16 +382,40 @@ subtree:true
    QUICK TOOLS
 ========================================== */
 
-document.querySelectorAll(".tool-card").forEach(card=>{
 
-card.addEventListener("click",()=>{
+document.querySelectorAll(".tool-card").forEach(card => {
 
-alert(card.querySelector("h3").innerText+" module will open soon.");
+    card.addEventListener("click", () => {
+
+        const title = card.querySelector("h3").innerText.trim();
+
+        if (title === "Medicine Reminder") {
+
+           window.location.href = "medicine.html";
+
+        }
+
+        else if (title === "Medical Reports") {
+
+    window.location.href = "reports.html";
+
+}
+
+        else if (title === "Appointments") {
+
+            window.location.href = "appointments.html";
+
+        }
+
+        else if (title === "Health Tracker") {
+
+            window.location.href = "health-tracker.html";
+
+        }
+
+    });
 
 });
-
-});
-
 
 /* ==========================================
    EMERGENCY BUTTON
@@ -404,4 +440,61 @@ alert("🚑 In a real application, this button will immediately call emergency s
 
 console.log("%c🤖 Healora AI Ready",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
+/* ===============================
+   NOTIFICATIONS
+=============================== */
+
+const notificationBtn =
+document.getElementById("notificationBtn");
+
+const notificationDropdown =
+document.getElementById("notificationDropdown");
+
+const notificationList =
+document.getElementById("notificationList");
+
+const notificationCount =
+document.getElementById("notificationCount");
+if (notificationBtn) {
+
+    notificationBtn.addEventListener("click", () => {
+
+        notificationDropdown.style.display =
+            notificationDropdown.style.display === "block"
+            ? "none"
+            : "block";
+
+    });
+
+}
+
+});
+
+// Sidebar navigation
+document.querySelectorAll(".history-card").forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        const text = card.innerText.trim();
+
+        if (text.includes("Medicine Reminder")) {
+
+            window.location.href = "medicine.html";
+
+        }
+
+        else if (text.includes("Blood Report")) {
+
+            window.location.href = "reports.html";
+
+        }
+
+        else if (text.includes("Heart Health")) {
+
+            window.location.href = "health-tracker.html";
+
+        }
+
+    });
+
 });

@@ -1,0 +1,143 @@
+/* ===============================
+   Medicine Reminder Page
+================================ */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#333;
+}
+
+.container{
+    width:90%;
+    max-width:900px;
+    margin:40px auto;
+}
+
+h1{
+    text-align:center;
+    color:#2563eb;
+    margin-bottom:30px;
+}
+
+/* ===============================
+   Add Medicine Card
+================================ */
+
+.add-medicine-card{
+    background:#fff;
+    padding:25px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.08);
+    margin-bottom:30px;
+}
+
+.add-medicine-card h2{
+    margin-bottom:20px;
+    color:#1e3a8a;
+}
+
+.form-group{
+    margin-bottom:15px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    font-size:15px;
+}
+
+.form-group input:focus,
+.form-group select:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+/* ===============================
+   Button
+================================ */
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:16px;
+    transition:.3s;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+/* ===============================
+   Medicine List
+================================ */
+
+.medicine-list{
+    display:grid;
+    gap:20px;
+}
+
+.medicine-card{
+    background:white;
+    border-radius:12px;
+    padding:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.medicine-card h3{
+    color:#2563eb;
+    margin-bottom:10px;
+}
+
+.medicine-card p{
+    margin:6px 0;
+    color:#555;
+}
+
+/* ===============================
+   Empty State
+================================ */
+
+.empty-state{
+    background:white;
+    padding:30px;
+    text-align:center;
+    border-radius:12px;
+    color:#888;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+/* ===============================
+   Responsive
+================================ */
+
+@media(max-width:768px){
+
+.container{
+    width:95%;
+}
+
+button{
+    width:100%;
+}
+
+}

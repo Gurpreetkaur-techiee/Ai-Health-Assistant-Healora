@@ -1404,3 +1404,87 @@ padding:25px;
 }
 
 }
+/* ===============================
+   NOTIFICATIONS
+================================ */
+
+.notification-wrapper{
+    position:relative;
+}
+
+#notificationCount{
+
+    position:absolute;
+    top:-6px;
+    right:-6px;
+
+    width:18px;
+    height:18px;
+
+    border-radius:50%;
+
+    background:#ef4444;
+    color:#fff;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    font-size:10px;
+
+    display:none;
+}
+
+.notification-dropdown{
+
+    position:absolute;
+
+    top:55px;
+    right:0;
+
+    width:330px;
+
+    background:#fff;
+
+    border-radius:12px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+
+    display:none;
+
+    overflow:hidden;
+
+    z-index:999;
+}
+
+.notification-header{
+
+    padding:15px;
+
+    border-bottom:1px solid #eee;
+}
+
+.notification-item{
+
+    padding:15px;
+
+    border-bottom:1px solid #eee;
+
+    cursor:pointer;
+
+    transition:.3s;
+}
+
+.notification-item:hover{
+
+    background:#f8fafc;
+}
+
+.empty-notification{
+
+    padding:25px;
+
+    text-align:center;
+
+    color:#888;
+}

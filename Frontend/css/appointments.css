@@ -532,13 +532,15 @@ gap:22px;
 
 .appointment-card{
 
-display:flex;
+display:grid;
+
+grid-template-columns:90px 1fr;
 
 justify-content:space-between;
 
-align-items:center;
+align-items:start;
 
-gap:25px;
+gap:20px;
 
 padding:25px;
 
@@ -564,9 +566,9 @@ transform:translateY(-6px);
 
 .appointment-date{
 
-width:90px;
+width:100px;
 
-height:90px;
+height:100px;
 
 border-radius:22px;
 
@@ -638,9 +640,11 @@ gap:10px;
 
 .appointment-actions{
 
-display:flex;
+    display:flex;
 
-gap:14px;
+    gap:12px;
+
+    margin-top:18px;
 
 }
 
@@ -1459,5 +1463,166 @@ z-index:9999;
 opacity:1;
 
 transform:translateY(0);
+
+}
+
+.notification-panel{
+
+    position:absolute;
+
+    top:70px;
+
+    right:20px;
+
+    width:320px;
+
+    background:white;
+
+    border-radius:18px;
+
+    padding:20px;
+
+    box-shadow:0 15px 35px rgba(0,0,0,.15);
+
+    display:none;
+
+    z-index:999;
+    .notification-panel{
+
+    width:320px;
+    min-height:120px;
+
+}
+}
+
+.notification-panel.show{
+
+    display:block;
+
+}
+
+.notification-panel h3{
+
+    margin-bottom:15px;
+
+    color:#0B4F6C;
+
+}
+
+.notification-item{
+
+    padding:12px 0;
+
+    border-bottom:1px solid #eee;
+
+}
+
+/* ===== Notification Dark Mode ===== */
+
+body.dark .notification-panel{
+
+    background:#1E293B;
+
+    color:white;
+
+    border:1px solid rgba(255,255,255,.1);
+
+}
+
+body.dark .notification-panel h3{
+
+    color:#6EE7E7;
+
+}
+
+body.dark .notification-item{
+
+    border-bottom:1px solid rgba(255,255,255,.08);
+
+}
+
+body.dark .notification-item small{
+
+    color:#CBD5E1;
+
+}
+
+body.dark #notificationPanel p{
+
+    color:#CBD5E1;
+
+}
+
+/* ===== Sidebar Dark Mode ===== */
+
+body.dark .sidebar{
+
+    background:#0F172A;
+
+}
+
+body.dark .sidebar nav a{
+
+    color:#E2E8F0;
+
+}
+
+body.dark .sidebar nav a i{
+
+    color:#E2E8F0;
+
+}
+
+body.dark .sidebar nav a:hover{
+
+    background:#1E293B;
+
+    color:#FFFFFF;
+
+}
+
+body.dark .sidebar nav a.active{
+
+    background:linear-gradient(135deg,#0B4F6C,#14B8A6);
+
+    color:white;
+
+}
+
+body.dark .sidebar nav a.active i{
+
+    color:white;
+
+}
+
+body.dark .logout{
+
+    color:#F8FAFC;
+
+}
+
+body.dark .logo h2{
+
+    color:white;
+
+
+}
+
+body.dark .topbar p,
+body.dark .section-title p{
+
+    color:black;
+
+}
+
+body.dark input::placeholder{
+
+    color:#94A3B8;
+
+}
+
+body.dark .sidebar nav a.active{
+
+    box-shadow:0 8px 20px rgba(20,184,166,.35);
 
 }

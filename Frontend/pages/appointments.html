@@ -113,7 +113,7 @@ href="../css/appointments.css">
 
 </nav>
 
-<div class="logout">
+<<div class="logout" id="logoutBtn">
 
 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -147,10 +147,8 @@ Book, manage and track your medical appointments.
 
 <div class="top-actions">
 
-<button class="icon-btn">
-
-<i class="fa-solid fa-bell"></i>
-
+<button class="icon-btn" id="notificationBtn">
+    <i class="fa-solid fa-bell"></i>
 </button>
 
 <button class="icon-btn">
@@ -263,7 +261,7 @@ placeholder="Search doctor, specialization or hospital...">
 
 <div class="doctor-top">
 
-<img src="../assets/doctors/doctor1.jpg" alt="Doctor">
+<img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=14B8A6&color=fff&size=200" alt="Doctor">
 
 <span class="status available">
 
@@ -327,7 +325,7 @@ Book Now
 
 <div class="doctor-top">
 
-<img src="../assets/doctors/doctor2.jpg" alt="Doctor">
+<img src="https://ui-avatars.com/api/?name=Amit+Sharma&background=2563EB&color=fff&size=200" alt="Doctor">
 
 <span class="status available">
 
@@ -391,7 +389,7 @@ Book Now
 
 <div class="doctor-top">
 
-<img src="../assets/doctors/doctor3.jpg" alt="Doctor">
+<img src="https://ui-avatars.com/api/?name=Priya+Mehta&background=8B5CF6&color=fff&size=200" alt="Doctor">
 
 <span class="status busy">
 
@@ -455,7 +453,7 @@ Book Now
 
 <div class="doctor-top">
 
-<img src="../assets/doctors/doctor4.jpg" alt="Doctor">
+<img src="https://ui-avatars.com/api/?name=Neha+Kapoor&background=F97316&color=fff&size=200" alt="Doctor">
 
 <span class="status available">
 
@@ -503,75 +501,6 @@ Smile Care Clinic
 
 <h4>₹600</h4>
 
-<button class="book
-<!-- ================= DOCTORS ================= -->
-
-<section class="doctor-section">
-
-<div class="section-title">
-
-<h2>👨‍⚕ Available Doctors</h2>
-
-<p>Choose a specialist and book your appointment instantly.</p>
-
-</div>
-
-<div class="doctor-grid">
-
-<!-- Doctor 1 -->
-
-<div class="doctor-card">
-
-<div class="doctor-top">
-
-<img src="../assets/doctors/doctor1.jpg" alt="Doctor">
-
-<span class="status available">
-
-● Available
-
-</span>
-
-</div>
-
-<h3>Dr. Sarah Johnson</h3>
-
-<p class="speciality">
-
-<i class="fa-solid fa-stethoscope"></i>
-
-Cardiologist
-
-</p>
-
-<p class="hospital">
-
-<i class="fa-solid fa-hospital"></i>
-
-Apollo Hospital
-
-</p>
-
-<div class="doctor-info">
-
-<span>
-
-⭐ 4.9
-
-</span>
-
-<span>
-
-💬 450 Reviews
-
-</span>
-
-</div>
-
-<div class="doctor-footer">
-
-<h4>₹800</h4>
-
 <button class="book-now">
 
 Book Now
@@ -579,189 +508,48 @@ Book Now
 </button>
 
 </div>
+</section>
+
+
+
+
+<section class="appointments-section">
+
+    <div class="section-title">
+
+        <h2>📅 My Appointments</h2>
+
+        <p>Your upcoming and previous appointments.</p>
+
+    </div>
+
+    <div id="appointmentsContainer">
+
+        <p>No appointments booked yet.</p>
+
+    </div>
+
+</section>
+
+</main>
 
 </div>
 
-<!-- Doctor 2 -->
 
-<div class="doctor-card">
+<div id="notificationPanel" class="notification-panel">
 
-<div class="doctor-top">
+    <h3>🔔 Notifications</h3>
 
-<img src="../assets/doctors/doctor2.jpg" alt="Doctor">
+    <div id="notificationList">
 
-<span class="status available">
+        <p>No notifications yet.</p>
 
-● Available
-
-</span>
+    </div>
 
 </div>
 
-<h3>Dr. Amit Sharma</h3>
+<script src="../js/appointments.js"></script>
 
-<p class="speciality">
+</body>
 
-<i class="fa-solid fa-brain"></i>
-
-Neurologist
-
-</p>
-
-<p class="hospital">
-
-<i class="fa-solid fa-hospital"></i>
-
-Fortis Hospital
-
-</p>
-
-<div class="doctor-info">
-
-<span>
-
-⭐ 4.8
-
-</span>
-
-<span>
-
-💬 390 Reviews
-
-</span>
-
-</div>
-
-<div class="doctor-footer">
-
-<h4>₹1000</h4>
-
-<button class="book-now">
-
-Book Now
-
-</button>
-
-</div>
-
-</div>
-
-<!-- Doctor 3 -->
-
-<div class="doctor-card">
-
-<div class="doctor-top">
-
-<img src="../assets/doctors/doctor3.jpg" alt="Doctor">
-
-<span class="status busy">
-
-● Busy
-
-</span>
-
-</div>
-
-<h3>Dr. Priya Mehta</h3>
-
-<p class="speciality">
-
-<i class="fa-solid fa-child"></i>
-
-Pediatrician
-
-</p>
-
-<p class="hospital">
-
-<i class="fa-solid fa-hospital"></i>
-
-Max Healthcare
-
-</p>
-
-<div class="doctor-info">
-
-<span>
-
-⭐ 4.7
-
-</span>
-
-<span>
-
-💬 280 Reviews
-
-</span>
-
-</div>
-
-<div class="doctor-footer">
-
-<h4>₹700</h4>
-
-<button class="book-now">
-
-Book Now
-
-</button>
-
-</div>
-
-</div>
-
-<!-- Doctor 4 -->
-
-<div class="doctor-card">
-
-<div class="doctor-top">
-
-<img src="../assets/doctors/doctor4.jpg" alt="Doctor">
-
-<span class="status available">
-
-● Available
-
-</span>
-
-</div>
-
-<h3>Dr. Neha Kapoor</h3>
-
-<p class="speciality">
-
-<i class="fa-solid fa-tooth"></i>
-
-Dentist
-
-</p>
-
-<p class="hospital">
-
-<i class="fa-solid fa-hospital"></i>
-
-Smile Care Clinic
-
-</p>
-
-<div class="doctor-info">
-
-<span>
-
-⭐ 4.9
-
-</span>
-
-<span>
-
-💬 510 Reviews
-
-</span>
-
-</div>
-
-<div class="doctor-footer">
-
-<h4>₹600</h4>
-
-<button class="book
+</html>
