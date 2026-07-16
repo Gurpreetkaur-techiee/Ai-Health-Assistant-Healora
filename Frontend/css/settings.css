@@ -756,6 +756,10 @@ var(--secondary)
 
 }
 
+body.dark-mode .switch input:checked + .slider{
+    box-shadow:0 0 12px rgba(20,184,166,.35);
+}
+
 .switch input:checked + .slider::before{
 
 transform:translateX(28px);
@@ -946,11 +950,23 @@ body.dark-mode .background-blobs{
 body.dark-mode .sidebar,
 body.dark-mode .settings-card,
 body.dark-mode .stat-card,
-body.dark-mode .danger-zone,
 body.dark-mode .icon-btn{
-    background:rgba(18,30,38,.92);
+    background:rgba(17,27,36,.92);
+    box-shadow:0 20px 45px rgba(0,0,0,.28);
     border-color:rgba(255,255,255,.08);
     color:white;
+}
+
+/* Danger Zone */
+body.dark-mode .danger-zone{
+    background:linear-gradient(
+        135deg,
+        #431516,
+        #561818,
+        #381112
+    );
+    border:2px solid rgba(248,113,113,.45);
+    box-shadow:0 20px 45px rgba(220,38,38,.22);
 }
 
 body.dark-mode .hero-card{
@@ -964,9 +980,16 @@ body.dark-mode .setting-item{
 body.dark-mode .topbar h1,
 body.dark-mode .logo h2,
 body.dark-mode .settings-card h2,
-body.dark-mode .danger-zone h2,
 body.dark-mode .setting-item h4{
     color:white;
+}
+
+body.dark-mode .danger-zone h2{
+    color:#FF4D4F;
+}
+
+body.dark-mode .danger-zone p{
+    color:#D1D5DB;
 }
 
 body.dark-mode .topbar p,
@@ -977,14 +1000,49 @@ body.dark-mode .settings-footer{
 }
 
 body.dark-mode select{
-    background:#10232C;
-    color:white;
-    border-color:#24414F;
+    background:#132C35;
+    color:#fff;
+    border:1px solid rgba(20,184,166,.35);
+    border-radius:16px;
+    box-shadow:none;
+}
+
+body.dark-mode select:focus{
+    border-color:#14B8A6;
+    box-shadow:0 0 0 4px rgba(20,184,166,.15);
 }
 
 body.dark-mode .secondary-btn{
     background:#10232C;
     color:white;
+}
+
+/* ================= SIDEBAR LINKS ================= */
+
+body.dark-mode .sidebar nav a {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+body.dark-mode .sidebar nav a i {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+body.dark-mode .sidebar nav a:hover{
+    background:rgba(20,184,166,.12);
+    color:#fff;
+}
+
+body.dark-mode .sidebar nav a:hover i{
+    color:#fff;
+}
+
+/* Keep active button bright */
+body.dark-mode .sidebar nav a.active {
+    color: #ffffff;
+}
+
+body.dark-mode .sidebar nav a.active i {
+    color: #ffffff;
 }
 
 /* ================= RESPONSIVE ================= */
@@ -1150,4 +1208,22 @@ opacity:1;
 
 transform:translateY(0);
 
+}
+
+body.dark-mode .logout-btn{
+    background:rgba(255,255,255,.08);
+    color:#FDE2E2;
+    border:1px solid rgba(248,113,113,.35);
+}
+
+body.dark-mode .logout-btn:hover{
+    background:rgba(239,68,68,.18);
+}
+
+body.dark-mode .delete-btn{
+    background:linear-gradient(135deg,#EF4444,#DC2626);
+}
+
+body.dark-mode .delete-btn:hover{
+    background:linear-gradient(135deg,#DC2626,#B91C1C);
 }

@@ -16,9 +16,18 @@ const logoutBtn=document.querySelector(".logout-btn");
 
 const deleteBtn=document.querySelector(".delete-btn");
 
-const selects=document.querySelectorAll("select");
+const profileVisibility = document.getElementById("profileVisibility");
 
-const switches=document.querySelectorAll(".switch input");
+const medicineReminder = document.getElementById("medicineReminder");
+const appointmentReminder = document.getElementById("appointmentReminder");
+const emailUpdates = document.getElementById("emailUpdates");
+
+const twoFactorAuth = document.getElementById("twoFactorAuth");
+
+const aiSuggestions = document.getElementById("aiSuggestions");
+const aiMemory = document.getElementById("aiMemory");
+
+const cloudBackup = document.getElementById("cloudBackup");
 
 const themeBtn = document.getElementById("themeBtn");
 const notificationBtn = document.getElementById("notificationBtn");
@@ -113,7 +122,9 @@ function loadSettings() {
     );
 
     // Load theme (same as Profile page)
-    const isDark = localStorage.getItem("theme") === "dark";
+    const isDark =
+        settings?.darkMode ??
+        (localStorage.getItem("theme") === "dark");
 
     document.body.classList.toggle("dark-mode", isDark);
     updateThemeCard(isDark);
@@ -131,59 +142,126 @@ function loadSettings() {
         }
     }
 
-    if (!settings) return;
-
-    selects.forEach((select, index) => {
-        if (settings.selects) {
-            select.value = settings.selects[index];
+        if (!settings) {
+            saveSettings();
+            return;
         }
-    });
 
-    switches.forEach((toggle, index) => {
-        if (settings.switches) {
-            toggle.checked = settings.switches[index];
-        }
-    });
+        medicineReminder.checked = settings.medicineReminder ?? false;
+        appointmentReminder.checked = settings.appointmentReminder ?? false;
+        emailUpdates.checked = settings.emailUpdates ?? false;
 
+        twoFactorAuth.checked = settings.twoFactorAuth ?? false;
+
+        profileVisibility.value = settings.profileVisibility || "Private";
+
+        aiSuggestions.checked = settings.aiSuggestions ?? false;
+        aiMemory.checked = settings.aiMemory ?? false;
+
+        cloudBackup.checked = settings.cloudBackup ?? false;
+
+        updateStatusCards();
 }
 
 /* ==========================================
         SAVE SETTINGS
 ========================================== */
 
-function saveSettings(){
+function saveSettings() {
 
-const data={
+    const data = {
 
-darkMode:darkMode?darkMode.checked:false,
+        darkMode: darkMode.checked,
 
-selects:[],
+        medicineReminder: medicineReminder.checked,
+        appointmentReminder: appointmentReminder.checked,
+        emailUpdates: emailUpdates.checked,
 
-switches:[]
+        twoFactorAuth: twoFactorAuth.checked,
 
-};
+        profileVisibility: profileVisibility.value,
 
-selects.forEach(select=>{
+        aiSuggestions: aiSuggestions.checked,
+        aiMemory: aiMemory.checked,
 
-data.selects.push(select.value);
+        cloudBackup: cloudBackup.checked,
 
-});
+    };
 
-switches.forEach(toggle=>{
+    // Save all settings
+    localStorage.setItem(
+        "healoraSettings",
+        JSON.stringify(data)
+    );
+    updateStatusCards();
 
-data.switches.push(toggle.checked);
+    // Keep global theme in sync across the app
+    localStorage.setItem(
+        "theme",
+        darkMode.checked ? "dark" : "light"
+    );
 
-});
+    showToast("☁️ Settings Synced");
+}
+function updateStatusCards() {
 
-localStorage.setItem(
+    // Theme
+    themeStatus.textContent = darkMode.checked ? "Dark" : "Light";
+    themeSubStatus.textContent = darkMode.checked ? "Enabled" : "Disabled";
 
-"healoraSettings",
-
-JSON.stringify(data)
-
-);
-
-showToast("✅ Settings Saved");
+    // Notifications
+    const notificationCount = [
+        medicineReminder,
+        appointmentReminder,
+        emailUpdates
+    ].filter(item => item.checked).length;
+    
+    const notificationStatus =
+        document.getElementById("notificationStatus");
+    
+    const notificationSubStatus =
+        document.getElementById("notificationSubStatus");
+    
+    notificationStatus.textContent =
+        notificationCount ? "ON" : "OFF";
+    
+    notificationSubStatus.textContent =
+        `${notificationCount}/3 Enabled`;
+    
+    // Change color
+    if (notificationCount === 0) {
+        notificationSubStatus.style.color = "#EF4444";   // Red
+    } else {
+        notificationSubStatus.style.color = "#10B981";   // Green
+    }
+    // Backup
+    const backupStatus = document.getElementById("backupStatus");
+    const backupSubStatus = document.getElementById("backupSubStatus");
+    
+    backupStatus.textContent =
+        cloudBackup.checked ? "ON" : "OFF";
+    
+    if (cloudBackup.checked) {
+        backupSubStatus.textContent = "Synced";
+        backupSubStatus.style.color = "#10B981";
+    } else {
+        backupSubStatus.textContent = "Not Synced";
+        backupSubStatus.style.color = "#EF4444";
+    }
+    // AI
+    const aiCount = [
+        aiSuggestions,
+        aiMemory
+    ].filter(item => item.checked).length;
+    
+    const aiStatus = document.getElementById("aiModeStatus");
+    const aiSubStatus = document.getElementById("aiModeSubStatus");
+    
+    aiStatus.textContent = aiCount ? "Smart" : "OFF";
+    aiSubStatus.textContent = `${aiCount}/2 Enabled`;
+    
+    aiSubStatus.style.color =
+        aiCount === 0 ? "#EF4444" : "#10B981";
 
 }
 
@@ -249,18 +327,21 @@ saveBtn.addEventListener("click",saveSettings);
         AUTO SAVE ON CHANGE
 ========================================== */
 
-switches.forEach(toggle=>{
+[
+    medicineReminder,
+    appointmentReminder,
+    emailUpdates,
+    twoFactorAuth,
+    aiSuggestions,
+    aiMemory,
+    cloudBackup,
+].forEach(control => {
 
-toggle.addEventListener("change",saveSettings);
+    control.addEventListener("change", saveSettings);
 
 });
 
-selects.forEach(select=>{
-
-select.addEventListener("change",saveSettings);
-
-});
-
+profileVisibility.addEventListener("change", saveSettings);
 /* ==========================================
         EXPORT DATA
 ========================================== */

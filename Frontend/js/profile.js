@@ -412,27 +412,41 @@ if (notificationBtn) {
 }
 
 // Load saved theme
-if (localStorage.getItem("theme") === "dark") {
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark-mode");
     document.body.classList.add("dark-mode");
+
     themeBtn?.querySelector("i")?.classList.replace("fa-moon", "fa-sun");
 }
 
 if (themeBtn) {
+
     themeBtn.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
+
+        const isDark =
+            !document.documentElement.classList.contains("dark-mode");
+
+        document.documentElement.classList.toggle("dark-mode", isDark);
+        document.body.classList.toggle("dark-mode", isDark);
+
+        localStorage.setItem(
+            "theme",
+            isDark ? "dark" : "light"
+        );
 
         const icon = themeBtn.querySelector("i");
 
-        if (document.body.classList.contains("dark-mode")) {
-            localStorage.setItem("theme", "dark");
+        if (isDark) {
             icon.classList.replace("fa-moon", "fa-sun");
         } else {
-            localStorage.setItem("theme", "light");
             icon.classList.replace("fa-sun", "fa-moon");
         }
-    });
-}
 
+    });
+
+}
 // ================= PROFILE IMAGE =================
 
 if (cameraBtn && profileUpload) {

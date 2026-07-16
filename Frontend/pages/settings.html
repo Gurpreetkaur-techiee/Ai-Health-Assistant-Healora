@@ -102,7 +102,7 @@ href="../css/settings.css">
 
 </nav>
 
-<div class="logout">
+<div class="logout logout-btn">
 
 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -196,33 +196,21 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 </div>
 
 <div class="stat-card">
-
-<h3>Notifications</h3>
-
-<h2>ON</h2>
-
-<p>Healthy</p>
-
+    <h3>Notifications</h3>
+    <h2 id="notificationStatus">--</h2>
+    <p id="notificationSubStatus">Loading...</p>
 </div>
 
 <div class="stat-card">
-
-<h3>Language</h3>
-
-<h2>English</h2>
-
-<p>Default</p>
-
+    <h3>Backup</h3>
+    <h2 id="backupStatus">--</h2>
+    <p id="backupSubStatus">Loading...</p>
 </div>
 
 <div class="stat-card">
-
-<h3>AI Mode</h3>
-
-<h2>Smart</h2>
-
-<p>Active</p>
-
+    <h3>AI Mode</h3>
+    <h2 id="aiModeStatus">--</h2>
+    <p id="aiModeSubStatus">Loading...</p>
 </div>
 
 </section>
@@ -260,30 +248,6 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 </div>
 
-<div class="setting-item">
-
-<div>
-
-<h4>Accent Color</h4>
-
-<p>Choose your favorite color theme.</p>
-
-</div>
-
-<select>
-
-<option selected>Ocean Blue</option>
-
-<option>Emerald Green</option>
-
-<option>Purple</option>
-
-<option>Rose Pink</option>
-
-</select>
-
-</div>
-
 </div>
 
 <!-- ================= NOTIFICATIONS ================= -->
@@ -308,7 +272,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 <label class="switch">
 
-<input type="checkbox" checked>
+<input type="checkbox" id="medicineReminder">
 
 <span class="slider"></span>
 
@@ -328,7 +292,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 <label class="switch">
 
-<input type="checkbox" checked>
+<input type="checkbox" id="appointmentReminder">
 
 <span class="slider"></span>
 
@@ -348,7 +312,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 <label class="switch">
 
-<input type="checkbox">
+<input type="checkbox" id="emailUpdates">
 
 <span class="slider"></span>
 
@@ -380,7 +344,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 <label class="switch">
 
-<input type="checkbox">
+<input type="checkbox" id="twoFactorAuth">
 
 <span class="slider"></span>
 
@@ -398,7 +362,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 </div>
 
-<select>
+<select id="profileVisibility">
 
 <option selected>Private</option>
 
@@ -434,7 +398,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 <label class="switch">
 
-<input type="checkbox" checked>
+<input type="checkbox" id="aiSuggestions">
 
 <span class="slider"></span>
 
@@ -454,7 +418,7 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 
 <label class="switch">
 
-<input type="checkbox" checked>
+<input type="checkbox" id="aiMemory">
 
 <span class="slider"></span>
 
@@ -465,131 +429,41 @@ Manage appearance, privacy, notifications, AI preferences, account security and 
 </div>
 
 </section>
-<!-- ================= LANGUAGE ================= -->
-
-<section class="settings-grid">
-
-<div class="settings-card">
-
-<h2>
-
-🌐 Language & Region
-
-</h2>
-
-<div class="setting-item">
-
-<div>
-
-<h4>Language</h4>
-
-<p>Select your preferred language.</p>
-
-</div>
-
-<select>
-
-<option selected>English</option>
-
-<option>Hindi</option>
-
-<option>Punjabi</option>
-
-<option>Spanish</option>
-
-</select>
-
-</div>
-
-<div class="setting-item">
-
-<div>
-
-<h4>Time Zone</h4>
-
-<p>Used for reminders and appointments.</p>
-
-</div>
-
-<select>
-
-<option selected>(GMT +5:30) India</option>
-
-<option>(GMT +0:00) London</option>
-
-<option>(GMT -5:00) New York</option>
-
-<option>(GMT +9:00) Tokyo</option>
-
-</select>
-
-</div>
-
-</div>
 
 <!-- ================= BACKUP ================= -->
 
-<div class="settings-card">
+<section class="settings-grid">
 
-<h2>
+    <div class="settings-card">
 
-☁️ Backup & Sync
+        <h2>
+            ☁️ Cloud Backup
+        </h2>
 
-</h2>
+        <div class="setting-item">
 
-<div class="setting-item">
+            <div>
+                <h4>Cloud Backup</h4>
+                <p>Automatically backup your health records.</p>
+            </div>
 
-<div>
+            <label class="switch">
+                <input type="checkbox" id="cloudBackup">
+                <span class="slider"></span>
+            </label>
 
-<h4>Cloud Backup</h4>
+        </div>
 
-<p>Automatically backup your health records.</p>
+        <div class="setting-item">
 
-</div>
+            <button class="secondary-btn">
+                <i class="fa-solid fa-download"></i>
+                Export Health Data
+            </button>
 
-<label class="switch">
+        </div>
 
-<input type="checkbox" checked>
-
-<span class="slider"></span>
-
-</label>
-
-</div>
-
-<div class="setting-item">
-
-<div>
-
-<h4>Sync Across Devices</h4>
-
-<p>Access Healora from multiple devices.</p>
-
-</div>
-
-<label class="switch">
-
-<input type="checkbox" checked>
-
-<span class="slider"></span>
-
-</label>
-
-</div>
-
-<div class="setting-item">
-
-<button class="secondary-btn">
-
-<i class="fa-solid fa-download"></i>
-
-Export Health Data
-
-</button>
-
-</div>
-
-</div>
+    </div>
 
 </section>
 
@@ -634,15 +508,10 @@ Delete Account
 <!-- ================= SAVE SETTINGS ================= -->
 
 <section class="save-section">
-
-<button class="save-settings">
-
-<i class="fa-solid fa-floppy-disk"></i>
-
-Save Settings
-
-</button>
-
+    <button class="save-settings">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        Sync Settings
+    </button>
 </section>
 
 <footer class="settings-footer">
