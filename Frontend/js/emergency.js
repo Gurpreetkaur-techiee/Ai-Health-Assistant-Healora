@@ -8,10 +8,82 @@ if (!token) {
 }
 document.addEventListener("DOMContentLoaded",()=>{
 
-const sosBtn=document.querySelector(".sos-btn");
-const moonBtn=document.querySelector(".fa-moon");
-const quickButtons=document.querySelectorAll(".quick-card button");
-const hospitalButtons=document.querySelectorAll(".hospital-btn");
+const sosBtn = document.querySelector(".sos-btn");
+
+const themeBtn = document.getElementById("themeBtn");
+
+const profileBtn = document.getElementById("profileBtn");
+
+const notificationBtn = document.getElementById("notificationBtn");
+const notificationPopup = document.getElementById("notificationPopup");
+const notificationList = document.getElementById("notificationList");
+
+const quickButtons = document.querySelectorAll(".quick-card button");
+
+const hospitalButtons = document.querySelectorAll(".hospital-btn");
+
+/* ==========================
+        PROFILE
+========================== */
+
+const storedUser = JSON.parse(localStorage.getItem("user"));
+if (profileBtn) {
+
+    profileBtn.innerHTML = "";
+
+    const avatar = document.createElement("div");
+    avatar.className = "profile-avatar";
+
+    const initials = storedUser?.name
+        ? storedUser.name.substring(0, 2).toUpperCase()
+        : "U";
+
+    avatar.textContent = initials;
+
+    profileBtn.appendChild(avatar);
+
+    profileBtn.addEventListener("click", () => {
+        window.location.href = "profile.html";
+    });
+
+}
+
+/* ==========================
+      NOTIFICATIONS
+========================== */
+
+if(notificationBtn){
+
+    notificationBtn.addEventListener("click",()=>{
+
+    notificationList.innerHTML = `
+        <p>🚑 Emergency services are available.</p>
+        <p>📍 Share your location for nearby hospitals.</p>
+        <p>☎ SOS will call 108 immediately.</p>
+    `;
+
+    notificationPopup.classList.toggle("show");
+
+});
+
+}
+
+document.addEventListener("click",(e)=>{
+
+    if(
+        !notificationPopup.contains(e.target) &&
+        !notificationBtn.contains(e.target)
+    ){
+
+        notificationPopup.classList.remove("show");
+
+    }
+
+});
+
+
+
+
 
 /* ==========================
         SOS BUTTON
@@ -97,15 +169,17 @@ navigator.geolocation.getCurrentPosition(
 
 (position)=>{
 
-const lat=position.coords.latitude.toFixed(5);
+const lat = position.coords.latitude;
+const lng = position.coords.longitude;
 
-const lng=position.coords.longitude.toFixed(5);
+// Save location
+localStorage.setItem("userLatitude", lat);
+localStorage.setItem("userLongitude", lng);
 
-showToast("📍 Location shared!");
+showToast("📍 Live location captured!");
 
-console.log("Latitude:",lat);
-
-console.log("Longitude:",lng);
+console.log("Latitude:", lat);
+console.log("Longitude:", lng);
 
 },
 
@@ -149,29 +223,34 @@ window.open(
         DARK MODE
 ========================== */
 
-if(localStorage.getItem("emergencyDark")==="true"){
+const savedTheme = localStorage.getItem("theme");
 
-document.body.classList.add("dark");
+if (savedTheme === "dark") {
+
+    document.body.classList.add("dark");
+
+    themeBtn.innerHTML = `<i class="fa-solid fa-sun"></i>`;
 
 }
 
-if(moonBtn){
+themeBtn.addEventListener("click", () => {
 
-moonBtn.parentElement.addEventListener("click",()=>{
+    document.body.classList.toggle("dark");
 
-document.body.classList.toggle("dark");
+    if (document.body.classList.contains("dark")) {
 
-localStorage.setItem(
+        localStorage.setItem("theme", "dark");
 
-"emergencyDark",
+        themeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+    } else {
 
-document.body.classList.contains("dark")
+        localStorage.setItem("theme", "light");
 
-);
+        themeBtn.innerHTML = `<i class="fa-solid fa-moon"></i>`;
+
+    }
 
 });
-
-}
 
 /* ==========================
         TOAST

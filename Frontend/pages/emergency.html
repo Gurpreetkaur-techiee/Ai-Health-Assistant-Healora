@@ -121,7 +121,7 @@ href="../css/emergency.css">
 
 </nav>
 
-<div class="logout">
+<div class="logout" id="logoutBtn">
 
 <i class="fa-solid fa-right-from-bracket"></i>
 
@@ -151,17 +151,15 @@ Quick access to emergency services, hospitals and important medical information.
 
 <div class="top-actions">
 
-<button class="icon-btn">
+    <button class="icon-btn" id="notificationBtn">
+        <i class="fa-solid fa-bell"></i>
+    </button>
 
-<i class="fa-solid fa-moon"></i>
+    <button class="icon-btn" id="themeBtn">
+        <i class="fa-solid fa-moon"></i>
+    </button>
 
-</button>
-
-<div class="profile-small">
-
-<img src="../assets/avatars/default-avatar.png" alt="Profile">
-
-</div>
+    <div id="profileBtn" class="profile-small"></div>
 
 </div>
 
@@ -411,6 +409,18 @@ Immobilize the injured area and avoid moving the person unnecessarily.
 <script src="../js/emergency.js"></script>
 
 </main>
+
+</div>
+
+<div id="notificationPopup" class="notification-popup">
+
+    <h3>🔔 Notifications</h3>
+
+    <div id="notificationList">
+
+        <p>No notifications yet.</p>
+
+    </div>
 
 </div>
 
