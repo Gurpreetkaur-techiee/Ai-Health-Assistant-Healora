@@ -1624,3 +1624,121 @@ font-size:32px;
     transform:scale(1.08);
 
 }
+
+/* ===========================================
+   DARK MODE
+=========================================== */
+
+body.dark{
+
+background:#0F1B22;
+
+color:#E2F4F3;
+
+}
+
+body.dark .sidebar,
+body.dark .glass-card,
+body.dark .stat-card,
+body.dark .health-score,
+body.dark .icon-btn,
+body.dark .notification-dropdown{
+
+background:rgba(20,35,42,.75);
+
+border-color:rgba(255,255,255,.08);
+
+color:#E2F4F3;
+
+}
+
+body.dark .medicine-item,
+body.dark .activity,
+body.dark .ai-input input,
+body.dark .notification-item{
+
+background:rgba(255,255,255,.06);
+
+color:#E2F4F3;
+
+}
+
+body.dark .sidebar nav a{
+
+color:#B7D3D0;
+
+}
+
+body.dark .sidebar nav a:hover{
+
+background:rgba(255,255,255,.08);
+
+}
+
+/* ===========================================
+   NOTIFICATION DROPDOWN
+=========================================== */
+
+.notification-wrapper{
+
+position:relative;
+
+}
+
+.notification-dropdown{
+
+position:absolute;
+
+top:65px;
+
+right:0;
+
+width:280px;
+
+background:rgba(255,255,255,.95);
+
+backdrop-filter:blur(20px);
+
+border-radius:18px;
+
+box-shadow:var(--shadow);
+
+padding:18px;
+
+display:none;
+
+z-index:10;
+
+}
+
+.notification-dropdown.show{
+
+display:block;
+
+}
+
+.notification-dropdown h4{
+
+color:var(--primary);
+
+margin-bottom:12px;
+
+}
+
+.notification-item{
+
+padding:12px;
+
+border-radius:12px;
+
+margin-bottom:10px;
+
+font-size:14px;
+
+}
+
+.notification-item:last-child{
+
+margin-bottom:0;
+
+}

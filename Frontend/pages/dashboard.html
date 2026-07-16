@@ -127,11 +127,29 @@ Your AI Healthcare Companion
 
 <div class="top-actions">
 
+<div class="notification-wrapper">
+
 <button class="icon-btn" id="notificationBtn">
 
 <i class="fa-solid fa-bell"></i>
 
 </button>
+
+<div class="notification-dropdown" id="notificationDropdown">
+
+<h4>Notifications</h4>
+
+<div class="notification-item">
+    💊 Calcium Tablet due at 2:00 PM
+</div>
+
+<div class="notification-item">
+    📅 Appointment with Dr. Sharma tomorrow
+</div>
+
+</div>
+
+</div>
 
 <button class="icon-btn" id="themeToggleBtn">
 
@@ -464,35 +482,16 @@ placeholder="How are you feeling today?">
 
 </div>
 
-<h3>
 
-Dr. Sharma
+<h3 id="app-doctor-name">Dr. Sharma</h3>
 
-</h3>
+<p id="app-doctor-specialty">Cardiologist</p>
 
-<p>
+<div class="appointment-date" id="app-date">18 July 2026</div>
 
-Cardiologist
+<div class="appointment-time" id="app-time">11:30 AM</div>
 
-</p>
-
-<div class="appointment-date">
-
-18 July 2026
-
-</div>
-
-<div class="appointment-time">
-
-11:30 AM
-
-</div>
-
-<button class="primary-btn">
-
-View Details
-
-</button>
+<button class="primary-btn" id="view-details-btn" data-id="">View Details</button>
 
 </div>
 
