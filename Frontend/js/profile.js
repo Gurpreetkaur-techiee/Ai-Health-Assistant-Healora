@@ -161,6 +161,29 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (user.phoneNumber) {
                 phoneNumber.value = user.phoneNumber;
             }
+
+            // ================= AI Badge =================
+
+            const settings = JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+            const aiBadge = document.getElementById("aiBadge");
+
+            if (aiBadge) {
+            
+                const aiEnabled = settings.aiSuggestions || settings.aiMemory;
+            
+                if (aiEnabled) {
+                    aiBadge.textContent = "🤖 AI Enabled";
+                    aiBadge.style.background = "#D1FAE5";
+                    aiBadge.style.color = "#065F46";
+                } else {
+                    aiBadge.textContent = "🤖 AI Disabled";
+                    aiBadge.style.background = "#FEE2E2";
+                    aiBadge.style.color = "#991B1B";
+                }
+            
+            }
+
             }
 
         catch (err) {

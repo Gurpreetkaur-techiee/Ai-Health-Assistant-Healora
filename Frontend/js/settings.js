@@ -12,17 +12,13 @@ const darkMode=document.getElementById("darkMode");
 
 const saveBtn=document.querySelector(".save-settings");
 
-const logoutBtn=document.querySelector(".logout-btn");
+const logoutBtns = document.querySelectorAll(".logout-btn");
 
 const deleteBtn=document.querySelector(".delete-btn");
-
-const profileVisibility = document.getElementById("profileVisibility");
 
 const medicineReminder = document.getElementById("medicineReminder");
 const appointmentReminder = document.getElementById("appointmentReminder");
 const emailUpdates = document.getElementById("emailUpdates");
-
-const twoFactorAuth = document.getElementById("twoFactorAuth");
 
 const aiSuggestions = document.getElementById("aiSuggestions");
 const aiMemory = document.getElementById("aiMemory");
@@ -151,10 +147,6 @@ function loadSettings() {
         appointmentReminder.checked = settings.appointmentReminder ?? false;
         emailUpdates.checked = settings.emailUpdates ?? false;
 
-        twoFactorAuth.checked = settings.twoFactorAuth ?? false;
-
-        profileVisibility.value = settings.profileVisibility || "Private";
-
         aiSuggestions.checked = settings.aiSuggestions ?? false;
         aiMemory.checked = settings.aiMemory ?? false;
 
@@ -176,10 +168,6 @@ function saveSettings() {
         medicineReminder: medicineReminder.checked,
         appointmentReminder: appointmentReminder.checked,
         emailUpdates: emailUpdates.checked,
-
-        twoFactorAuth: twoFactorAuth.checked,
-
-        profileVisibility: profileVisibility.value,
 
         aiSuggestions: aiSuggestions.checked,
         aiMemory: aiMemory.checked,
@@ -331,7 +319,6 @@ saveBtn.addEventListener("click",saveSettings);
     medicineReminder,
     appointmentReminder,
     emailUpdates,
-    twoFactorAuth,
     aiSuggestions,
     aiMemory,
     cloudBackup,
@@ -341,7 +328,6 @@ saveBtn.addEventListener("click",saveSettings);
 
 });
 
-profileVisibility.addEventListener("change", saveSettings);
 /* ==========================================
         EXPORT DATA
 ========================================== */
@@ -391,31 +377,30 @@ showToast("📁 Backup exported successfully");
         LOGOUT
 ========================================== */
 
-if(logoutBtn){
+logoutBtns.forEach(btn => {
 
-logoutBtn.addEventListener("click",()=>{
+    btn.addEventListener("click", () => {
 
-const confirmLogout=confirm(
+        const confirmLogout = confirm(
+            "Are you sure you want to logout?"
+        );
 
-"Are you sure you want to logout?"
+        if (confirmLogout) {
 
-);
+            showToast("👋 Logging out...");
 
-if(confirmLogout){
+            setTimeout(() => {
 
-showToast("👋 Logging out...");
+                localStorage.removeItem("token");
+                window.location.href = "login.html";
 
-setTimeout(()=>{
+            }, 1200);
 
-window.location.href="login.html";
+        }
 
-},1200);
-
-}
+    });
 
 });
-
-}
 
 /* ==========================================
         DELETE ACCOUNT
