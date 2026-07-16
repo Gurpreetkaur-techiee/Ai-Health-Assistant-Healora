@@ -1630,3 +1630,27 @@ color:#64748B;
     border:1px solid #FECACA;
 
 }
+
+.password-strength {
+    display: block !important;
+    margin: 20px 0 !important;
+    border: 2px solid red;
+}
+
+.strength-bar {
+    display: block !important;
+    height: 12px !important;
+    background: #ddd !important;
+}
+
+.strength-fill {
+    display: block !important;
+}
+
+.password-strength.active{
+
+    opacity:1;
+    max-height:120px;
+    margin-top:12px;
+
+}
