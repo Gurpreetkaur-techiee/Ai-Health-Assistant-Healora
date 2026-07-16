@@ -63,9 +63,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             }
 
-            if (password.length < 6) {
+            const passwordRegex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/;
 
-                showMessage("Password must be at least 6 characters.", "error");
+            if (!passwordRegex.test(password)) {
+
+                showMessage(
+                    "Password must be at least 8 characters and include uppercase, lowercase, number and special character.",
+                    "error"
+                );
+
                 return;
 
             }
@@ -296,6 +303,29 @@ document.addEventListener("visibilitychange", () => {
 });
 
 
+function updateRule(element, valid){
+
+    if(valid){
+
+        element.innerHTML =
+        "✅ " + element.textContent.substring(2);
+
+        element.classList.add("valid");
+
+    }
+
+    else{
+
+        element.innerHTML =
+        "❌ " + element.textContent.substring(2);
+
+        element.classList.remove("valid");
+
+    }
+
+}
+
+
 console.log("%c❤️ Healora Authentication Loaded",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
 /* ==========================================
@@ -311,6 +341,63 @@ if (signupForm) {
 
     const signupPassword =
         document.getElementById("signupPassword");
+
+    const passwordFeedback =
+        document.querySelector(".password-feedback");
+
+    signupPassword.addEventListener("focus", () => {
+
+        passwordFeedback.classList.add("active");
+
+    });
+
+    signupPassword.addEventListener("blur", () => {
+
+    setTimeout(() => {
+
+        const password = signupPassword.value;
+
+        let score = 0;
+
+        if(password.length >= 8) score++;
+        if(/[A-Z]/.test(password)) score++;
+        if(/[a-z]/.test(password)) score++;
+        if(/[0-9]/.test(password)) score++;
+        if(/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+
+        if(score < 5){
+
+            passwordFeedback.classList.remove("active");
+
+        }
+
+    },150);
+
+});
+
+
+
+    const strengthFill =
+        document.getElementById("strengthFill");
+
+    const strengthText =
+        document.getElementById("strengthText");
+
+    const ruleLength = document.getElementById("ruleLength");
+
+    const ruleUpper = document.getElementById("ruleUpper");
+
+    const ruleLower = document.getElementById("ruleLower");
+
+    const ruleNumber = document.getElementById("ruleNumber");
+
+    const ruleSpecial = document.getElementById("ruleSpecial");
+
+    const confirmPassword =
+        document.getElementById("confirmPassword");
+
+    const confirmMessage =
+        document.getElementById("confirmMessage");
 
     if (toggleSignupPassword && signupPassword) {
 
@@ -332,8 +419,152 @@ if (signupForm) {
 
     }
 
+    if (signupPassword && strengthFill && strengthText) {
+
+    signupPassword.addEventListener("input", () => {
+
+    const password = signupPassword.value;
+
+    updateRule(
+    ruleLength,
+    password.length >= 8
+);
+
+updateRule(
+    ruleUpper,
+    /[A-Z]/.test(password)
+);
+
+updateRule(
+    ruleLower,
+    /[a-z]/.test(password)
+);
+
+updateRule(
+    ruleNumber,
+    /[0-9]/.test(password)
+);
+
+updateRule(
+    ruleSpecial,
+    /[!@#$%^&*(),.?":{}|<>]/.test(password)
+);
+
+    let score = 0;
+
+    if(password.length >= 8) score++;
+
+    if(/[A-Z]/.test(password)) score++;
+
+    if(/[a-z]/.test(password)) score++;
+
+    if(/[0-9]/.test(password)) score++;
+
+    if(/[!@#$%^&*(),.?":{}|<>]/.test(password)) score++;
+
+    if(score <= 2){
+
+        strengthFill.style.width = "30%";
+        strengthFill.style.background = "#EF4444";
+        strengthText.innerHTML =
+        "<span style='color:#EF4444'>Weak</span>";
+
+    }
+
+    else if(score <= 4){
+
+        strengthFill.style.width = "70%";
+        strengthFill.style.background = "#F59E0B";
+        strengthText.innerHTML =
+        "<span style='color:#F59E0B'>Medium</span>";
+
+    }
+
+    else{
+
+        strengthFill.style.width = "100%";
+        strengthFill.style.background = "#10B981";
+        strengthText.innerHTML =
+        "<span style='color:#10B981'>Strong</span>";
+
+    }
+
+
+    if(score === 5){
+
+    passwordFeedback.classList.add("completed");
+
+    }else{
+
+    passwordFeedback.classList.remove("completed");
+    passwordFeedback.classList.add("active");
+
+}
+
+    if(confirmPassword.value.length > 0){
+
+    if(confirmPassword.value === signupPassword.value){
+
+        confirmMessage.textContent = "✅ Passwords match";
+
+        confirmMessage.className = "confirm-message success";
+
+    }
+
+    else{
+
+        confirmMessage.textContent = "❌ Passwords do not match";
+
+        confirmMessage.className = "confirm-message error";
+
+    }
+
+}
+
+});
+
+    confirmPassword.addEventListener("input", () => {
+
+    if(confirmPassword.value.length === 0){
+
+        confirmMessage.textContent = "";
+
+        confirmMessage.className = "confirm-message";
+
+        return;
+
+    }
+
+    if(confirmPassword.value === signupPassword.value){
+
+        confirmMessage.textContent = "✅ Passwords match";
+
+        confirmMessage.className = "confirm-message success";
+
+    }
+
+    else{
+
+        confirmMessage.textContent = "❌ Passwords do not match";
+
+        confirmMessage.className = "confirm-message error";
+
+    }
+
+});
+    }
+
     signupForm.addEventListener("submit", async function (e) {
 
+    if(signupPassword.value !== confirmPassword.value){
+
+        e.preventDefault();
+
+        showToast("Passwords do not match.", "error");
+
+        return;
+
+    }
         e.preventDefault();
 
         const name =

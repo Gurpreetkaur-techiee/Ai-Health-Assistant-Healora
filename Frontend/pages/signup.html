@@ -120,145 +120,178 @@ Join Healora and manage your health smarter.
 
 <form id="signupForm">
 
-<div class="input-group">
+    <div class="input-group">
 
-<label>Full Name</label>
+        <label>Full Name</label>
 
-<div class="input-box">
+        <div class="input-box">
 
-<span>👤</span>
+            <span>👤</span>
 
-<input
-type="text"
-id="signupName"
-placeholder="Enter your full name"
-required>
+            <input
+                type="text"
+                id="signupName"
+                placeholder="Enter your full name"
+                required>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
-<div class="input-group">
+    <div class="input-group">
 
-<label>Email Address</label>
+        <label>Email Address</label>
 
-<div class="input-box">
+        <div class="input-box">
 
-<span>📧</span>
+            <span>📧</span>
 
-<input
-type="email"
-id="signupEmail"
-placeholder="Enter your email"
-required>
+            <input
+                type="email"
+                id="signupEmail"
+                placeholder="Enter your email"
+                required>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
-<div class="input-group">
+    <div class="input-group">
 
-<label>Password</label>
+        <label>Password</label>
 
-<div class="input-box">
+        <div class="input-box">
 
-<span>🔒</span>
+            <span>🔒</span>
 
-<input
-type="password"
-id="signupPassword"
-placeholder="Create password"
-required>
+            <input
+                type="password"
+                id="signupPassword"
+                placeholder="Create password"
+                required>
 
-<button
-type="button"
-class="show-password"
-id="toggleSignupPassword">
+            <button
+                type="button"
+                class="show-password"
+                id="toggleSignupPassword">
 
-👁
+                👁
 
-</button>
+            </button>
 
-</div>
+        </div>
 
-</div>
+<div class="password-feedback">
 
-<div class="input-group">
+    <div class="password-strength">
 
-<label>Confirm Password</label>
+        <div class="strength-bar">
+            <div id="strengthFill"></div>
+        </div>
 
-<div class="input-box">
+        <p id="strengthText"></p>
 
-<span>🔐</span>
+    </div>
 
-<input
-type="password"
-id="confirmPassword"
-placeholder="Confirm password"
-required>
+    <div class="password-rules" id="passwordRules">
 
-</div>
+        <p id="ruleLength">○ Minimum 8 characters</p>
 
-</div>
+        <p id="ruleUpper">○ One uppercase letter</p>
 
-<div class="input-group">
+        <p id="ruleLower">○ One lowercase letter</p>
 
-<label class="remember">
+        <p id="ruleNumber">○ One number</p>
 
-<input type="checkbox" required>
+        <p id="ruleSpecial">○ One special character</p>
 
-<span>
-
-I agree to the Terms & Privacy Policy
-
-</span>
-
-</label>
+    </div>
 
 </div>
 
-<button
-type="submit"
-class="auth-btn">
 
-<span>
 
-Create Account
+    </div>
 
-</span>
+    <div class="input-group">
 
-</button>
+        <label>Confirm Password</label>
 
-<div class="divider">
+        <div class="input-box">
 
-<span>OR</span>
+            <span>🔐</span>
 
-</div>
+            <input
+                type="password"
+                id="confirmPassword"
+                placeholder="Confirm password"
+                required>
 
-<button
-type="button"
-class="google-btn">
+        </div>
 
-<span>🌐</span>
+        <p id="confirmMessage" class="confirm-message"></p>
 
-Continue with Google
+    </div>
 
-</button>
+    <div class="input-group">
 
-<p class="switch-page">
+        <label class="remember">
 
-Already have an account?
+            <input type="checkbox" required>
 
-<a href="login.html">
+            <span>
 
-Login
+                I agree to the Terms & Privacy Policy
 
-</a>
+            </span>
 
-</p>
+        </label>
+
+    </div>
+
+    <div id="signupError" class="form-message"></div>
+
+    <button
+        type="submit"
+        class="auth-btn">
+
+        <span>
+
+            Create Account
+
+        </span>
+
+    </button>
+
+    <div class="divider">
+
+        <span>OR</span>
+
+    </div>
+
+    <button
+        type="button"
+        class="google-btn">
+
+        <span>🌐</span>
+
+        Continue with Google
+
+    </button>
+
+    <p class="switch-page">
+
+        Already have an account?
+
+        <a href="login.html">
+
+            Login
+
+        </a>
+
+    </p>
 
 </form>
-
 </section>
 
 </main>
