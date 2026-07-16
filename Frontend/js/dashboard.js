@@ -11,8 +11,10 @@ if (!token) {
 
 }
 
+let storedUser = JSON.parse(localStorage.getItem("user"));
+
 document.addEventListener("DOMContentLoaded", () => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+ storedUser = JSON.parse(localStorage.getItem("user"));
 
 
     /* ======================================
@@ -384,11 +386,36 @@ document.querySelectorAll(".glass").forEach((glass, index) => {
             }
 
         });
+        const waterText = document.querySelector(".water-card p");
+
+        if (waterText) {
+
+            waterText.textContent = `${index + 1} / 8 Glasses`;
+
+        }
 
     });
 
 });
 
+/* ==========================================
+   MEDICINE CHECKMARK TOGGLE
+========================================== */
+
+document.querySelectorAll(".medicine-item .status").forEach((status) => {
+
+    status.addEventListener("click", () => {
+
+        status.classList.toggle("done");
+        status.classList.toggle("pending");
+
+        status.innerHTML = status.classList.contains("done")
+            ? '<i class="fa-solid fa-check"></i>'
+            : "";
+
+    });
+
+});
 
 /* ==========================================
    QUICK ACTION BUTTONS
