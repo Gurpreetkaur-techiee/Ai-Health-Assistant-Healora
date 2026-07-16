@@ -11,8 +11,10 @@ if (!token) {
 
 }
 
+let storedUser = JSON.parse(localStorage.getItem("user"));
+
 document.addEventListener("DOMContentLoaded", () => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+ storedUser = JSON.parse(localStorage.getItem("user"));
 
 
     /* ======================================
@@ -98,15 +100,53 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 }
 
-                const healthStatus =
-                    document.querySelector(".health-score p");
+                const healthStatus = document.querySelector(".health-score p");
 
-                if (healthStatus && summary.healthStatus) {
+    if (healthStatus && summary.healthStatus) {
+        healthStatus.textContent = summary.healthStatus;
+    }
 
-                    healthStatus.textContent =
-                        summary.healthStatus;
-
-                }
+    // === FETCH UPCOMING APPOINTMENT ===
+    try {
+      const appResponse = await fetch(`${API_BASE_URL}/appointments?upcoming=true`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      
+      if (appResponse.ok) {
+        const appResult = await appResponse.json();
+        const appointments = appResult.data.appointments;
+        
+        if (appointments && appointments.length > 0) {
+          const nextApp = appointments[0];
+          
+          // Update HTML with actual backend details
+          document.getElementById('app-doctor-name').textContent = nextApp.doctorName || 'N/A';
+          document.getElementById('app-doctor-specialty').textContent = nextApp.specialization || 'General';
+          
+          // Format date and time
+          if (nextApp.date) {
+            document.getElementById('app-date').textContent = new Date(nextApp.date).toLocaleDateString();
+          }
+          if (nextApp.time) {
+            document.getElementById('app-time').textContent = nextApp.time;
+          }
+          
+          // Store MongoDB ID on the button
+          const viewDetailsBtn = document.getElementById('view-details-btn');
+          if (viewDetailsBtn) {
+            viewDetailsBtn.setAttribute('data-id', nextApp._id);
+          }
+        } else {
+          // Fallback if there are no upcoming appointments in DB
+          document.getElementById('app-doctor-name').textContent = 'No Upcoming Appointments';
+          document.getElementById('app-doctor-specialty').textContent = '';
+          document.getElementById('app-date').textContent = '-';
+          document.getElementById('app-time').textContent = '-';
+        }
+      }
+    } catch (appErr) {
+      console.error("Error fetching upcoming appointment:", appErr);
+    }
 
             } catch (err) {
 
@@ -116,6 +156,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
     loadDashboard();
+
+  // === HANDLE VIEW DETAILS CLICK ===
+  const viewDetailsBtn = document.getElementById('view-details-btn');
+  if (viewDetailsBtn) {
+    viewDetailsBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      
+      const appointmentId = viewDetailsBtn.getAttribute('data-id');
+      if (!appointmentId) {
+        alert("No appointment details found to display.");
+        return;
+      }
+      
+      try {
+        const res = await fetch(`${API_BASE_URL}/appointments/${appointmentId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (res.ok) {
+          const result = await res.json();
+          const appointment = result.data.appointment;
+          
+          // Display the backend appointment details cleanly in a popup
+          alert(`
+🩺 Appointment Details
+-------------------------
+Doctor: ${appointment.doctorName}
+Specialty: ${appointment.specialization}
+Date: ${new Date(appointment.date).toLocaleDateString()}
+Time: ${appointment.time}
+Status: ${appointment.status || 'Scheduled'}
+Notes: ${appointment.notes || 'No custom notes.'}
+          `);
+        } else {
+          alert("Failed to retrieve appointment details from server.");
+        }
+      } catch (error) {
+        console.error("Error loading appointment details:", error);
+        alert("Could not connect to server. Please try again.");
+      }
+    });
+  }
 
     }
 
@@ -154,14 +236,25 @@ document.addEventListener("DOMContentLoaded", () => {
        DARK MODE
     ====================================== */
 
-    const darkButton =
+   const darkButton =
         document.querySelector(".fa-moon");
+
+    if (localStorage.getItem("theme") === "dark") {
+
+        document.body.classList.add("dark");
+
+    }
 
     if (darkButton) {
 
         darkButton.parentElement.addEventListener("click", () => {
 
             document.body.classList.toggle("dark");
+
+            localStorage.setItem(
+                "theme",
+                document.body.classList.contains("dark") ? "dark" : "light"
+            );
 
         });
 
@@ -293,11 +386,36 @@ document.querySelectorAll(".glass").forEach((glass, index) => {
             }
 
         });
+        const waterText = document.querySelector(".water-card p");
+
+        if (waterText) {
+
+            waterText.textContent = `${index + 1} / 8 Glasses`;
+
+        }
 
     });
 
 });
 
+/* ==========================================
+   MEDICINE CHECKMARK TOGGLE
+========================================== */
+
+document.querySelectorAll(".medicine-item .status").forEach((status) => {
+
+    status.addEventListener("click", () => {
+
+        status.classList.toggle("done");
+        status.classList.toggle("pending");
+
+        status.innerHTML = status.classList.contains("done")
+            ? '<i class="fa-solid fa-check"></i>'
+            : "";
+
+    });
+
+});
 
 /* ==========================================
    QUICK ACTION BUTTONS
@@ -431,32 +549,33 @@ console.log("%c❤️ Healora Dashboard Loaded",
 ========================================== */
 
 const notificationBtn = document.getElementById("notificationBtn");
+const notificationDropdown = document.getElementById("notificationDropdown");
 
-if (notificationBtn) {
+if (notificationBtn && notificationDropdown) {
 
-    notificationBtn.addEventListener("click", () => {
+    notificationBtn.addEventListener("click", (e) => {
 
-        window.location.href = "notifications.html";
+        e.stopPropagation();
+
+        notificationDropdown.classList.toggle("show");
+
+    });
+
+    document.addEventListener("click", (e) => {
+
+        if (
+            !notificationDropdown.contains(e.target) &&
+            !notificationBtn.contains(e.target)
+        ) {
+
+            notificationDropdown.classList.remove("show");
+
+        }
 
     });
 
 }
 
-/* ==========================================
-   DARK MODE (COMING SOON)
-========================================== */
-
-const themeToggleBtn = document.getElementById("themeToggleBtn");
-
-if (themeToggleBtn) {
-
-    themeToggleBtn.addEventListener("click", () => {
-
-        alert("🌙 Dark Mode is coming soon! Stay tuned for a future update.");
-
-    });
-
-}
 
 /* ==========================================
    DASHBOARD AI QUICK ACTIONS

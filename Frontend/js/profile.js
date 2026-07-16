@@ -161,6 +161,29 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (user.phoneNumber) {
                 phoneNumber.value = user.phoneNumber;
             }
+
+            // ================= AI Badge =================
+
+            const settings = JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+            const aiBadge = document.getElementById("aiBadge");
+
+            if (aiBadge) {
+            
+                const aiEnabled = settings.aiSuggestions || settings.aiMemory;
+            
+                if (aiEnabled) {
+                    aiBadge.textContent = "🤖 AI Enabled";
+                    aiBadge.style.background = "#D1FAE5";
+                    aiBadge.style.color = "#065F46";
+                } else {
+                    aiBadge.textContent = "🤖 AI Disabled";
+                    aiBadge.style.background = "#FEE2E2";
+                    aiBadge.style.color = "#991B1B";
+                }
+            
+            }
+
             }
 
         catch (err) {
@@ -412,27 +435,41 @@ if (notificationBtn) {
 }
 
 // Load saved theme
-if (localStorage.getItem("theme") === "dark") {
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark-mode");
     document.body.classList.add("dark-mode");
+
     themeBtn?.querySelector("i")?.classList.replace("fa-moon", "fa-sun");
 }
 
 if (themeBtn) {
+
     themeBtn.addEventListener("click", () => {
-        document.body.classList.toggle("dark-mode");
+
+        const isDark =
+            !document.documentElement.classList.contains("dark-mode");
+
+        document.documentElement.classList.toggle("dark-mode", isDark);
+        document.body.classList.toggle("dark-mode", isDark);
+
+        localStorage.setItem(
+            "theme",
+            isDark ? "dark" : "light"
+        );
 
         const icon = themeBtn.querySelector("i");
 
-        if (document.body.classList.contains("dark-mode")) {
-            localStorage.setItem("theme", "dark");
+        if (isDark) {
             icon.classList.replace("fa-moon", "fa-sun");
         } else {
-            localStorage.setItem("theme", "light");
             icon.classList.replace("fa-sun", "fa-moon");
         }
-    });
-}
 
+    });
+
+}
 // ================= PROFILE IMAGE =================
 
 if (cameraBtn && profileUpload) {

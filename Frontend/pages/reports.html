@@ -55,51 +55,33 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 <nav>
 
 <a href="dashboard.html">
-
-<i class="fa-solid fa-house"></i>
-
-<span>Dashboard</span>
-
+    <i class="fa-solid fa-house"></i>
+    <span>Dashboard</span>
 </a>
 
 <a href="chatbot.html">
-
-<i class="fa-solid fa-robot"></i>
-
-<span>AI Assistant</span>
-
+    <i class="fa-solid fa-robot"></i>
+    <span>AI Assistant</span>
 </a>
 
 <a class="active" href="reports.html">
-
-<i class="fa-solid fa-file-waveform"></i>
-
-<span>Medical Reports</span>
-
+    <i class="fa-solid fa-file-waveform"></i>
+    <span>Medical Reports</span>
 </a>
 
-<a href="#">
-
-<i class="fa-solid fa-pills"></i>
-
-<span>Medicines</span>
-
+<a href="reminder.html">
+    <i class="fa-solid fa-pills"></i>
+    <span>Medicines</span>
 </a>
 
-<a href="#">
-
-<i class="fa-solid fa-calendar-check"></i>
-
-<span>Appointments</span>
-
+<a href="appointments.html">
+    <i class="fa-solid fa-calendar-check"></i>
+    <span>Appointments</span>
 </a>
 
-<a href="#">
-
-<i class="fa-solid fa-user"></i>
-
-<span>Profile</span>
-
+<a href="profile.html">
+    <i class="fa-solid fa-user"></i>
+    <span>Profile</span>
 </a>
 
 </nav>
@@ -273,25 +255,35 @@ placeholder="Search reports by name, doctor or date...">
 
 <section class="upload-area">
 
-<div class="upload-box">
+    <div class="upload-box" id="uploadBox">
 
-<i class="fa-solid fa-cloud-arrow-up"></i>
+        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
 
-<h2>Drag & Drop Medical Report</h2>
+        <h2>Drag & Drop Medical Report</h2>
 
-<p>
-
-Upload PDF, JPG, PNG or Prescription
-
+       <p>
+    Drag your report here or click the button below
 </p>
 
-<input type="file" accept=".pdf,.jpg,.jpeg,.png,image/*">
+        <button id="chooseFileBtn" class="upload-select-btn">
+            Choose File
+        </button>
 
-<button id="chooseFileBtn">
-    Choose File
-</button>
+        <p id="selectedFile" class="selected-file">
+            No file selected
+        </p>
+        <p class="supported-files">
+    Supported: PDF • JPG • PNG
+</p>
 
-</div>
+        <input
+            id="uploadInput"
+            type="file"
+            accept=".pdf,.jpg,.jpeg,.png,image/*"
+            hidden
+        >
+
+    </div>
 
 </section>
 
@@ -308,100 +300,78 @@ Upload PDF, JPG, PNG or Prescription
 
 <section class="analysis-card">
 
-<div class="analysis-header">
+    <div class="analysis-header">
 
-<h2>
+        <h2>🤖 AI Report Summary</h2>
 
-🤖 AI Report Summary
+        <p>
+            AI generated insights from your uploaded report.
+        </p>
 
-</h2>
+    </div>
 
-<span class="status">
+    <div class="analysis-dashboard">
 
-AI Analysed
+        <div class="analysis-item">
 
-</span>
+            <h3>📄 Summary</h3>
 
-</div>
+            <p id="aiSummaryText">
 
-<div class="analysis-grid">
+                Upload a report to view AI summary.
 
-<div>
+            </p>
 
-<h4>🩸 Hemoglobin</h4>
+        </div>
 
-<p>Normal (13.8 g/dL)</p>
+        <div class="analysis-item">
 
-</div>
+            <h3>⚠ Priority</h3>
 
-<div>
+            <span
+                id="urgencyBadge"
+                class="priority low">
 
-<h4>🍬 Blood Sugar</h4>
+                Low
 
-<p>Slightly High (118 mg/dL)</p>
+            </span>
 
-</div>
+            <p id="urgencyReason">
 
-<div>
+                No urgent issues detected.
 
-<h4>💓 Cholesterol</h4>
+            </p>
 
-<p>Normal</p>
+        </div>
 
-</div>
+        <div class="analysis-item">
 
-<div>
+            <h3>📋 Key Findings</h3>
 
-<h4>🦴 Vitamin D</h4>
+            <ul id="keyFindingsList">
 
-<p>Low — Consider consulting your doctor.</p>
+                <li>No findings yet.</li>
 
-</div>
+            </ul>
 
-</div>
+        </div>
 
-</section>
-<!-- ================= HEALTH INSIGHTS ================= -->
+        <div class="analysis-item">
 
-<section class="insights-grid">
+            <h3>💡 Recommendations</h3>
 
-<div class="insight-card">
+            <ul id="recommendationList">
 
-<div class="insight-icon">❤️</div>
+                <li>No recommendations yet.</li>
 
-<h3>Heart Health</h3>
+            </ul>
 
-<p>Stable</p>
+        </div>
 
-<span class="green">Excellent</span>
-
-</div>
-
-<div class="insight-card">
-
-<div class="insight-icon">🩸</div>
-
-<h3>Blood Sugar</h3>
-
-<p>118 mg/dL</p>
-
-<span class="orange">Monitor</span>
-
-</div>
-
-<div class="insight-card">
-
-<div class="insight-icon">🦴</div>
-
-<h3>Vitamin D</h3>
-
-<p>Low Level</p>
-
-<span class="red">Needs Attention</span>
-
-</div>
+    </div>
 
 </section>
+
 
 <!-- ================= TIMELINE ================= -->
 
@@ -415,31 +385,7 @@ AI Analysed
 
 </section>
 
-<!-- ================= AI RECOMMENDATIONS ================= -->
 
-<section class="recommendation-card">
-
-<h2>
-
-💡 Healora AI Recommendations
-
-</h2>
-
-<ul>
-
-<li>✅ Drink at least 2–3 litres of water daily.</li>
-
-<li>🥗 Increase Vitamin D rich foods.</li>
-
-<li>🚶 Walk for 30 minutes every day.</li>
-
-<li>🩺 Schedule a follow-up blood test next month.</li>
-
-<li>😴 Maintain 7–8 hours of sleep.</li>
-
-</ul>
-
-</section>
 
 <footer class="reports-footer">
 

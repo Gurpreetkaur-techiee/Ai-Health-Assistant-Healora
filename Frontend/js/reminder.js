@@ -9,7 +9,7 @@ if (!token) {
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL = "http://localhost:5000/api";
 
 
 const form=document.getElementById("reminderForm");

@@ -21,7 +21,9 @@ if (profileImage && storedUser) {
 
 }
 
-const uploadInput = document.querySelector(".upload-box input");
+const uploadInput = document.getElementById("uploadInput");
+const uploadBox = document.getElementById("uploadBox");
+const selectedFile = document.getElementById("selectedFile");
 
 const uploadBtn = document.querySelector(".upload-btn");
 
@@ -46,6 +48,47 @@ if (chooseFileBtn) {
     });
 
 }
+uploadBox.addEventListener("click", () => {
+    uploadInput.click();
+});
+
+uploadBox.addEventListener("dragover", (e) => {
+
+    e.preventDefault();
+
+    uploadBox.classList.add("dragging");
+
+    uploadBox.querySelector("h2").textContent =
+    "📂 Drop your report here";
+
+});
+
+uploadBox.addEventListener("dragleave", () => {
+
+    uploadBox.classList.remove("dragging");
+
+    uploadBox.querySelector("h2").textContent =
+    "📄 Drag & Drop Medical Report";
+
+});
+
+uploadBox.addEventListener("drop", (e) => {
+
+    e.preventDefault();
+
+    uploadBox.classList.remove("dragging");
+
+    uploadBox.querySelector("h2").textContent =
+    "📄 Drag & Drop Medical Report";
+
+    uploadInput.files = e.dataTransfer.files;
+
+    selectedFile.textContent =
+    e.dataTransfer.files[0].name;
+
+    uploadInput.dispatchEvent(new Event("change"));
+
+});
 
 const reportsGrid = document.querySelector(".reports-grid");
 const timeline = document.getElementById("timeline");
@@ -85,8 +128,11 @@ function updateStats(reports) {
 uploadInput.addEventListener("change", async (e) => {
 
     const file = e.target.files[0];
+    chooseFileBtn.innerText = "Uploading...";
+chooseFileBtn.disabled = true;
 
     if (!file) return;
+    selectedFile.textContent = file.name;
 
     const formData = new FormData();
 
@@ -113,9 +159,12 @@ uploadInput.addEventListener("change", async (e) => {
 
     alert("Report uploaded successfully!");
 
-    uploadInput.value = "";
+uploadInput.value = "";
+selectedFile.textContent = "No file selected";
+chooseFileBtn.innerText = "Choose File";
+chooseFileBtn.disabled = false;
 
-    loadReportsFromBackend();
+loadReportsFromBackend();
 
 }
 
@@ -123,9 +172,16 @@ uploadInput.addEventListener("change", async (e) => {
 
     catch(err){
 
-        console.error(err);
+    console.error(err);
 
-    }
+    alert("Upload failed.");
+
+    chooseFileBtn.innerText = "Choose File";
+    chooseFileBtn.disabled = false;
+
+    selectedFile.textContent = "No file selected";
+
+}
 
 });
 
@@ -253,15 +309,25 @@ reportsGrid.addEventListener("click", async (e) => {
 
 reportsGrid.addEventListener("click",(e)=>{
 
-if(e.target.classList.contains("view-btn")){
+    if(!e.target.classList.contains("view-btn")) return;
 
-const reportName=e.target
-.closest(".report-card")
-.querySelector("h3").innerText;
+    const file=e.target.dataset.file;
 
-alert("📄 Opening: " + reportName);
+    if(!file){
 
-}
+        alert("File not found.");
+
+        return;
+
+    }
+
+    window.open(
+
+        `http://localhost:5000${file}`,
+
+        "_blank"
+
+    );
 
 });
 
@@ -370,49 +436,68 @@ async function loadReportsFromBackend(){
 
     reportsGrid.innerHTML += `
 
-    <div class="report-card"
-         data-name="${report.originalFileName.toLowerCase()}">
+<div class="report-card"
+     data-name="${report.originalFileName.toLowerCase()}">
+
+    <div class="report-header">
 
         <div class="report-icon">
-            📄
+            <i class="fa-solid fa-file-pdf"></i>
         </div>
 
-        <h3>
-            ${report.originalFileName}
-        </h3>
+        <div class="report-info">
 
-        <p>
-            Uploaded:
-            ${new Date(report.createdAt).toLocaleDateString()}
-        </p>
+            <h3>${report.originalFileName}</h3>
 
-        <div class="report-tags">
-
-            <span>
-                ${report.urgencyLevel}
+            <span class="report-date">
+                <i class="fa-solid fa-calendar-days"></i>
+                ${new Date(report.createdAt).toLocaleDateString()}
             </span>
-
-            <span>
-                PDF
-            </span>
-
-        </div>
-
-        <div class="report-actions">
-
-            <button class="view-btn" data-id="${report._id}">
-                View
-            </button>
-
-            <button class="delete-btn" data-id="${report._id}">
-                Delete
-            </button>
 
         </div>
 
     </div>
 
-    `;
+    <div class="report-meta">
+
+        <div>
+            <strong>Size</strong><br>
+            ${(report.fileSizeBytes/1024).toFixed(1)} KB
+        </div>
+
+        <div>
+            <strong>Pages</strong><br>
+            ${report.pageCount}
+        </div>
+
+        <div>
+            <strong>Priority</strong><br>
+
+            <span class="priority ${report.urgencyLevel}">
+                ${report.urgencyLevel}
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="report-actions">
+
+        <button class="view-btn" data-id="${report._id}">
+            <i class="fa-solid fa-eye"></i>
+            View
+        </button>
+
+        <button class="delete-btn" data-id="${report._id}">
+            <i class="fa-solid fa-trash"></i>
+            Delete
+        </button>
+
+    </div>
+
+</div>
+
+`;
 
     // ================= Timeline =================
 
@@ -482,8 +567,6 @@ if (profileAvatar) {
     });
 
 }
-
-});
 /* ==========================================
    LOGOUT
 ========================================== */
@@ -510,3 +593,5 @@ if (logoutBtn) {
     });
 
 }
+});
+
