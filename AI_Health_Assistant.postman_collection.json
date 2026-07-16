@@ -1,11 +1,11 @@
 {
   "info": {
     "name": "AI Health Assistant API",
-    "description": "Complete API collection for the AI Health Assistant backend.\n\nSETUP:\n1. Set {{baseUrl}} = http://localhost:5001\n2. Run 'Register' or 'Login' first — token is auto-saved\n3. All protected routes use {{authToken}} automatically\n\nAUTH FLOW:\nRegister → Login → (token saved) → use any protected endpoint",
+    "description": "Complete API collection for the AI Health Assistant backend.\n\nSETUP:\n1. Set {{baseUrl}} = http://localhost:5000\n2. Run 'Register' or 'Login' first — token is auto-saved\n3. All protected routes use {{authToken}} automatically\n\nAUTH FLOW:\nRegister → Login → (token saved) → use any protected endpoint",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl",   "value": "http://localhost:5001", "type": "string" },
+    { "key": "baseUrl",   "value": "http://localhost:5000", "type": "string" },
     { "key": "authToken", "value": "",                      "type": "string" },
     { "key": "reminderId",    "value": "", "type": "string" },
     { "key": "appointmentId", "value": "", "type": "string" },
