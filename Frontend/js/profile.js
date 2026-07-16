@@ -142,15 +142,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     ? subtitle.join(" • ")
                     : "Welcome to Healora";
 
-            const savedImage = localStorage.getItem("profileImage");
-
-            if (savedImage) {
-                profileImage.src = savedImage;
-                topProfileImage.src = savedImage;
-            } else {
-                profileImage.src = avatarUrl;
-                topProfileImage.src = avatarUrl;
-            }
+            profileImage.src = avatarUrl;
+            topProfileImage.src = avatarUrl;
 
             fullName.value = user.name || "";
             email.value = user.email || "";
@@ -443,51 +436,6 @@ if (themeBtn) {
         } else {
             icon.classList.replace("fa-sun", "fa-moon");
         }
-
-    });
-
-}
-// ================= PROFILE IMAGE =================
-
-if (cameraBtn && profileUpload) {
-
-    // Load saved profile picture
-    const savedImage = localStorage.getItem("profileImage");
-
-    if (savedImage) {
-        profileImage.src = savedImage;
-        topProfileImage.src = savedImage;
-    }
-
-    // Open file picker
-    cameraBtn.addEventListener("click", () => {
-        profileUpload.click();
-    });
-
-    // Change profile picture
-    profileUpload.addEventListener("change", (e) => {
-
-        const file = e.target.files[0];
-
-        if (!file) return;
-
-        if (!file.type.startsWith("image/")) {
-            alert("Please select an image.");
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function () {
-
-            profileImage.src = reader.result;
-            topProfileImage.src = reader.result;
-
-            localStorage.setItem("profileImage", reader.result);
-
-        };
-
-        reader.readAsDataURL(file);
 
     });
 
