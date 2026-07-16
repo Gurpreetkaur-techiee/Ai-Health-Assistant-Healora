@@ -14,16 +14,105 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
     const API_BASE_URL = "http://localhost:5000/api";
+    if(localStorage.getItem("theme")==="dark"){
 
-    
+    document.body.classList.add("dark");
 
+}
+    const user = JSON.parse(localStorage.getItem("user"));
 
+if (user) {
 
+    const nameElement = document.getElementById("userName");
 
+    const avatarElement = document.getElementById("userAvatar");
 
+    if (nameElement) {
+        nameElement.textContent = user.name;
+    }
 
-    
+    if (avatarElement) {
+        avatarElement.src =
+            `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=0B4F6C&color=fff`;
+    }
 
+}
+
+    function addWelcomeMessage() {
+
+    const welcome = document.createElement("div");
+
+    welcome.className = "message ai";
+
+    welcome.innerHTML = `
+        <div class="avatar">🤖</div>
+
+        <div class="bubble">
+            Hello 👋 I'm Healora AI.
+            Tell me your symptoms and I'll try to help.
+
+            <div class="message-time">
+
+                ${getCurrentTime()}
+
+            </div>
+        </div>
+    `;
+
+    chatWindow.appendChild(welcome);
+
+}
+    /* ======================================
+   CURRENT TIME
+====================================== */
+
+function getCurrentTime() {
+    return new Date().toLocaleTimeString("en-IN", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
+function getChatDateLabel(date = new Date()) {
+
+    const today = new Date();
+
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString())
+        return "Today";
+
+    if (date.toDateString() === yesterday.toDateString())
+        return "Yesterday";
+
+    return date.toLocaleDateString("en-IN", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+
+let lastChatDate = "";
+
+function addDateSeparator() {
+
+    const label = getChatDateLabel();
+
+    if (lastChatDate === label) return;
+
+    lastChatDate = label;
+
+    const separator = document.createElement("div");
+
+    separator.className = "chat-date";
+
+    separator.innerHTML = `<span>${label}</span>`;
+
+    chatWindow.appendChild(separator);
+
+}
     /* ======================================
        SEND MESSAGE
     ====================================== */
@@ -35,20 +124,40 @@ document.addEventListener("DOMContentLoaded", () => {
         if (message === "") return;
 
         // USER MESSAGE
+
+        addDateSeparator();
         const userMessage = document.createElement("div");
 
         userMessage.className = "message user";
 
         userMessage.innerHTML = `
-            <div class="bubble">${message}</div>
-            <div class="avatar user-avatar">👤</div>
+            <div class="bubble">
+
+    ${message}
+
+    <div class="message-time">
+
+        ${getCurrentTime()}
+
+    </div>
+
+</div>
+            <div class="avatar user-avatar">
+    ${user ? user.name.charAt(0).toUpperCase() : "U"}
+</div>
         `;
 
         chatWindow.appendChild(userMessage);
 
         input.value = "";
 
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatWindow.scrollTo({
+
+    top: chatWindow.scrollHeight,
+
+    behavior: "smooth"
+
+});
 
         showTyping(message);
 
@@ -94,8 +203,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         chatWindow.appendChild(typing);
 
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+        chatWindow.scrollTo({
 
+    top: chatWindow.scrollHeight,
+
+    behavior: "smooth"
+
+});
+        sendBtn.disabled = true;
         setTimeout(() => {
 
             typing.remove();
@@ -114,6 +229,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
 
+        sendBtn.innerHTML = `
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        `;
         const response = await fetch(
             `${API_BASE_URL}/symptoms/analyze`,
             {
@@ -134,11 +252,48 @@ document.addEventListener("DOMContentLoaded", () => {
 
         console.log(result);
 
-        if(!result.success){
+        if (!result.success) {
+            sendBtn.innerHTML = `
+            <i class="fa-solid fa-paper-plane"></i>
+            `;
+    
+    addDateSeparator();
+    const aiMessage = document.createElement("div");
 
-            return;
+    aiMessage.className = "message ai";
 
-        }
+    aiMessage.innerHTML = `
+        <div class="avatar">🤖</div>
+        <div class="bubble">
+
+    ${result.message}
+
+    <div class="message-time">
+
+        ${getCurrentTime()}
+
+    </div>
+
+</div>
+    `;
+
+    chatWindow.appendChild(aiMessage);
+
+    chatWindow.scrollTo({
+
+    top: chatWindow.scrollHeight,
+
+    behavior: "smooth"
+
+});
+
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = `
+    <i class="fa-solid fa-paper-plane"></i>
+`;
+
+    return;
+}
 
         const aiMessage=document.createElement("div");
 
@@ -154,26 +309,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
         <div class="bubble">
 
-        ${result.data.response}
+    ${result.data.response}
 
-        </div>
+    <div class="message-time">
 
+        ${getCurrentTime()}
+
+    </div>
+
+</div>
         `;
 
         chatWindow.appendChild(aiMessage);
 
-        chatWindow.scrollTop=chatWindow.scrollHeight;
+        chatWindow.scrollTo({
+
+    top: chatWindow.scrollHeight,
+
+    behavior: "smooth"
+
+});
 
    
 
     }
 
-    catch(err){
+    catch (err) {
 
-        console.error(err);
+    console.error(err);
 
-    }
+    const aiMessage = document.createElement("div");
 
+    aiMessage.className = "message ai";
+
+    aiMessage.innerHTML = `
+        <div class="avatar">🤖</div>
+
+        <div class="bubble">
+
+        ❌ Unable to connect to Healora AI.
+
+        Please try again later.
+
+        <div class="message-time">
+
+        ${getCurrentTime()}
+
+        </div>
+
+        </div>
+    `;
+
+    chatWindow.appendChild(aiMessage);
+
+    chatWindow.scrollTo({
+
+        top: chatWindow.scrollHeight,
+
+        behavior: "smooth"
+
+    });
+
+    sendBtn.disabled = false;
+
+    sendBtn.innerHTML = `
+        <i class="fa-solid fa-paper-plane"></i>
+    `;
+
+}
 }
 
        
@@ -213,28 +416,25 @@ if (newChat) {
         // Clear local storage
         localStorage.removeItem("healoraChat");
 
-        // Clear all messages
-        chatWindow.innerHTML = "";
+       chatWindow.innerHTML = "";
 
-        // Add welcome message
-        const welcome = document.createElement("div");
+        lastChatDate = "";
 
-        welcome.className = "message ai";
+        addDateSeparator();
 
-        welcome.innerHTML = `
-            <div class="avatar">🤖</div>
-            <div class="bubble">
-                Hello 👋 I'm Healora AI. Tell me your symptoms and I'll try to help.
-            </div>
-        `;
-
-        chatWindow.appendChild(welcome);
+        addWelcomeMessage();
 
         // Clear input
         input.value = "";
 
         // Scroll to top
-        chatWindow.scrollTop = 0;
+        chatWindow.scrollTo({
+
+            top: chatWindow.scrollHeight,
+
+            behavior: "smooth"
+
+});
 
     });
 
@@ -251,69 +451,235 @@ if(moonBtn){
 
         document.body.classList.toggle("dark");
 
+if(document.body.classList.contains("dark")){
+
+    localStorage.setItem("theme","dark");
+
+}
+else{
+
+    localStorage.setItem("theme","light");
+
+}
+
     });
 
 }
 
 
 /* ==========================================
-   REPORT UPLOAD
+   ATTACHMENT BUTTON
 ========================================== */
 
-const upload=document.getElementById("reportUpload");
+const upload = document.getElementById("reportUpload");
+const attachBtn = document.getElementById("attachBtn");
 
-if(upload){
+if (attachBtn && upload) {
 
-upload.addEventListener("change",(e)=>{
+    attachBtn.addEventListener("click", () => {
 
-const file=e.target.files[0];
+        upload.click();
 
-if(file){
-
-alert("📄 "+file.name+" uploaded successfully.");
-
-}
-
-});
+    });
 
 }
 
+if (upload) {
 
+    upload.addEventListener("change", async () => {
+
+        const file = upload.files[0];
+
+        if (!file) return;
+
+        // Show selected file in chat
+        const fileMessage = document.createElement("div");
+
+        fileMessage.className = "message user";
+
+        addDateSeparator();
+        fileMessage.innerHTML = `
+            <div class="bubble">
+
+             📄 ${file.name}
+
+            <div class="message-time">
+
+            ${getCurrentTime()}
+
+            </div>
+
+            </div>
+
+            <div class="avatar user-avatar">
+                ${user ? user.name.charAt(0).toUpperCase() : "U"}
+            </div>
+        `;
+
+        chatWindow.appendChild(fileMessage);
+
+        chatWindow.scrollTo({
+
+            top: chatWindow.scrollHeight,
+
+            behavior: "smooth"
+
+        });
+        sendBtn.disabled = false;
+
+        sendBtn.innerHTML = `
+        <i class="fa-solid fa-paper-plane"></i>
+        `;
+
+    });
+
+}
+const uploadBox = document.querySelector(".upload-box");
+
+if (uploadBox && upload) {
+
+    uploadBox.addEventListener("click", () => {
+
+        upload.click();
+
+    });
+
+    uploadBox.addEventListener("dragover", (e) => {
+
+        e.preventDefault();
+
+        uploadBox.classList.add("dragging");
+
+    });
+
+    uploadBox.addEventListener("dragleave", () => {
+
+        uploadBox.classList.remove("dragging");
+
+    });
+
+    uploadBox.addEventListener("drop", (e) => {
+
+        e.preventDefault();
+
+        uploadBox.classList.remove("dragging");
+
+        const files = e.dataTransfer.files;
+
+        if (files.length > 0) {
+
+            upload.files = files;
+
+            upload.dispatchEvent(new Event("change"));
+
+        }
+
+    });
+
+}
 /* ==========================================
    VOICE INPUT
 ========================================== */
 
-const micBtn=document.querySelector(".fa-microphone");
+const micBtn = document.querySelector(".fa-microphone");
+const voicePopup = document.getElementById("voicePopup");
 
-if(micBtn){
+if (micBtn) {
 
-micBtn.parentElement.addEventListener("click",()=>{
+    micBtn.parentElement.addEventListener("click", () => {
 
-if(!('webkitSpeechRecognition' in window)){
+        const SpeechRecognition =
+            window.SpeechRecognition ||
+            window.webkitSpeechRecognition;
 
-alert("Voice recognition is not supported in this browser.");
+        if (!SpeechRecognition) {
 
-return;
+            alert("Voice recognition is not supported.");
 
-}
+            return;
 
-const recognition=new webkitSpeechRecognition();
+        }
 
-recognition.lang="en-US";
+        const recognition = new SpeechRecognition();
 
-recognition.start();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
 
-recognition.onresult=function(event){
+        // Show popup
+        voicePopup.classList.add("show");
 
-input.value=event.results[0][0].transcript;
+        // Listening animation
+        micBtn.classList.add("fa-beat");
+
+        recognition.start();
+
+        // User started speaking
+        recognition.onspeechstart = () => {
+
+            voicePopup.querySelector("h3").textContent =
+                "Listening...";
+
+            voicePopup.querySelector("p").textContent =
+                "We can hear you.";
+
+        };
+
+        // Speech recognized
+        recognition.onresult = (event) => {
+
+    const transcript = event.results[0][0].transcript;
+
+    input.value = transcript;
+
+    voicePopup.querySelector("h3").textContent = "Processing...";
+    voicePopup.querySelector("p").textContent = "Converting speech to text.";
+
+    setTimeout(() => {
+        sendMessage();
+    }, 300);
 
 };
 
-});
+        // Recognition finished
+        recognition.onend = () => {
+
+            micBtn.classList.remove("fa-beat");
+
+            setTimeout(() => {
+
+                voicePopup.classList.remove("show");
+
+                // Reset popup text
+                voicePopup.querySelector("h3").textContent =
+                    "Listening...";
+
+                voicePopup.querySelector("p").textContent =
+                    "Speak now";
+
+            }, 600);
+
+        };
+
+        recognition.onerror = (event) => {
+
+            micBtn.classList.remove("fa-beat");
+
+            voicePopup.classList.remove("show");
+
+            voicePopup.querySelector("h3").textContent =
+                "Listening...";
+
+            voicePopup.querySelector("p").textContent =
+                "Speak now";
+
+            alert("Voice recognition failed: " + event.error);
+
+        };
+
+    });
 
 }
-
-
 /* ==========================================
    EMOJI BUTTON
 ========================================== */
@@ -349,13 +715,21 @@ chatWindow.innerHTML
 
 }
 
-function loadChat(){
+function loadChat() {
 
-const history=localStorage.getItem("healoraChat");
+    const history = localStorage.getItem("healoraChat");
 
-if(history){
+    if (history) {
 
-chatWindow.innerHTML=history;
+        chatWindow.innerHTML = history;
+
+    } else {
+
+    lastChatDate = "";
+
+    addDateSeparator();
+
+    addWelcomeMessage();
 
 }
 
@@ -363,9 +737,13 @@ chatWindow.innerHTML=history;
 
 loadChat();
 
-const observer=new MutationObserver(()=>{
+const observer = new MutationObserver(() => {
 
-saveChat();
+    if (chatWindow.querySelector(".typing-box")) {
+        return;
+    }
+
+    saveChat();
 
 });
 
@@ -421,17 +799,43 @@ document.querySelectorAll(".tool-card").forEach(card => {
    EMERGENCY BUTTON
 ========================================== */
 
-const emergency=document.querySelector(".emergency-btn");
+const emergency = document.querySelector(".emergency-btn");
 
-if(emergency){
+const emergencyModal =
+    document.getElementById("emergencyModal");
 
-emergency.addEventListener("click",()=>{
+const closeEmergency =
+    document.getElementById("closeEmergency");
 
-alert("🚑 In a real application, this button will immediately call emergency services or your emergency contact.");
+if (emergency) {
 
-});
+    emergency.addEventListener("click", () => {
+
+        emergencyModal.classList.add("show");
+
+    });
 
 }
+
+if (closeEmergency) {
+
+    closeEmergency.addEventListener("click", () => {
+
+        emergencyModal.classList.remove("show");
+
+    });
+
+}
+
+window.addEventListener("click", (e) => {
+
+    if (e.target === emergencyModal) {
+
+        emergencyModal.classList.remove("show");
+
+    }
+
+});
 
 
 /* ==========================================
@@ -447,26 +851,7 @@ console.log("%c🤖 Healora AI Ready",
 const notificationBtn =
 document.getElementById("notificationBtn");
 
-const notificationDropdown =
-document.getElementById("notificationDropdown");
 
-const notificationList =
-document.getElementById("notificationList");
-
-const notificationCount =
-document.getElementById("notificationCount");
-if (notificationBtn) {
-
-    notificationBtn.addEventListener("click", () => {
-
-        notificationDropdown.style.display =
-            notificationDropdown.style.display === "block"
-            ? "none"
-            : "block";
-
-    });
-
-}
 
 });
 
