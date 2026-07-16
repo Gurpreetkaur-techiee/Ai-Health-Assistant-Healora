@@ -1,171 +1,176 @@
 /* ==========================================
         HEALORA NOTIFICATIONS
 ========================================== */
+
 const token = localStorage.getItem("token");
 
 if (!token) {
     window.location.href = "login.html";
 }
-document.addEventListener("DOMContentLoaded",()=>{
 
-const markReadBtn=document.querySelector(".mark-read-btn");
-const deleteBtn=document.querySelector(".delete-btn");
-const notifications=document.querySelectorAll(".notification-card");
-const moonBtn=document.querySelector(".fa-moon");
-const toggles=document.querySelectorAll(".switch input");
+document.addEventListener("DOMContentLoaded", () => {
 
-/* ==========================
-        MARK AS READ
-========================== */
+    const markReadBtn = document.querySelector(".mark-read-btn");
+    const deleteBtn = document.querySelector(".delete-btn");
+    const notifications = document.querySelectorAll(".notification-card");
+    const emptyCard = document.querySelector(".empty-card");
+    const moonBtn = document.getElementById("themeBtn");
+    const toggles = document.querySelectorAll(".switch input");
 
-if(markReadBtn){
+    /* ==========================
+            HIDE EMPTY CARD
+    ========================== */
 
-markReadBtn.addEventListener("click",()=>{
+    if (emptyCard) {
+        emptyCard.style.display = "none";
+    }
 
-notifications.forEach(card=>{
+    /* ==========================
+          MARK ALL AS READ
+    ========================== */
 
-card.classList.remove("unread");
+    if (markReadBtn) {
 
-});
+        markReadBtn.addEventListener("click", () => {
 
-showToast("All notifications marked as read.");
+            notifications.forEach(card => {
+                card.classList.remove("unread");
+            });
 
-});
+            showToast("✅ All notifications marked as read.");
 
-}
+        });
 
-/* ==========================
-        DELETE ALL
-========================== */
+    }
 
-if(deleteBtn){
+    /* ==========================
+            DELETE ALL
+    ========================== */
 
-deleteBtn.addEventListener("click",()=>{
+    if (deleteBtn) {
 
-if(confirm("Delete all notifications?")){
+        deleteBtn.addEventListener("click", () => {
 
-notifications.forEach(card=>{
+            if (!confirm("Delete all notifications?")) return;
 
-card.remove();
+            notifications.forEach(card => card.remove());
 
-});
+            if (emptyCard) {
+                emptyCard.style.display = "block";
+            }
 
-showToast("All notifications deleted.");
+            showToast("🗑️ All notifications deleted.");
 
-}
+        });
 
-});
+    }
 
-}
+    /* ==========================
+      CLICK TO MARK AS READ
+    ========================== */
 
-/* ==========================
-     SAVE PREFERENCES
-========================== */
+    notifications.forEach(card => {
 
-toggles.forEach((toggle,index)=>{
+        card.addEventListener("click", () => {
 
-const key="notificationPreference"+index;
+            card.classList.remove("unread");
 
-const saved=localStorage.getItem(key);
+        });
 
-if(saved!==null){
+    });
 
-toggle.checked=saved==="true";
+    /* ==========================
+       SAVE PREFERENCES
+    ========================== */
 
-}
+    toggles.forEach((toggle, index) => {
 
-toggle.addEventListener("change",()=>{
+        const key = "notificationPreference" + index;
 
-localStorage.setItem(key,toggle.checked);
+        const saved = localStorage.getItem(key);
 
-showToast("Preference updated.");
+        if (saved !== null) {
 
-});
+            toggle.checked = saved === "true";
 
-});
+        }
 
-/* ==========================
-        DARK MODE
-========================== */
+        toggle.addEventListener("change", () => {
 
-if(localStorage.getItem("notificationDark")==="true"){
+            localStorage.setItem(key, toggle.checked);
 
-document.body.classList.add("dark");
+            showToast("⚙️ Preference updated.");
 
-}
+        });
 
-if(moonBtn){
+    });
 
-moonBtn.parentElement.addEventListener("click",()=>{
+    /* ==========================
+            DARK MODE
+    ========================== */
 
-document.body.classList.toggle("dark");
+    if (localStorage.getItem("notificationDark") === "true") {
 
-localStorage.setItem(
+        document.body.classList.add("dark");
 
-"notificationDark",
+    }
 
-document.body.classList.contains("dark")
+    if (moonBtn) {
 
-);
+        moonBtn.addEventListener("click", () => {
 
-});
+            document.body.classList.toggle("dark");
 
-}
+            localStorage.setItem(
+                "notificationDark",
+                document.body.classList.contains("dark")
+            );
 
-/* ==========================
-      CLICK NOTIFICATION
-========================== */
+        });
 
-notifications.forEach(card=>{
+    }
 
-card.addEventListener("click",()=>{
+    /* ==========================
+              TOAST
+    ========================== */
 
-card.classList.remove("unread");
+    function showToast(message) {
 
-});
+        const oldToast = document.querySelector(".notification-toast");
 
-});
+        if (oldToast) oldToast.remove();
 
-/* ==========================
-        TOAST
-========================== */
+        const toast = document.createElement("div");
 
-function showToast(message){
+        toast.className = "notification-toast";
 
-const toast=document.createElement("div");
+        toast.innerText = message;
 
-toast.className="notification-toast";
+        document.body.appendChild(toast);
 
-toast.innerText=message;
+        setTimeout(() => {
 
-document.body.appendChild(toast);
+            toast.classList.add("show");
 
-setTimeout(()=>{
+        }, 100);
 
-toast.classList.add("show");
+        setTimeout(() => {
 
-},100);
+            toast.classList.remove("show");
 
-setTimeout(()=>{
+            setTimeout(() => {
 
-toast.classList.remove("show");
+                toast.remove();
 
-setTimeout(()=>{
+            }, 300);
 
-toast.remove();
+        }, 2500);
 
-},300);
+    }
 
-},2500);
-
-}
-
-console.log(
-
-"%c🔔 Healora Notifications Loaded",
-
-"color:#14B8A6;font-size:18px;font-weight:bold;"
-
-);
+    console.log(
+        "%c🔔 Healora Notifications Ready",
+        "color:#14B8A6;font-size:18px;font-weight:bold;"
+    );
 
 });
