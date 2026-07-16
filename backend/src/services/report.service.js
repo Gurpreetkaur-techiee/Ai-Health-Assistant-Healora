@@ -47,6 +47,7 @@
  */
 
 const pdfParse  = require('pdf-parse');
+const fs = require("fs");
 const { MedicalReport } = require('../models');
 const GeminiService = require('./gemini.service');
 const AppError  = require('../utils/AppError');
@@ -63,11 +64,17 @@ const MIN_TEXT_LENGTH = 50;
  * @param {string} originalName    - For error messages
  * @returns {Promise<{ text: string, pageCount: number }>}
  */
-const _extractPdfText = async (buffer, originalName) => {
-  let parsed;
-  try {
-    parsed = await pdfParse(buffer);
-  } catch (err) {
+const _extractPdfText = async (filePath, originalName) => {
+
+    let parsed;
+
+    try {
+
+        const pdfBuffer = fs.readFileSync(filePath);
+
+        parsed = await pdfParse(pdfBuffer);
+
+    } catch (err) {
   console.error("PDF Parse Error:", err);
 
   throw new AppError(
@@ -170,9 +177,17 @@ const _parseAIResponse = (rawResponse) => {
  * @param {number}   param0.fileSizeBytes - req.file.size
  * @returns {Promise<MedicalReport>}      - The saved MedicalReport document
  */
-const uploadAndAnalyzeReport = async ({ userId, fileBuffer, originalName, fileSizeBytes }) => {
+const uploadAndAnalyzeReport = async ({
+    userId,
+
+    originalName,
+    fileSizeBytes,
+    storedFileName,
+    filePath,
+    mimeType
+}) => {
   // ── Step 1: Extract text from PDF buffer ──────────────────
-  const { text: extractedText, pageCount } = await _extractPdfText(fileBuffer, originalName);
+  const { text: extractedText, pageCount } = await _extractPdfText(filePath, originalName);
 
   // ── Step 2: Build prompt with extracted text ───────────────
   const prompt = buildReportAnalysisPrompt(extractedText, originalName);
@@ -193,19 +208,36 @@ const uploadAndAnalyzeReport = async ({ userId, fileBuffer, originalName, fileSi
   // All AI-parsed fields (recommendations, urgencyLevel, urgencyReason) are
   // stored in the model so they are available on every subsequent GET request.
   const report = await MedicalReport.create({
-    userId,
-    originalFileName: originalName,
-    fileSizeBytes,
-    pageCount,
-    extractedText,           // Full extracted text (even if truncated for AI)
-    aiSummary,
-    keyFindings,
-    recommendations,         // Persisted — available on GET /api/reports/:id
-    urgencyLevel,            // Persisted — used for dashboard urgency badge
-    urgencyReason,           // Persisted — explains urgency to user
-    modelUsed: process.env.GEMINI_MODEL || 'gemini-1.5-flash'
-  });
 
+    userId,
+
+    originalFileName: originalName,
+
+    storedFileName,
+
+    filePath,
+
+    mimeType,
+
+    fileSizeBytes,
+
+    pageCount,
+
+    extractedText,
+
+    aiSummary,
+
+    keyFindings,
+
+    recommendations,
+
+    urgencyLevel,
+
+    urgencyReason,
+
+    modelUsed: process.env.GEMINI_MODEL || "gemini-1.5-flash"
+
+});
   return report;
 };
 

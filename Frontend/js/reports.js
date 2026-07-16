@@ -151,22 +151,31 @@ chooseFileBtn.disabled = true;
             }
         );
 
-        const result = await response.json();
+    const result = await response.json();
 
-        console.log(result);
+console.log(result);
 
-      if (result.success) {
-
-    alert("Report uploaded successfully!");
-
-uploadInput.value = "";
-selectedFile.textContent = "No file selected";
+// Always restore the button
 chooseFileBtn.innerText = "Choose File";
 chooseFileBtn.disabled = false;
 
-loadReportsFromBackend();
+if (!result.success) {
 
+    alert(result.message);
+
+    selectedFile.textContent = "No file selected";
+    uploadInput.value = "";
+
+    return;
 }
+
+// Success
+alert("Report uploaded successfully!");
+
+selectedFile.textContent = "No file selected";
+uploadInput.value = "";
+
+loadReportsFromBackend();
 
     }
 
@@ -307,30 +316,25 @@ reportsGrid.addEventListener("click", async (e) => {
    VIEW REPORT
 ========================================== */
 
-reportsGrid.addEventListener("click",(e)=>{
+reportsGrid.addEventListener("click", (e) => {
 
-    if(!e.target.classList.contains("view-btn")) return;
+    const button = e.target.closest(".view-btn");
 
-    const file=e.target.dataset.file;
+    if (!button) return;
 
-    if(!file){
+    const file = button.dataset.file;
 
+    if (!file) {
         alert("File not found.");
-
         return;
-
     }
 
     window.open(
-
         `http://localhost:5000${file}`,
-
         "_blank"
-
     );
 
 });
-
 
 /* ==========================================
    DARK MODE
@@ -483,7 +487,10 @@ async function loadReportsFromBackend(){
 
     <div class="report-actions">
 
-        <button class="view-btn" data-id="${report._id}">
+        <button
+            class="view-btn"
+            data-id="${report._id}"
+            data-file="${report.filePath}">
             <i class="fa-solid fa-eye"></i>
             View
         </button>

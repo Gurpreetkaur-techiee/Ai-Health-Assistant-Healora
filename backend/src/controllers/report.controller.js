@@ -74,11 +74,22 @@ exports.uploadReport = asyncWrapper(async (req, res) => {
   }
 
   const report = await ReportService.uploadAndAnalyzeReport({
-    userId:        req.user._id,
-    fileBuffer:    req.file.buffer,
-    originalName:  req.file.originalname,
-    fileSizeBytes: req.file.size
-  });
+
+    userId: req.user._id,
+
+    fileBuffer: req.file.buffer,
+
+    originalName: req.file.originalname,
+
+    fileSizeBytes: req.file.size,
+
+    storedFileName: req.file.filename,
+
+    filePath: `/uploads/reports/${req.file.filename}`,
+
+    mimeType: req.file.mimetype
+
+});
 
   return sendSuccess(
     res,

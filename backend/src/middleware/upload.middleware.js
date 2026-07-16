@@ -15,7 +15,7 @@
  *          read-only filesystems (e.g., AWS App Runner, Lambda).
  *        - pdf-parse accepts a Buffer directly — no path needed.
  *      Cons:
- *        - For very large files, RAM usage spikes. Mitigated by our 5MB limit.
+ *        - For very large files, RAM usage spikes. Mitigated by our 10 MB limit.
  *        - If the Node process crashes during upload, the file is gone.
  *          (Acceptable for v1 since we only need the text, not the file.)
  *
@@ -46,20 +46,54 @@
  *    in app.js catches and formats this as a 413 response.
  */
 
-const multer  = require('multer');
-const path    = require('path');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 const AppError = require('../utils/AppError');
 
 // Read max size from env (set in .env.example as MAX_PDF_SIZE_MB=5)
-const MAX_SIZE_BYTES = (parseInt(process.env.MAX_PDF_SIZE_MB, 10) || 5) * 1024 * 1024;
+const MAX_SIZE_BYTES = (parseInt(process.env.MAX_PDF_SIZE_MB, 10) || 10) * 1024 * 1024;
 
 // ── Storage: Memory (no disk writes) ─────────────────────────
-const storage = multer.memoryStorage();
+const uploadDir = path.join(__dirname, "../../uploads/reports");
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+
+    destination: (req, file, cb) => {
+        cb(null, uploadDir);
+    },
+
+    filename: (req, file, cb) => {
+
+        const uniqueName =
+            Date.now() + "-" + file.originalname.replace(/\s+/g, "_");
+
+        cb(null, uniqueName);
+
+    }
+
+});
 
 // ── File Filter: PDF Only ─────────────────────────────────────
 const pdfFilter = (req, file, cb) => {
-  const allowedMimeTypes = ['application/pdf'];
-  const allowedExtensions = ['.pdf'];
+  const allowedMimeTypes = [
+    "application/pdf",
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "application/octet-stream" // optional for local development
+];
+
+const allowedExtensions = [
+    ".pdf",
+    ".jpg",
+    ".jpeg",
+    ".png"
+];
 
   const ext = path.extname(file.originalname).toLowerCase();
   const mimeOk = allowedMimeTypes.includes(file.mimetype);
@@ -130,7 +164,7 @@ const handleUploadErrors = (req, res, next) => {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return next(
         new AppError(
-          `File too large. Maximum allowed size is ${process.env.MAX_PDF_SIZE_MB || 5}MB.`,
+          `File too large. Maximum allowed size is ${process.env.MAX_PDF_SIZE_MB || 10}MB.`,
           413
         )
       );

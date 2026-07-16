@@ -42,7 +42,7 @@ const rateLimit = require('express-rate-limit');
  */
 const aiStandardLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,  // 15 minutes
-  max: 20,                    // Max 20 requests per window
+  max: 100,                    // Max 20 requests per window
   standardHeaders: true,      // Return RateLimit-* headers (RFC 6585)
   legacyHeaders: false,       // Disable X-RateLimit-* headers (deprecated)
   message: {
@@ -64,7 +64,7 @@ const aiStandardLimiter = rateLimit({
  */
 const aiUploadLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,  // 1 hour
-  max: 5,                     // Max 5 uploads per hour
+  max: 100,                     // Max 100 uploads per hour
   standardHeaders: true,
   legacyHeaders: false,
   message: {

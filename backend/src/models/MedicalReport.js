@@ -52,6 +52,24 @@ const MedicalReportSchema = new mongoose.Schema(
       maxlength: [255, 'File name is too long']
     },
 
+
+    storedFileName: {
+    type: String,
+    required: true,
+    trim: true
+},
+
+filePath: {
+    type: String,
+    required: true,
+    trim: true
+},
+
+mimeType: {
+    type: String,
+    required: true
+},
+
     // File size in bytes (from Multer's file.size)
     fileSizeBytes: {
       type: Number,

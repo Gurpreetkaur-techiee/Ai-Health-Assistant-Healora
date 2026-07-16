@@ -21,7 +21,7 @@
  *   6. 404 handler                   — after routes, catches unmatched paths
  *   7. Global error handler          — must be the absolute last middleware
  */
-
+const path = require("path");
 const express = require('express');
 const helmet  = require('helmet');
 const cors    = require('cors');
@@ -74,7 +74,10 @@ app.use(cors({
 // not JSON. Multer's own size limit is defined in upload.middleware.js.
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "../uploads"))
+);
 // ─────────────────────────────────────────────
 // 4.  REQUEST LOGGING (Morgan)
 // ─────────────────────────────────────────────
