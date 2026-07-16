@@ -200,47 +200,45 @@ document.querySelectorAll(".suggestions button").forEach(button => {
    NEW CHAT
 ========================================== */
 
+
+
 const newChat = document.querySelector(".new-chat");
 
-if(newChat){
+if (newChat) {
 
-    newChat.addEventListener("click",()=>{
+    newChat.addEventListener("click", () => {
 
-        if(confirm("Start a new conversation?")){
+        if (!confirm("Start a new conversation?")) return;
 
-            chatWindow.innerHTML=`
-            // Clear saved chat
-localStorage.removeItem("healoraChat");
+        // Clear local storage
+        localStorage.removeItem("healoraChat");
 
-// Clear input
-input.value = "";
+        // Clear all messages
+        chatWindow.innerHTML = "";
 
-// Scroll to top
-chatWindow.scrollTop = 0;
+        // Add welcome message
+        const welcome = document.createElement("div");
 
-            <div class="message ai">
+        welcome.className = "message ai";
 
-                <div class="avatar">🤖</div>
-
-                <div class="bubble">
-
-                    Hello 👋 I'm Healora AI.
-
-                    Tell me your symptoms and I'll try to help.
-
-                </div>
-
+        welcome.innerHTML = `
+            <div class="avatar">🤖</div>
+            <div class="bubble">
+                Hello 👋 I'm Healora AI. Tell me your symptoms and I'll try to help.
             </div>
+        `;
 
-            `;
+        chatWindow.appendChild(welcome);
 
-        }
+        // Clear input
+        input.value = "";
+
+        // Scroll to top
+        chatWindow.scrollTop = 0;
 
     });
 
 }
-
-
 /* ==========================================
    DARK MODE
 ========================================== */
@@ -399,9 +397,9 @@ document.querySelectorAll(".tool-card").forEach(card => {
 
         else if (title === "Medical Reports") {
 
-            window.location.href = "medical-reports.html";
+    window.location.href = "reports.html";
 
-        }
+}
 
         else if (title === "Appointments") {
 
@@ -457,13 +455,46 @@ document.getElementById("notificationList");
 
 const notificationCount =
 document.getElementById("notificationCount");
+if (notificationBtn) {
 
-notificationBtn.addEventListener("click",()=>{
+    notificationBtn.addEventListener("click", () => {
 
-    notificationDropdown.style.display=
-    notificationDropdown.style.display==="block"
-    ? "none"
-    : "block";
+        notificationDropdown.style.display =
+            notificationDropdown.style.display === "block"
+            ? "none"
+            : "block";
+
+    });
+
+}
 
 });
+
+// Sidebar navigation
+document.querySelectorAll(".history-card").forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        const text = card.innerText.trim();
+
+        if (text.includes("Medicine Reminder")) {
+
+            window.location.href = "medicine.html";
+
+        }
+
+        else if (text.includes("Blood Report")) {
+
+            window.location.href = "reports.html";
+
+        }
+
+        else if (text.includes("Heart Health")) {
+
+            window.location.href = "health-tracker.html";
+
+        }
+
+    });
+
 });
