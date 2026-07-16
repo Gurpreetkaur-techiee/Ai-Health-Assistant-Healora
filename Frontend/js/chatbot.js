@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatWindow = document.querySelector(".chat-window");
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
-    const API_BASE_URL = "http://localhost:5000/api";
+    const API_BASE_URL = "http://localhost:5001/api";
 
     
 
