@@ -13,9 +13,11 @@ const API_BASE_URL = "http://localhost:5001/api";
 
 
 const form=document.getElementById("reminderForm");
+const addReminderBtn = document.querySelector(".add-btn");
 
-
+let editingReminderId = null;
 const medicineGrid=document.querySelector(".medicine-grid");
+const scheduleList = document.querySelector(".schedule-list");
 
 const searchInput=document.querySelector(".search-box input");
 
@@ -41,6 +43,68 @@ statCards[0].querySelector("h2").textContent=cards.length;
 
 }
 
+
+function loadTodaysSchedule(reminders){
+
+    scheduleList.innerHTML = "";
+    let hasReminder = false;
+
+    const today = new Date();
+
+    reminders.forEach(reminder=>{
+
+        if(!reminder.isActive) return;
+
+        const start = new Date(reminder.startDate);
+
+        const end = reminder.endDate
+            ? new Date(reminder.endDate)
+            : null;
+
+        if(start > today) return;
+
+        if(end && end < today) return;
+
+        reminder.times.forEach(time=>{
+            hasReminder = true;
+
+           scheduleList.innerHTML += `
+
+<div class="schedule-item">
+
+    <div class="schedule-time">
+        🕒 ${time}
+    </div>
+
+    <div class="schedule-info">
+
+        <h4>💊 ${reminder.medicineName}</h4>
+
+        <p>${reminder.dosage}</p>
+
+        <span>${reminder.frequency.replaceAll("_"," ")}</span>
+
+    </div>
+
+</div>
+
+`;
+        });
+        
+
+    });
+    if (!hasReminder) {
+
+    scheduleList.innerHTML = `
+        <p class="empty-schedule">
+            🎉 No medicines scheduled for today.
+        </p>
+    `;
+
+}
+
+}
+
 /* ==========================================
         ADD NEW REMINDER
 ========================================== */
@@ -60,9 +124,15 @@ form.addEventListener("submit", async (e) => {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/reminders`, {
+       const url = editingReminderId
+    ? `${API_BASE_URL}/reminders/${editingReminderId}`
+    : `${API_BASE_URL}/reminders`;
 
-            method: "POST",
+const method = editingReminderId ? "PUT" : "POST";
+
+const response = await fetch(url, {
+
+    method,
 
             headers: {
 
@@ -92,10 +162,25 @@ form.addEventListener("submit", async (e) => {
        
 
         if (result.success) {
-                alert("Reminder created successfully!");
-                form.reset();
+                alert(
+        editingReminderId
+            ? "Reminder updated successfully!"
+            : "Reminder created successfully!"
+    );
 
-                await loadRemindersFromBackend();
+    form.reset();
+
+    editingReminderId = null;
+
+    const saveButton = form.querySelector(".save-btn");
+
+    saveButton.innerHTML = `
+        <i class="fa-solid fa-floppy-disk"></i>
+        Save Reminder
+    `;
+
+    await loadRemindersFromBackend();
+
 
         
 
@@ -137,6 +222,18 @@ card.innerText.toLowerCase().includes(value)
 ========================================== */
 
 medicineGrid.addEventListener("click",(e)=>{
+    if (e.target.classList.contains("edit-btn")) {
+        console.log("Edit button clicked");
+
+    const card = e.target.closest(".medicine-card");
+    console.log(card);
+
+    const reminderId = card.dataset.id;
+    console.log(reminderId);
+
+    editReminder(reminderId);
+
+}
     
     if (e.target.classList.contains("delete-btn")) {
         
@@ -187,35 +284,50 @@ showToast("⚠ Medicine skipped");
           FILTERS
 ========================================== */
 
-filterBtns.forEach(btn=>{
 
-btn.addEventListener("click",()=>{
+filterBtns.forEach(btn => {
 
-filterBtns.forEach(b=>b.classList.remove("active"));
+    btn.addEventListener("click", () => {
 
-btn.classList.add("active");
+        filterBtns.forEach(b => b.classList.remove("active"));
 
-const filter=btn.innerText.toLowerCase();
+        btn.classList.add("active");
 
-document.querySelectorAll(".medicine-card").forEach(card=>{
+        const filter = btn.innerText.toLowerCase();
 
-if(filter==="all"){
+        document.querySelectorAll(".medicine-card").forEach(card => {
 
-card.style.display="block";
+            if (filter === "all") {
 
-return;
+                card.style.display = "block";
+                return;
 
-}
+            }
 
-card.style.display=
+            const time = card.querySelector(".fa-regular.fa-clock")
+                .parentElement
+                .innerText
+                .trim();
 
-card.innerText.toLowerCase().includes(filter)
+            const hour = parseInt(time.split(":")[0]);
 
-?"block":"none";
+            if (
+                (filter === "morning" && hour < 12) ||
+                (filter === "afternoon" && hour >= 12 && hour < 18) ||
+                (filter === "night" && hour >= 18)
+            ) {
 
-});
+                card.style.display = "block";
 
-});
+            } else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+    });
 
 });
 
@@ -246,6 +358,32 @@ if(localStorage.getItem("reminderDarkMode")==="true"){
 document.body.classList.add("dark");
 
 }
+
+/* ==========================================
+        ADD NEW REMINDER BUTTON
+========================================== */
+
+addReminderBtn.addEventListener("click", () => {
+
+    editingReminderId = null;
+
+    form.reset();
+
+    const saveButton = form.querySelector(".save-btn");
+
+    saveButton.innerHTML = `
+        <i class="fa-solid fa-floppy-disk"></i>
+        Save Reminder
+    `;
+
+    form.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+    form.querySelector("input").focus();
+
+});
 
 /* ==========================================
         LOCAL STORAGE
@@ -397,6 +535,7 @@ async function loadRemindersFromBackend(){
 });
 
 updateStats();
+loadTodaysSchedule(result.data.reminders);
 
     }
 
@@ -445,7 +584,60 @@ console.log(id);
 
 }
 
+async function editReminder(id){
+try{
 
+       const response = await fetch(
+            `${API_BASE_URL}/reminders/${id}`,
+            {
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            }
+        );
+
+        const result = await response.json();
+        if(result.success){
+
+            const reminder = result.data.reminder;
+
+            editingReminderId = id;
+
+            const inputs = form.querySelectorAll("input,select,textarea");
+
+            inputs[0].value = reminder.medicineName;
+            inputs[1].value = reminder.dosage;
+            inputs[2].value = reminder.times[0];
+            inputs[3].value = reminder.frequency;
+            inputs[4].value = reminder.notes || "";
+
+            form.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+            const saveButton = form.querySelector(".save-btn");
+
+            saveButton.innerHTML = `
+                <i class="fa-solid fa-pen"></i>
+                Update Reminder
+            `;
+        }
+
+ } catch(err){
+
+        console.error(err);
+
+    }
+
+
+    }
+
+
+
+
+    
+        
 
 
 function showToast(message){

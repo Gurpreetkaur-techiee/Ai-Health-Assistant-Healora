@@ -1456,3 +1456,92 @@ height:48px;
 }
 
 }
+.schedule-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    padding:16px;
+
+    margin-bottom:15px;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    border:1px solid #e5e7eb;
+
+    transition:.25s ease;
+
+}
+
+.schedule-item:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:0 8px 18px rgba(0,0,0,.08);
+
+}
+
+.schedule-time{
+
+    min-width:75px;
+
+    text-align:center;
+
+    font-weight:700;
+
+    color:#0f766e;
+
+    background:#d1fae5;
+
+    padding:10px;
+
+    border-radius:12px;
+
+}
+
+.schedule-info{
+
+    flex:1;
+
+}
+
+.schedule-info h4{
+
+    margin:0;
+
+    font-size:17px;
+
+    color:#1f2937;
+
+}
+
+.schedule-info p{
+
+    margin:6px 0;
+
+    color:#6b7280;
+
+}
+
+.schedule-info span{
+
+    display:inline-block;
+
+    padding:4px 10px;
+
+    border-radius:20px;
+
+    background:#e0f2fe;
+
+    color:#0369a1;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
