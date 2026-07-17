@@ -154,6 +154,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
 
+
+    // ================= RECENT ACTIVITY =================
+
+try {
+
+    const reportsResponse = await fetch(
+        `${API_BASE_URL}/reports`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    );
+
+    const reportsResult = await reportsResponse.json();
+
+    let activities = [];
+
+    if (
+        reportsResponse.ok &&
+        reportsResult.success &&
+        Array.isArray(reportsResult.data?.reports)
+    ) {
+
+        reportsResult.data.reports
+            .slice(0, 5)
+            .forEach(report => {
+
+                activities.push({
+                    icon: "📄",
+                    title: `Uploaded ${report.originalFileName}`,
+                    time: new Date(report.createdAt).toLocaleString()
+                });
+
+            });
+
+    }
+
+    renderRecentActivity(activities);
+
+} catch (err) {
+
+    console.error(
+        "Recent Activity Error:",
+        err
+    );
+
+    renderRecentActivity([]);
+
+}
+
     }
     loadDashboard();
 
@@ -773,7 +824,7 @@ const stepsPlusBtn = document.getElementById("stepsPlusBtn");
 
 function getSavedSteps() {
     const saved = localStorage.getItem("healora_steps");
-    return saved !== null ? parseInt(saved, 10) : 8462; // default when nothing saved yet
+    return saved !== null ? parseInt(saved, 10) : 0; // default when nothing saved yet
 }
 
 function renderSteps(value) {
@@ -797,4 +848,54 @@ if (stepsMinusBtn) {
         localStorage.setItem("healora_steps", currentSteps);
         renderSteps(currentSteps);
     });
+}
+
+function renderRecentActivity(activities) {
+
+    const activityList = document.getElementById("activityList");
+
+    if (!activityList) return;
+
+    activityList.innerHTML = "";
+
+    if (!activities || activities.length === 0) {
+
+        activityList.innerHTML = `
+            <div class="activity">
+                <div class="activity-icon">📭</div>
+
+                <div>
+                    <h4>No Recent Activity</h4>
+                    <p>Your recent actions will appear here.</p>
+                </div>
+            </div>
+        `;
+
+        return;
+    }
+
+    activities.forEach(activity => {
+
+        activityList.innerHTML += `
+
+        <div class="activity">
+
+            <div class="activity-icon">
+                ${activity.icon}
+            </div>
+
+            <div>
+
+                <h4>${activity.title}</h4>
+
+                <p>${activity.time}</p>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
 }
