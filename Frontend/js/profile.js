@@ -454,9 +454,21 @@ if (themeBtn) {
         document.documentElement.classList.toggle("dark-mode", isDark);
         document.body.classList.toggle("dark-mode", isDark);
 
+        // Global theme
         localStorage.setItem(
             "theme",
             isDark ? "dark" : "light"
+        );
+
+        // Keep Settings page in sync
+        const settings =
+            JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+        settings.darkMode = isDark;
+
+        localStorage.setItem(
+            "healoraSettings",
+            JSON.stringify(settings)
         );
 
         const icon = themeBtn.querySelector("i");
