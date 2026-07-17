@@ -161,7 +161,23 @@ chooseFileBtn.disabled = false;
 
 if (!result.success) {
 
-    alert(result.message);
+    let message = result.message || "";
+
+    // Show a friendly message for scanned/image PDFs
+    if (
+        message.toLowerCase().includes("parsed") ||
+        message.toLowerCase().includes("pdf") ||
+        message.toLowerCase().includes("read")
+    ) {
+
+        message =
+            "⚠️ This file cannot be analyzed.\n\n" +
+            "Please upload the original digital PDF provided by the hospital or laboratory.\n\n" +
+            "Scanned images, WhatsApp PDFs, or photos converted to PDF are not supported.";
+
+    }
+
+    alert(message);
 
     selectedFile.textContent = "No file selected";
     uploadInput.value = "";
@@ -183,12 +199,16 @@ loadReportsFromBackend();
 
     console.error(err);
 
-    alert("Upload failed.");
+    alert(
+        "⚠️ Upload failed.\n\n" +
+        "Please make sure you're uploading a valid digital PDF report."
+    );
 
     chooseFileBtn.innerText = "Choose File";
     chooseFileBtn.disabled = false;
 
     selectedFile.textContent = "No file selected";
+    uploadInput.value = "";
 
 }
 
@@ -289,25 +309,31 @@ reportsGrid.addEventListener("click", async (e) => {
 
         const result = await response.json();
 
-        if (result.success) {
+if (result.success) {
+    alert("✅ Report uploaded successfully!");
+} else {
 
-            alert("Report deleted successfully!");
+    let message = result.message;
 
-            loadReportsFromBackend();
+    if (
+        message.includes("PDF") ||
+        message.includes("parsed") ||
+        message.includes("readable text")
+    ) {
+        message =
+            "⚠️ This report appears to be a scanned/photo-based PDF.\n\nPlease upload the original digital PDF provided by the hospital or laboratory.";
+    }
 
-        } else {
-
-            alert(result.message);
-
-        }
+    alert(message);
+}
 
     } catch (err) {
+    console.error(err);
 
-        console.error(err);
-
-        alert("Failed to delete report.");
-
-    }
+    alert(
+        "⚠️ Unable to upload the report.\n\nPlease make sure you're uploading a valid digital PDF."
+    );
+}
 
 });
 
