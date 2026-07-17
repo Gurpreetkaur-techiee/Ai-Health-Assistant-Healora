@@ -55,8 +55,7 @@ const AppError = require('../utils/AppError');
 const MAX_SIZE_BYTES = (parseInt(process.env.MAX_PDF_SIZE_MB, 10) || 10) * 1024 * 1024;
 
 // ── Storage: Memory (no disk writes) ─────────────────────────
-const uploadDir = path.join(__dirname, "../../uploads/reports");
-
+const uploadDir = path.resolve(process.cwd(), "uploads", "reports");
 if (!fs.existsSync(uploadDir)) {
     fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -64,8 +63,9 @@ if (!fs.existsSync(uploadDir)) {
 const storage = multer.diskStorage({
 
     destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
+    console.log("UPLOAD DIRECTORY:", uploadDir);
+    cb(null, uploadDir);
+},
 
     filename: (req, file, cb) => {
 
@@ -81,40 +81,29 @@ const storage = multer.diskStorage({
 // ── File Filter: PDF Only ─────────────────────────────────────
 const pdfFilter = (req, file, cb) => {
   const allowedMimeTypes = [
-    "application/pdf",
-    "image/jpeg",
-    "image/jpg",
-    "image/png",
-    "application/octet-stream" // optional for local development
-];
+    "application/pdf"
+  ];
 
-const allowedExtensions = [
-    ".pdf",
-    ".jpg",
-    ".jpeg",
-    ".png"
-];
+  const allowedExtensions = [
+    ".pdf"
+  ];
 
   const ext = path.extname(file.originalname).toLowerCase();
   const mimeOk = allowedMimeTypes.includes(file.mimetype);
-  const extOk  = allowedExtensions.includes(ext);
+  const extOk = allowedExtensions.includes(ext);
 
   if (mimeOk && extOk) {
-    // Accept the file
     cb(null, true);
   } else {
-    // Reject — pass an AppError to the cb (Multer forwards it to next())
     cb(
       new AppError(
-        `Invalid file type. Only PDF files are accepted. ` +
-        `Received: ${file.mimetype || 'unknown type'}`,
+        `Invalid file type. Only PDF files are accepted. Received: ${file.mimetype || 'unknown type'}`,
         400
       ),
       false
     );
   }
 };
-
 // ── Multer Instance ───────────────────────────────────────────
 const upload = multer({
   storage,

@@ -156,12 +156,8 @@ Securely upload prescriptions, blood tests, X-rays, MRI scans, and let Healora A
 
 </p>
 
-<button class="upload-btn">
-
-<i class="fa-solid fa-cloud-arrow-up"></i>
-
-Upload New Report
-
+<button type="button" class="upload-btn">
+    Upload New Report
 </button>
 
 </div>
@@ -182,7 +178,7 @@ Upload New Report
 
 <h3>Total Reports</h3>
 
-<h2>28</h2>
+<h2 id="totalReports">0</h2>
 
 <p>Uploaded</p>
 
@@ -192,7 +188,7 @@ Upload New Report
 
 <h3>AI Analysed</h3>
 
-<h2>24</h2>
+<h2 id="aiAnalysed">0</h2>
 
 <p>Completed</p>
 
@@ -202,7 +198,7 @@ Upload New Report
 
 <h3>Pending</h3>
 
-<h2>4</h2>
+<h2 id="pendingReports">0</h2>
 
 <p>Waiting</p>
 
@@ -212,7 +208,7 @@ Upload New Report
 
 <h3>Storage</h3>
 
-<h2>310 MB</h2>
+<h2 id="storageUsed">0 KB</h2>
 
 <p>Used</p>
 
@@ -265,7 +261,7 @@ placeholder="Search reports by name, doctor or date...">
     Drag your report here or click the button below
 </p>
 
-        <button id="chooseFileBtn" class="upload-select-btn">
+        <button type="button" id="chooseFileBtn">
             Choose File
         </button>
 
@@ -273,15 +269,15 @@ placeholder="Search reports by name, doctor or date...">
             No file selected
         </p>
         <p class="supported-files">
-    Supported: PDF • JPG • PNG
+    Supported: PDF only
 </p>
 
-        <input
-            id="uploadInput"
-            type="file"
-            accept=".pdf,.jpg,.jpeg,.png,image/*"
-            hidden
-        >
+<input
+    id="uploadInput"
+    type="file"
+    accept=".pdf,application/pdf"
+    hidden
+>
 
     </div>
 

@@ -65,7 +65,7 @@ const asyncWrapper   = require('../utils/asyncWrapper');
  *   }
  */
 exports.uploadReport = asyncWrapper(async (req, res) => {
-  // Guard: file must be present (Multer would have already caught type/size errors)
+
   if (!req.file) {
     throw new AppError(
       'No file received. Please upload a PDF file using the "report" form field.',
@@ -73,32 +73,33 @@ exports.uploadReport = asyncWrapper(async (req, res) => {
     );
   }
 
+  console.log("MULTER FILE PATH:", req.file.path);
+
   const report = await ReportService.uploadAndAnalyzeReport({
-
     userId: req.user._id,
-
-    fileBuffer: req.file.buffer,
-
     originalName: req.file.originalname,
-
     fileSizeBytes: req.file.size,
-
     storedFileName: req.file.filename,
-
-    filePath: `/uploads/reports/${req.file.filename}`,
-
+    filePath: req.file.path,
+    publicFilePath: `/uploads/reports/${req.file.filename}`,
     mimeType: req.file.mimetype
+  });
 
-});
+  // TEMPORARY DEBUG LOGS
+  console.log("✅ SERVICE FINISHED");
+  console.log("REPORT ID:", report._id);
 
-  return sendSuccess(
+  const response = sendSuccess(
     res,
     { report },
     'Medical report uploaded and analyzed successfully.',
     201
   );
-});
 
+  console.log("✅ RESPONSE SENT");
+
+  return response;
+});
 // ─────────────────────────────────────────────────────────────
 // GET /api/reports
 // ─────────────────────────────────────────────────────────────

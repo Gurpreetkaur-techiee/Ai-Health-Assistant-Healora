@@ -29,11 +29,11 @@ const uploadBtn = document.querySelector(".upload-btn");
 
 if (uploadBtn) {
 
-    uploadBtn.addEventListener("click", () => {
-
-        uploadInput.click();
-
-    });
+    uploadBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadInput.click();
+});
 
 }
 
@@ -41,11 +41,11 @@ const chooseFileBtn = document.getElementById("chooseFileBtn");
 
 if (chooseFileBtn) {
 
-    chooseFileBtn.addEventListener("click", () => {
-
-        uploadInput.click();
-
-    });
+    chooseFileBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    uploadInput.click();
+});
 
 }
 uploadBox.addEventListener("click", () => {
@@ -128,17 +128,27 @@ function updateStats(reports) {
 uploadInput.addEventListener("change", async (e) => {
 
     const file = e.target.files[0];
-    chooseFileBtn.innerText = "Uploading...";
-chooseFileBtn.disabled = true;
 
-    if (!file) return;
+    // No file selected
+    if (!file) {
+        return;
+    }
+
+    console.log("FILE SELECTED:", file.name);
+
     selectedFile.textContent = file.name;
+
+    // Disable upload button while processing
+    chooseFileBtn.innerText = "Uploading...";
+    chooseFileBtn.disabled = true;
 
     const formData = new FormData();
 
     formData.append("report", file);
 
     try {
+
+        // ================= UPLOAD REPORT =================
 
         const response = await fetch(
             `${API_BASE_URL}/reports/upload`,
@@ -151,46 +161,95 @@ chooseFileBtn.disabled = true;
             }
         );
 
-    const result = await response.json();
+        console.log(
+            "UPLOAD RESPONSE STATUS:",
+            response.status
+        );
 
-console.log(result);
+        const result = await response.json();
 
-// Always restore the button
-chooseFileBtn.innerText = "Choose File";
-chooseFileBtn.disabled = false;
+        console.log(
+            "UPLOAD RESPONSE:",
+            result
+        );
 
-if (!result.success) {
 
-    alert(result.message);
+        // ================= ERROR RESPONSE =================
 
-    selectedFile.textContent = "No file selected";
-    uploadInput.value = "";
+        if (!response.ok || !result.success) {
 
-    return;
-}
+            throw new Error(
+                result.message ||
+                "Report upload failed."
+            );
 
-// Success
-alert("Report uploaded successfully!");
+        }
 
-selectedFile.textContent = "No file selected";
-uploadInput.value = "";
 
-loadReportsFromBackend();
+        // ================= GET UPLOADED REPORT =================
+
+        const uploadedReport =
+            result.data?.report;
+
+        if (!uploadedReport) {
+
+            throw new Error(
+                "Upload succeeded, but report data was not returned."
+            );
+
+        }
+
+
+        // ================= IMMEDIATE AI RENDER =================
+
+        // Display AI analysis directly from POST response
+        renderAIAnalysis(uploadedReport);
+
+
+        // ================= SYNC REPORT LIST =================
+
+        // Refresh report cards, timeline and statistics
+        // using reports stored in MongoDB
+        await loadReportsFromBackend();
+
+
+        // ================= SUCCESS =================
+
+        alert("Report uploaded successfully!");
+
+        selectedFile.textContent =
+            "No file selected";
+
+        uploadInput.value = "";
+
+
+    } catch (err) {
+
+        console.error(
+            "Report upload error:",
+            err
+        );
+
+        alert(
+            err.message ||
+            "Upload failed."
+        );
+
+        selectedFile.textContent =
+            "No file selected";
+
+        uploadInput.value = "";
+
+    } finally {
+
+        // Always restore button
+        chooseFileBtn.innerText =
+            "Choose File";
+
+        chooseFileBtn.disabled =
+            false;
 
     }
-
-    catch(err){
-
-    console.error(err);
-
-    alert("Upload failed.");
-
-    chooseFileBtn.innerText = "Choose File";
-    chooseFileBtn.disabled = false;
-
-    selectedFile.textContent = "No file selected";
-
-}
 
 });
 
@@ -293,7 +352,7 @@ reportsGrid.addEventListener("click", async (e) => {
 
             alert("Report deleted successfully!");
 
-            loadReportsFromBackend();
+            await loadReportsFromBackend();
 
         } else {
 
@@ -418,123 +477,252 @@ alert("🤖 AI analysis completed successfully.");
 
 });
 
-async function loadReportsFromBackend(){
 
-    try{
+function renderAIAnalysis(report) {
+
+    if (!report) return;
+
+    // Summary
+    const aiSummaryText =
+        document.getElementById("aiSummaryText");
+
+    aiSummaryText.textContent =
+        report.aiSummary ||
+        "No AI summary available.";
+
+
+    // Urgency Level
+    const urgencyBadge =
+        document.getElementById("urgencyBadge");
+
+    const urgencyLevel =
+        report.urgencyLevel || "low";
+
+    urgencyBadge.textContent = urgencyLevel;
+
+    urgencyBadge.className =
+        `priority ${urgencyLevel}`;
+
+
+    // Urgency Reason
+    const urgencyReason =
+        document.getElementById("urgencyReason");
+
+    urgencyReason.textContent =
+        report.urgencyReason ||
+        "No urgency information available.";
+
+
+    // Key Findings
+    const keyFindingsList =
+        document.getElementById("keyFindingsList");
+
+    keyFindingsList.innerHTML = "";
+
+    if (
+        Array.isArray(report.keyFindings) &&
+        report.keyFindings.length > 0
+    ) {
+
+        report.keyFindings.forEach(finding => {
+
+            const li =
+                document.createElement("li");
+
+            li.textContent = finding;
+
+            keyFindingsList.appendChild(li);
+
+        });
+
+    } else {
+
+        keyFindingsList.innerHTML =
+            "<li>No findings available.</li>";
+
+    }
+
+
+    // Recommendations
+    const recommendationList =
+        document.getElementById("recommendationList");
+
+    recommendationList.innerHTML = "";
+
+    if (
+        Array.isArray(report.recommendations) &&
+        report.recommendations.length > 0
+    ) {
+
+        report.recommendations.forEach(recommendation => {
+
+            const li =
+                document.createElement("li");
+
+            li.textContent = recommendation;
+
+            recommendationList.appendChild(li);
+
+        });
+
+    } else {
+
+        recommendationList.innerHTML =
+            "<li>No recommendations available.</li>";
+
+    }
+}
+async function loadReportsFromBackend() {
+
+    try {
 
         const response = await fetch(
             `${API_BASE_URL}/reports`,
             {
-                headers:{
-                    Authorization:`Bearer ${token}`
+                headers: {
+                    Authorization: `Bearer ${token}`
                 }
             }
         );
 
         const result = await response.json();
 
+        // Check whether backend request succeeded
+        if (!response.ok || !result.success) {
+            throw new Error(
+                result.message || "Failed to load reports."
+            );
+        }
+
+        // Safely get reports array
+        const reports = result.data?.reports || [];
+
+        // Clear existing UI
         reportsGrid.innerHTML = "";
         timeline.innerHTML = "";
 
-      result.data.reports.forEach(report => {
+        // ================= REPORT CARDS =================
 
-    reportsGrid.innerHTML += `
+        reports.forEach(report => {
 
-<div class="report-card"
-     data-name="${report.originalFileName.toLowerCase()}">
+            reportsGrid.innerHTML += `
 
-    <div class="report-header">
+                <div
+                    class="report-card"
+                    data-name="${report.originalFileName.toLowerCase()}"
+                >
 
-        <div class="report-icon">
-            <i class="fa-solid fa-file-pdf"></i>
-        </div>
+                    <div class="report-header">
 
-        <div class="report-info">
+                        <div class="report-icon">
+                            <i class="fa-solid fa-file-pdf"></i>
+                        </div>
 
-            <h3>${report.originalFileName}</h3>
+                        <div class="report-info">
 
-            <span class="report-date">
-                <i class="fa-solid fa-calendar-days"></i>
-                ${new Date(report.createdAt).toLocaleDateString()}
-            </span>
+                            <h3>${report.originalFileName}</h3>
 
-        </div>
+                            <span class="report-date">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                ${new Date(report.createdAt).toLocaleDateString()}
+                            </span>
 
-    </div>
+                        </div>
 
-    <div class="report-meta">
+                    </div>
 
-        <div>
-            <strong>Size</strong><br>
-            ${(report.fileSizeBytes/1024).toFixed(1)} KB
-        </div>
+                    <div class="report-meta">
 
-        <div>
-            <strong>Pages</strong><br>
-            ${report.pageCount}
-        </div>
+                        <div>
+                            <strong>Size</strong><br>
+                            ${((report.fileSizeBytes || 0) / 1024).toFixed(1)} KB
+                        </div>
 
-        <div>
-            <strong>Priority</strong><br>
+                        <div>
+                            <strong>Pages</strong><br>
+                            ${report.pageCount || 0}
+                        </div>
 
-            <span class="priority ${report.urgencyLevel}">
-                ${report.urgencyLevel}
-            </span>
+                        <div>
+                            <strong>Priority</strong><br>
 
-        </div>
+                            <span class="priority ${report.urgencyLevel || "low"}">
+                                ${report.urgencyLevel || "low"}
+                            </span>
 
-    </div>
+                        </div>
 
-    <div class="report-actions">
+                    </div>
 
-        <button
-            class="view-btn"
-            data-id="${report._id}"
-            data-file="${report.filePath}">
-            <i class="fa-solid fa-eye"></i>
-            View
-        </button>
+                    <div class="report-actions">
 
-        <button class="delete-btn" data-id="${report._id}">
-            <i class="fa-solid fa-trash"></i>
-            Delete
-        </button>
+                        <button
+                            class="view-btn"
+                            data-id="${report._id}"
+                            data-file="${report.filePath || ""}"
+                        >
+                            <i class="fa-solid fa-eye"></i>
+                            View
+                        </button>
 
-    </div>
+                        <button
+                            class="delete-btn"
+                            data-id="${report._id}"
+                        >
+                            <i class="fa-solid fa-trash"></i>
+                            Delete
+                        </button>
 
-</div>
+                    </div>
 
-`;
+                </div>
+            `;
 
-    // ================= Timeline =================
 
-    timeline.innerHTML += `
+            // ================= TIMELINE =================
 
-    <div class="timeline-item">
+            timeline.innerHTML += `
 
-        <div class="dot"></div>
+                <div class="timeline-item">
 
-        <div>
+                    <div class="dot"></div>
 
-            <h4>${report.originalFileName}</h4>
+                    <div>
 
-            <p>${new Date(report.createdAt).toLocaleDateString()}</p>
+                        <h4>${report.originalFileName}</h4>
 
-        </div>
+                        <p>
+                            ${new Date(report.createdAt).toLocaleDateString()}
+                        </p>
 
-    </div>
+                    </div>
 
-    `;
+                </div>
+            `;
 
-});
+        });
 
-updateStats(result.data.reports);
 
-    }
+        // ================= AI ANALYSIS =================
 
-    catch(err){
+        if (reports.length > 0) {
 
-        console.error(err);
+            // Backend returns newest report first
+            renderAIAnalysis(reports[0]);
+
+        }
+
+
+        // ================= STATS =================
+
+        updateStats(reports);
+
+    } catch (err) {
+
+        console.error(
+            "Failed to load reports:",
+            err
+        );
 
     }
 
@@ -602,3 +790,4 @@ if (logoutBtn) {
 }
 });
 
+console.log("NEW REPORTS.JS LOADED - TEST");

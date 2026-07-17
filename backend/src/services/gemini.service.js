@@ -189,6 +189,11 @@ const _handleGeminiError = (err) => {
 
   const message = err.message || '';
 
+  console.error("========== GEMINI ACTUAL ERROR ==========");
+console.error(err);
+console.error("GEMINI ERROR MESSAGE:", message);
+console.error("=========================================");
+
   if (message.includes('API_KEY_INVALID') || message.includes('API key not valid')) {
     // Config error — log server-side, don't expose details to client
     console.error('❌  Gemini API key is invalid. Check GEMINI_API_KEY in .env');

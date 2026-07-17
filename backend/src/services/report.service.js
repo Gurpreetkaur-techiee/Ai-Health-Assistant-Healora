@@ -46,7 +46,7 @@
  *    even if it was truncated for the AI call.
  */
 
-const pdfParse  = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 const fs = require("fs");
 const { MedicalReport } = require('../models');
 const GeminiService = require('./gemini.service');
@@ -54,7 +54,7 @@ const AppError  = require('../utils/AppError');
 const { buildReportAnalysisPrompt } = require('../utils/prompts.utils');
 
 // Minimum meaningful text length from a PDF (anything below = likely a scan)
-const MIN_TEXT_LENGTH = 50;
+const MIN_TEXT_LENGTH = 1;
 
 // ─────────────────────────────────────────────────────────────
 // Private: Extract Text from PDF Buffer
@@ -72,7 +72,11 @@ const _extractPdfText = async (filePath, originalName) => {
 
         const pdfBuffer = fs.readFileSync(filePath);
 
-        parsed = await pdfParse(pdfBuffer);
+        const parser = new PDFParse({ data: pdfBuffer });
+
+        parsed = await parser.getText();
+
+        await parser.destroy();
 
     } catch (err) {
   console.error("PDF Parse Error:", err);
@@ -83,16 +87,14 @@ const _extractPdfText = async (filePath, originalName) => {
   );
 }
   const text = parsed.text || '';
-  const pageCount = parsed.numpages || 0;
+  const pageCount = parsed.total || 0;
 
   // Reject PDFs that are clearly image-only (scanned without a text layer)
   if (text.trim().length < MIN_TEXT_LENGTH) {
     throw new AppError(
-      'This PDF does not contain readable text. ' +
-      'It may be a scanned image. Please use a text-based PDF medical report. ' +
-      '(OCR for scanned documents is not supported in this version.)',
+      'No readable text could be extracted from this PDF. The file may be a scanned or image-based PDF. Please upload a digital text-based PDF.',
       400
-    );
+  );
   }
 
   return { text, pageCount };
@@ -151,17 +153,28 @@ const _parseAIResponse = (rawResponse) => {
     };
 
   } catch (parseError) {
-    // GRACEFUL DEGRADATION: Store the raw response as summary.
-    // The report is still saved and readable — no crash.
-    console.warn('⚠️  Could not parse Gemini JSON response. Storing raw text as summary.');
-    return {
-      aiSummary:       rawResponse,
-      keyFindings:     [],
-      recommendations: [],
-      urgencyLevel:    'low',
-      urgencyReason:   ''
-    };
-  }
+  console.error(
+    '❌ Gemini JSON parse error:',
+    parseError.message
+  );
+
+  console.error(
+    '❌ Raw response type:',
+    typeof rawResponse
+  );
+
+  console.warn(
+    '⚠️ Could not parse Gemini JSON response. Storing raw text as summary.'
+  );
+
+  return {
+    aiSummary: rawResponse,
+    keyFindings: [],
+    recommendations: [],
+    urgencyLevel: 'low',
+    urgencyReason: ''
+  };
+}
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -179,11 +192,11 @@ const _parseAIResponse = (rawResponse) => {
  */
 const uploadAndAnalyzeReport = async ({
     userId,
-
     originalName,
     fileSizeBytes,
     storedFileName,
     filePath,
+    publicFilePath,
     mimeType
 }) => {
   // ── Step 1: Extract text from PDF buffer ──────────────────
@@ -215,7 +228,7 @@ const uploadAndAnalyzeReport = async ({
 
     storedFileName,
 
-    filePath,
+    filePath: publicFilePath,
 
     mimeType,
 
