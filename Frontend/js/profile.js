@@ -158,6 +158,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "";
             gender.value = user.gender || "";
             bloodGroup.value = user.bloodGroup || "";
+            height.value = localStorage.getItem("healora_height") || "";
+            weight.value = localStorage.getItem("healora_weight") || "";
             if (user.phoneNumber) {
                 phoneNumber.value = user.phoneNumber;
             }
@@ -407,6 +409,9 @@ async function updateProfile() {
             return false;
         }
 
+        localStorage.setItem("healora_height", height.value.trim());
+        localStorage.setItem("healora_weight", weight.value.trim());
+        
         alert("✅ Profile updated successfully!");
 
         await loadProfile();

@@ -689,3 +689,112 @@ logoutMenuBtn?.addEventListener("click", () => {
     window.location.href = "login.html";
 
 });
+
+/* ==========================================
+   BMI & CALORIE GOAL (from profile)
+========================================== */
+
+async function getVitalsData() {
+    const heightCm = parseFloat(localStorage.getItem("healora_height"));
+    const weightKg = parseFloat(localStorage.getItem("healora_weight"));
+
+    if (!heightCm || !weightKg) {
+        return null; // user hasn't entered height/weight on Profile page yet
+    }
+
+    try {
+        const res = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const result = await res.json();
+        const user = result?.data?.user;
+
+        return {
+            heightCm,
+            weightKg,
+            dob: user?.dateOfBirth,
+            gender: user?.gender
+        };
+    } catch (e) {
+        console.error("Could not load profile data:", e);
+        return null;
+    }
+}
+
+function calcAge(dob) {
+    const birth = new Date(dob);
+    const diff = new Date() - birth;
+    return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+}
+
+getVitalsData().then(data => {
+    const bmiEl = document.getElementById("statBMI");
+    const bmiCatEl = document.getElementById("statBMICategory");
+    const calEl = document.getElementById("statCalories");
+
+    if (!data) {
+        if (bmiEl) bmiEl.textContent = "--";
+        if (bmiCatEl) bmiCatEl.textContent = "Add height/weight in Profile";
+        if (calEl) calEl.textContent = "--";
+        return;
+    }
+
+    const heightM = data.heightCm / 100;
+    const bmi = data.weightKg / (heightM * heightM);
+
+    if (bmiEl) bmiEl.textContent = bmi.toFixed(1);
+    if (bmiCatEl) {
+        let category = "Normal";
+        if (bmi < 18.5) category = "Underweight";
+        else if (bmi >= 25 && bmi < 30) category = "Overweight";
+        else if (bmi >= 30) category = "Obese";
+        bmiCatEl.textContent = category;
+    }
+
+    if (calEl && data.dob && data.gender) {
+        const age = calcAge(data.dob);
+        let bmr = 10 * data.weightKg + 6.25 * data.heightCm - 5 * age;
+        bmr += data.gender.toLowerCase() === "male" ? 5 : -161;
+        const tdee = Math.round(bmr * 1.375); // light activity assumption
+        calEl.textContent = tdee.toLocaleString() + " kcal";
+    } else if (calEl) {
+        calEl.textContent = "--";
+    }
+});
+
+/* ==========================================
+   STEPS STEPPER (+ / -)
+========================================== */
+
+const STEPS_INCREMENT = 50;
+const stepsEl = document.getElementById("statSteps");
+const stepsMinusBtn = document.getElementById("stepsMinusBtn");
+const stepsPlusBtn = document.getElementById("stepsPlusBtn");
+
+function getSavedSteps() {
+    const saved = localStorage.getItem("healora_steps");
+    return saved !== null ? parseInt(saved, 10) : 8462; // default when nothing saved yet
+}
+
+function renderSteps(value) {
+    if (stepsEl) stepsEl.textContent = value.toLocaleString();
+}
+
+let currentSteps = getSavedSteps();
+renderSteps(currentSteps);
+
+if (stepsPlusBtn) {
+    stepsPlusBtn.addEventListener("click", () => {
+        currentSteps += STEPS_INCREMENT;
+        localStorage.setItem("healora_steps", currentSteps);
+        renderSteps(currentSteps);
+    });
+}
+
+if (stepsMinusBtn) {
+    stepsMinusBtn.addEventListener("click", () => {
+        currentSteps = Math.max(0, currentSteps - STEPS_INCREMENT);
+        localStorage.setItem("healora_steps", currentSteps);
+        renderSteps(currentSteps);
+    });
+}

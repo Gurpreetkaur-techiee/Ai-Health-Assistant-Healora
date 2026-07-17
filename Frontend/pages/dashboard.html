@@ -257,19 +257,19 @@ Track medicines, monitor reports, consult AI and manage your complete health jou
 
 <div class="stat-card">
 
-<div class="stat-icon heart">
+<div class="stat-icon bmi">
 
-<i class="fa-solid fa-heart-pulse"></i>
+<i class="fa-solid fa-weight-scale"></i>
 
 </div>
 
 <div class="stat-info">
 
-<h3>Heart Rate</h3>
+<h3>BMI</h3>
 
-<h2>78 BPM</h2>
+<h2 id="statBMI">--</h2>
 
-<span class="positive">+2% Healthy</span>
+<span id="statBMICategory">Calculating…</span>
 
 </div>
 
@@ -277,19 +277,19 @@ Track medicines, monitor reports, consult AI and manage your complete health jou
 
 <div class="stat-card">
 
-<div class="stat-icon pressure">
+<div class="stat-icon calories">
 
-<i class="fa-solid fa-stethoscope"></i>
+<i class="fa-solid fa-fire"></i>
 
 </div>
 
 <div class="stat-info">
 
-<h3>Blood Pressure</h3>
+<h3>Daily Calorie Goal</h3>
 
-<h2>120 / 80</h2>
+<h2 id="statCalories">--</h2>
 
-<span class="positive">Normal</span>
+<span>Based on your profile</span>
 
 </div>
 
@@ -327,7 +327,15 @@ Track medicines, monitor reports, consult AI and manage your complete health jou
 
 <h3>Steps</h3>
 
-<h2>8,462</h2>
+<div class="steps-control">
+
+<button class="stepper-btn" id="stepsMinusBtn" aria-label="Decrease steps">−</button>
+
+<h2 id="statSteps">8,462</h2>
+
+<button class="stepper-btn" id="stepsPlusBtn" aria-label="Increase steps">+</button>
+
+</div>
 
 <span>Today's Activity</span>
 
