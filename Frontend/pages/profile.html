@@ -19,7 +19,14 @@
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
 <script>
-if (localStorage.getItem("theme") === "dark") {
+const settings =
+    JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+const isDark =
+    settings.darkMode ??
+    (localStorage.getItem("theme") === "dark");
+
+if (isDark) {
     document.documentElement.classList.add("dark-mode");
 }
 </script>
