@@ -158,8 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "";
             gender.value = user.gender || "";
             bloodGroup.value = user.bloodGroup || "";
-            height.value = localStorage.getItem("healora_height") || "";
-            weight.value = localStorage.getItem("healora_weight") || "";
+            await loadHealthInformation();
             if (user.phoneNumber) {
                 phoneNumber.value = user.phoneNumber;
             }
@@ -447,6 +446,50 @@ async function saveEmergencyContact() {
 
 }
 
+async function saveWeight() {
+
+    const weightValue = parseFloat(weight.value);
+
+    if (isNaN(weightValue)) {
+        return true;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/health/readings`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    type: "weight",
+                    weight: {
+                        value: weightValue,
+                        unit: "kg"
+                    }
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to save weight.");
+        }
+
+        return true;
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Failed to save weight.");
+
+        return false;
+    }
+
+}
+
 async function updateProfile() {
 
     try {
@@ -476,16 +519,18 @@ async function updateProfile() {
             alert(result.message || "Failed to update profile.");
             return false;
         }
-
-        localStorage.setItem("healora_height", height.value.trim());
-        localStorage.setItem("healora_weight", weight.value.trim());
             
         const emergencySaved = await saveEmergencyContact();
             
         if (!emergencySaved) {
             return false;
         }
-        
+        const weightSaved = await saveWeight();
+
+        if (!weightSaved) {
+            return false;
+        }
+
         alert("✅ Profile updated successfully!");
         
         await loadProfile();
@@ -562,6 +607,51 @@ if (themeBtn) {
     });
 
 }
+
+async function loadHealthInformation() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/health/summary`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) return;
+
+        const result = await response.json();
+
+        const latestWeight =
+            result.data.latestReadings.weight;
+
+        if (
+            latestWeight &&
+            latestWeight.weight
+        ) {
+
+            weight.value = latestWeight.weight.value;
+
+        } else {
+
+            weight.value = "";
+
+        }
+
+        // Height is not available in backend yet
+        height.value = "";
+
+    } catch (err) {
+
+        console.error("Failed to load health information:", err);
+
+    }
+
+}
+
 // ================= PROFILE IMAGE =================
 
 if (cameraBtn && profileUpload) {
