@@ -105,6 +105,26 @@ const searchInput = document.querySelector(".search-box input");
 const statCards = document.querySelectorAll(".stat-card");
 
 const themeBtn = document.getElementById("themeBtn");
+
+// Sync theme button icon with current theme
+if (themeBtn) {
+    const icon = themeBtn.querySelector("i");
+
+    const settings =
+        JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+    const isDark =
+        settings.darkMode ??
+        (localStorage.getItem("theme") === "dark");
+
+    if (icon) {
+        if (isDark) {
+            icon.classList.replace("fa-moon", "fa-sun");
+        } else {
+            icon.classList.replace("fa-sun", "fa-moon");
+        }
+    }
+}
 /* ==========================================
    REPORT COUNTER
 ========================================== */
@@ -410,25 +430,25 @@ if (themeBtn) {
 
     themeBtn.addEventListener("click", () => {
 
-        const isDark =
-            !document.documentElement.classList.contains("dark-mode");
-
-        document.documentElement.classList.toggle("dark-mode", isDark);
-        document.body.classList.toggle("dark-mode", isDark);
-
-        localStorage.setItem(
-            "theme",
-            isDark ? "dark" : "light"
-        );
-
         const settings =
             JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+        const isDark =
+            !document.body.classList.contains("dark-mode");
+
+        document.body.classList.toggle("dark-mode", isDark);
+        document.documentElement.classList.toggle("dark-mode", isDark);
 
         settings.darkMode = isDark;
 
         localStorage.setItem(
             "healoraSettings",
             JSON.stringify(settings)
+        );
+
+        localStorage.setItem(
+            "theme",
+            isDark ? "dark" : "light"
         );
 
         const icon = themeBtn.querySelector("i");
@@ -440,7 +460,6 @@ if (themeBtn) {
                 icon.classList.replace("fa-sun", "fa-moon");
             }
         }
-
     });
 
 }
