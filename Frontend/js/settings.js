@@ -27,12 +27,6 @@ const topProfileImage = document.getElementById("topProfileImage");
 const themeStatus = document.getElementById("themeStatus");
 const themeSubStatus = document.getElementById("themeSubStatus");
 
-const backendStatus = document.getElementById("backendStatus");
-const databaseStatus = document.getElementById("databaseStatus");
-const cloudStatus = document.getElementById("cloudStatus");
-const appVersion = document.getElementById("appVersion");
-const aiEngine = document.getElementById("aiEngine");
-
 const API_BASE_URL = "http://localhost:5000/api";
 
 function updateThemeCard(isDark) {
@@ -112,7 +106,6 @@ if (topProfileImage) {
 
 loadSettings();
 loadProfile();
-loadSystemInformation();
 
 function loadSettings() {
 
@@ -220,110 +213,6 @@ function updateStatusCards() {
     
     aiSubStatus.style.color =
         aiCount === 0 ? "#EF4444" : "#10B981";
-
-}
-
-/* ==========================================
-        SYSTEM INFORMATION
-========================================== */
-
-async function loadSystemInformation() {
-
-    if (appVersion) {
-        appVersion.textContent = "v1.0.0";
-    }
-
-    if (aiEngine) {
-        aiEngine.textContent = "Google Gemini";
-    }
-
-    if (cloudStatus) {
-
-        if (cloudBackup.checked) {
-
-            cloudStatus.innerHTML = `
-                <i class="fa-solid fa-circle"
-                   style="color:#10B981;font-size:10px;"></i>
-                Active
-            `;
-
-        } else {
-
-            cloudStatus.innerHTML = `
-                <i class="fa-solid fa-circle"
-                   style="color:#EF4444;font-size:10px;"></i>
-                Inactive
-            `;
-
-        }
-
-    }
-
-    try {
-
-        const response = await fetch(`${API_BASE_URL}/auth/me`, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        if (response.ok) {
-
-            if (backendStatus) {
-                backendStatus.innerHTML = `
-                    <i class="fa-solid fa-circle"
-                       style="color:#10B981;font-size:10px;"></i>
-                    Connected
-                `;
-            }
-
-            if (databaseStatus) {
-                databaseStatus.innerHTML = `
-                    <i class="fa-solid fa-circle"
-                       style="color:#10B981;font-size:10px;"></i>
-                    Online
-                `;
-            }
-
-        } else {
-
-            if (backendStatus) {
-                backendStatus.innerHTML = `
-                    <i class="fa-solid fa-circle"
-                       style="color:#EF4444;font-size:10px;"></i>
-                    Offline
-                `;
-            }
-
-            if (databaseStatus) {
-                databaseStatus.innerHTML = `
-                    <i class="fa-solid fa-circle"
-                       style="color:#EF4444;font-size:10px;"></i>
-                    Unknown
-                `;
-            }
-
-        }
-
-    } catch {
-
-        if (backendStatus) {
-            backendStatus.innerHTML = `
-                <i class="fa-solid fa-circle"
-                   style="color:#EF4444;font-size:10px;"></i>
-                Offline
-            `;
-        }
-
-        if (databaseStatus) {
-            databaseStatus.innerHTML = `
-                <i class="fa-solid fa-circle"
-                   style="color:#EF4444;font-size:10px;"></i>
-                Offline
-            `;
-        }
-
-    }
 
 }
 
