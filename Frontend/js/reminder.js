@@ -9,7 +9,7 @@ if (!token) {
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://localhost:5001/api";
 
 
 const form=document.getElementById("reminderForm");
@@ -66,11 +66,24 @@ function loadTodaysSchedule(reminders){
         if(end && end < today) return;
 
         reminder.times.forEach(time=>{
+            const today = new Date().toISOString().split("T")[0];
+
+const alreadyCompleted = reminder.completedLogs?.some(
+    log => log.date === today && log.time === time
+);
+
+if (alreadyCompleted) return;
             hasReminder = true;
 
            scheduleList.innerHTML += `
 
 <div class="schedule-item">
+ <input
+        type="checkbox"
+        class="complete-checkbox"
+        data-id="${reminder._id}"
+        data-time="${time}"
+    >
 
     <div class="schedule-time">
         🕒 ${time}
@@ -279,7 +292,16 @@ showToast("⚠ Medicine skipped");
 }
 
 });
+scheduleList.addEventListener("change", (e) => {
 
+    if (!e.target.classList.contains("complete-checkbox")) return;
+
+    completeReminder(
+        e.target.dataset.id,
+        e.target.dataset.time
+    );
+
+});
 /* ==========================================
           FILTERS
 ========================================== */
@@ -633,7 +655,35 @@ try{
 
     }
 
+async function completeReminder(id, time) {
 
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/reminders/${id}/complete`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    time
+                })
+            }
+        );
+
+        const result = await response.json();
+
+        if (result.success) {
+            showToast("✅ Medicine marked as completed");
+            await loadRemindersFromBackend();
+        }
+
+    } catch (err) {
+        console.error(err);
+    }
+}
 
 
     

@@ -75,3 +75,18 @@ exports.toggleReminder = asyncWrapper(async (req, res) => {
   const state = reminder.isActive ? 'activated' : 'paused';
   return sendSuccess(res, { reminder }, `Reminder ${state} successfully.`);
 });
+// PATCH /api/reminders/:id/complete
+exports.completeReminder = asyncWrapper(async (req, res) => {
+
+  const reminder = await ReminderService.completeReminder(
+    req.user._id,
+    req.params.id,
+    req.body.time
+  );
+
+  return sendSuccess(
+    res,
+    { reminder },
+    'Medicine marked as completed successfully.'
+  );
+});

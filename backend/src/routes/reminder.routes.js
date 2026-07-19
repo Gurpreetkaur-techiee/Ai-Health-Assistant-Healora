@@ -75,5 +75,9 @@ router.patch(
   validateObjectId('id'),
   ReminderController.toggleReminder
 );
-
+router.patch(
+  '/:id/complete',
+  validateObjectId('id'),
+  ReminderController.completeReminder
+);
 module.exports = router;

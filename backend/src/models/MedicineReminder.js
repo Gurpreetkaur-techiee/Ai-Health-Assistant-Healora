@@ -117,13 +117,24 @@ const MedicineReminderSchema = new mongoose.Schema(
     isActive: {
       type: Boolean,
       default: true
-    }
+    
+  },
+  completedLogs: {
+    type: [
+        {
+            date: String,
+            time: String
+        }
+    ],
+    default: []
+}
   },
   {
     timestamps: true,
     toJSON: { versionKey: false }
   }
 );
+
 
 // ── Validation: endDate must be after startDate ───────────────
 MedicineReminderSchema.pre('save', function (next) {

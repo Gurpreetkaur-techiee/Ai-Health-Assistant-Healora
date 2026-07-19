@@ -136,6 +136,31 @@ const toggleReminder = async (userId, reminderId) => {
 };
 
 // ─────────────────────────────────────────────────────────────
+// COMPLETE REMINDER FOR TODAY
+// ─────────────────────────────────────────────────────────────
+const completeReminder = async (userId, reminderId, time) => {
+
+  const reminder = await getReminderById(userId, reminderId);
+
+  const today = new Date().toISOString().split("T")[0];
+
+  const alreadyCompleted = reminder.completedLogs.some(
+    log => log.date === today && log.time === time
+  );
+
+  if (!alreadyCompleted) {
+    reminder.completedLogs.push({
+      date: today,
+      time
+    });
+
+    await reminder.save();
+  }
+
+  return reminder;
+};
+
+// ─────────────────────────────────────────────────────────────
 // DELETE
 // ─────────────────────────────────────────────────────────────
 /**
@@ -160,5 +185,6 @@ module.exports = {
   getReminderById,
   updateReminder,
   toggleReminder,
+  completeReminder,
   deleteReminder
 };
