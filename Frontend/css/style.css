@@ -26,8 +26,7 @@
 
 --radius:24px;
 
---transition:.35s ease;
-
+--transition: all .3s ease;
 }
 
 *{
@@ -374,6 +373,27 @@ justify-content:center;
 
 }
 
+.btn{
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple{
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    background: rgba(255,255,255,0.4);
+    animation: ripple 600ms linear;
+    pointer-events: none;
+}
+
+@keyframes ripple{
+    to{
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
 .btn-primary{
 
 background:linear-gradient(
@@ -435,6 +455,7 @@ padding:18px 36px;
 font-size:16px;
 
 }
+
 /* =====================================================
    HERO SECTION
 ===================================================== */
