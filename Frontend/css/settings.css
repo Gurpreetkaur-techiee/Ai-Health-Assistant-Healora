@@ -502,15 +502,10 @@ opacity:.18;
 /* ================= QUICK STATS ================= */
 
 .stats-grid{
-
-display:grid;
-
-grid-template-columns:repeat(4,1fr);
-
-gap:22px;
-
-margin-bottom:35px;
-
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px,1fr));
+    gap:22px;
+    margin-bottom:35px;
 }
 
 .stat-card{
@@ -1058,12 +1053,6 @@ grid-template-columns:1fr;
 .sidebar{
 
 display:none;
-
-}
-
-.stats-grid{
-
-grid-template-columns:repeat(2,1fr);
 
 }
 

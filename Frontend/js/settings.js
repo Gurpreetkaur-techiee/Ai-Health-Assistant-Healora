@@ -16,10 +16,6 @@ const logoutBtns = document.querySelectorAll(".logout-btn");
 
 const deleteBtn=document.querySelector(".delete-btn");
 
-const medicineReminder = document.getElementById("medicineReminder");
-const appointmentReminder = document.getElementById("appointmentReminder");
-const emailUpdates = document.getElementById("emailUpdates");
-
 const aiSuggestions = document.getElementById("aiSuggestions");
 const aiMemory = document.getElementById("aiMemory");
 
@@ -30,6 +26,12 @@ const notificationBtn = document.getElementById("notificationBtn");
 const topProfileImage = document.getElementById("topProfileImage");
 const themeStatus = document.getElementById("themeStatus");
 const themeSubStatus = document.getElementById("themeSubStatus");
+
+const backendStatus = document.getElementById("backendStatus");
+const databaseStatus = document.getElementById("databaseStatus");
+const cloudStatus = document.getElementById("cloudStatus");
+const appVersion = document.getElementById("appVersion");
+const aiEngine = document.getElementById("aiEngine");
 
 const API_BASE_URL = "http://localhost:5000/api";
 
@@ -110,6 +112,7 @@ if (topProfileImage) {
 
 loadSettings();
 loadProfile();
+loadSystemInformation();
 
 function loadSettings() {
 
@@ -143,10 +146,6 @@ function loadSettings() {
             return;
         }
 
-        medicineReminder.checked = settings.medicineReminder ?? false;
-        appointmentReminder.checked = settings.appointmentReminder ?? false;
-        emailUpdates.checked = settings.emailUpdates ?? false;
-
         aiSuggestions.checked = settings.aiSuggestions ?? false;
         aiMemory.checked = settings.aiMemory ?? false;
 
@@ -165,10 +164,6 @@ function saveSettings() {
 
         darkMode: darkMode.checked,
 
-        medicineReminder: medicineReminder.checked,
-        appointmentReminder: appointmentReminder.checked,
-        emailUpdates: emailUpdates.checked,
-
         aiSuggestions: aiSuggestions.checked,
         aiMemory: aiMemory.checked,
 
@@ -182,7 +177,7 @@ function saveSettings() {
         JSON.stringify(data)
     );
     updateStatusCards();
-
+    loadSystemInformation();
     // Keep global theme in sync across the app
     localStorage.setItem(
         "theme",
@@ -197,31 +192,6 @@ function updateStatusCards() {
     themeStatus.textContent = darkMode.checked ? "Dark" : "Light";
     themeSubStatus.textContent = darkMode.checked ? "Enabled" : "Disabled";
 
-    // Notifications
-    const notificationCount = [
-        medicineReminder,
-        appointmentReminder,
-        emailUpdates
-    ].filter(item => item.checked).length;
-    
-    const notificationStatus =
-        document.getElementById("notificationStatus");
-    
-    const notificationSubStatus =
-        document.getElementById("notificationSubStatus");
-    
-    notificationStatus.textContent =
-        notificationCount ? "ON" : "OFF";
-    
-    notificationSubStatus.textContent =
-        `${notificationCount}/3 Enabled`;
-    
-    // Change color
-    if (notificationCount === 0) {
-        notificationSubStatus.style.color = "#EF4444";   // Red
-    } else {
-        notificationSubStatus.style.color = "#10B981";   // Green
-    }
     // Backup
     const backupStatus = document.getElementById("backupStatus");
     const backupSubStatus = document.getElementById("backupSubStatus");
@@ -250,6 +220,110 @@ function updateStatusCards() {
     
     aiSubStatus.style.color =
         aiCount === 0 ? "#EF4444" : "#10B981";
+
+}
+
+/* ==========================================
+        SYSTEM INFORMATION
+========================================== */
+
+async function loadSystemInformation() {
+
+    if (appVersion) {
+        appVersion.textContent = "v1.0.0";
+    }
+
+    if (aiEngine) {
+        aiEngine.textContent = "Google Gemini";
+    }
+
+    if (cloudStatus) {
+
+        if (cloudBackup.checked) {
+
+            cloudStatus.innerHTML = `
+                <i class="fa-solid fa-circle"
+                   style="color:#10B981;font-size:10px;"></i>
+                Active
+            `;
+
+        } else {
+
+            cloudStatus.innerHTML = `
+                <i class="fa-solid fa-circle"
+                   style="color:#EF4444;font-size:10px;"></i>
+                Inactive
+            `;
+
+        }
+
+    }
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        if (response.ok) {
+
+            if (backendStatus) {
+                backendStatus.innerHTML = `
+                    <i class="fa-solid fa-circle"
+                       style="color:#10B981;font-size:10px;"></i>
+                    Connected
+                `;
+            }
+
+            if (databaseStatus) {
+                databaseStatus.innerHTML = `
+                    <i class="fa-solid fa-circle"
+                       style="color:#10B981;font-size:10px;"></i>
+                    Online
+                `;
+            }
+
+        } else {
+
+            if (backendStatus) {
+                backendStatus.innerHTML = `
+                    <i class="fa-solid fa-circle"
+                       style="color:#EF4444;font-size:10px;"></i>
+                    Offline
+                `;
+            }
+
+            if (databaseStatus) {
+                databaseStatus.innerHTML = `
+                    <i class="fa-solid fa-circle"
+                       style="color:#EF4444;font-size:10px;"></i>
+                    Unknown
+                `;
+            }
+
+        }
+
+    } catch {
+
+        if (backendStatus) {
+            backendStatus.innerHTML = `
+                <i class="fa-solid fa-circle"
+                   style="color:#EF4444;font-size:10px;"></i>
+                Offline
+            `;
+        }
+
+        if (databaseStatus) {
+            databaseStatus.innerHTML = `
+                <i class="fa-solid fa-circle"
+                   style="color:#EF4444;font-size:10px;"></i>
+                Offline
+            `;
+        }
+
+    }
 
 }
 
@@ -316,9 +390,6 @@ saveBtn.addEventListener("click",saveSettings);
 ========================================== */
 
 [
-    medicineReminder,
-    appointmentReminder,
-    emailUpdates,
     aiSuggestions,
     aiMemory,
     cloudBackup,
