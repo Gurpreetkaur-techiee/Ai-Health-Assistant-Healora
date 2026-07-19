@@ -3,6 +3,37 @@
 ========================================== */
 const API_BASE_URL = "http://localhost:5000/api";
 
+/* Updates BOTH the number and the visual ring around it.
+   Without this, the ring stays stuck at the CSS-hardcoded 94%
+   even when a real score comes back from the API. */
+function updateHealthScore(score, statusText) {
+
+    if (typeof score !== "number" || isNaN(score)) return;
+
+    const clamped = Math.max(0, Math.min(100, Math.round(score)));
+
+    const valueEl = document.querySelector(".value");
+    if (valueEl) valueEl.textContent = clamped + "%";
+
+    const circleEl = document.querySelector(".circle");
+    if (circleEl) {
+        circleEl.style.background =
+            `conic-gradient(var(--secondary) 0%, var(--secondary) ${clamped}%, #E5E7EB ${clamped}%)`;
+    }
+
+    const statusEl = document.querySelector(".health-score p");
+    if (statusEl) {
+        statusEl.textContent = statusText || (
+            clamped >= 90 ? "Excellent" :
+            clamped >= 75 ? "Good" :
+            clamped >= 50 ? "Fair" :
+            "Needs Attention"
+        );
+    }
+}
+
+let backendHealthScore = null;
+
 const token = localStorage.getItem("token");
 
 if (!token) {
@@ -90,21 +121,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const summary = result.data;
 
-                const healthScore =
-                    document.querySelector(".value");
+                if (typeof summary.healthScore === "number") {
+                backendHealthScore = summary.healthScore;
+                updateHealthScore(summary.healthScore, summary.healthStatus);
+            }
 
-                if (healthScore && summary.healthScore) {
-
-                    healthScore.textContent =
-                        summary.healthScore + "%";
-
-                }
-
-                const healthStatus = document.querySelector(".health-score p");
-
-    if (healthStatus && summary.healthStatus) {
-        healthStatus.textContent = summary.healthStatus;
-    }
+               
 
     // === FETCH UPCOMING APPOINTMENT ===
     try {
@@ -778,6 +800,15 @@ function calcAge(dob) {
     return Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
 }
 
+function bmiToHealthScore(bmi) {
+    if (bmi < 18.5) return 65;       // Underweight
+    if (bmi < 25)   return 100;      // Normal
+    if (bmi < 30)   return 75;       // Overweight
+    if (bmi < 35)   return 50;       // Obese I
+    return 30;                       // Obese II+
+}
+
+
 getVitalsData().then(data => {
     const bmiEl = document.getElementById("statBMI");
     const bmiCatEl = document.getElementById("statBMICategory");
@@ -801,6 +832,20 @@ getVitalsData().then(data => {
         else if (bmi >= 30) category = "Obese";
         bmiCatEl.textContent = category;
     }
+    if (bmiCatEl) {
+        let category = "Normal";
+        if (bmi < 18.5) category = "Underweight";
+        else if (bmi >= 25 && bmi < 30) category = "Overweight";
+        else if (bmi >= 30) category = "Obese";
+        bmiCatEl.textContent = category;
+    }
+
+    // Only use the BMI-based estimate if the backend has no real
+    // reading-based score yet (i.e., user hasn't logged readings)
+    if (backendHealthScore === null) {
+        updateHealthScore(bmiToHealthScore(bmi));
+    }
+
 
     if (calEl && data.dob && data.gender) {
         const age = calcAge(data.dob);
