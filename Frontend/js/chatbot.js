@@ -20,7 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 }
     const user = JSON.parse(localStorage.getItem("user"));
-
+    let currentSessionId =
+        localStorage.getItem("chatSessionId");
+    const settings =
+        JSON.parse(localStorage.getItem("healoraSettings")) || {};
 if (user) {
 
     const nameElement = document.getElementById("userName");
@@ -122,7 +125,13 @@ function addDateSeparator() {
         const message = input.value.trim();
 
         if (message === "") return;
+        if (!settings.aiSuggestions) {
 
+            alert("AI Health Suggestions are disabled.\n\nEnable them in Settings.");
+                
+            return;
+
+}
         // USER MESSAGE
 
         addDateSeparator();
@@ -232,6 +241,16 @@ function addDateSeparator() {
         sendBtn.innerHTML = `
         <i class="fa-solid fa-spinner fa-spin"></i>
         `;
+
+        if (!settings.aiMemory) {
+            currentSessionId = null;
+        }
+        const requestBody = {
+            message: text
+        };
+        if (settings.aiMemory && currentSessionId) {
+            requestBody.sessionId = currentSessionId;
+        }
         const response = await fetch(
             `${API_BASE_URL}/symptoms/analyze`,
             {
@@ -240,16 +259,24 @@ function addDateSeparator() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                body: JSON.stringify({
 
-                    message: text
-
-                })
+                body: JSON.stringify(requestBody)
             }
         );
 
         const result = await response.json();
-
+        if (
+            settings.aiMemory &&
+            result.success &&
+            result.data.sessionId
+        ) {
+        
+            currentSessionId = result.data.sessionId;
+            localStorage.setItem(
+                "chatSessionId",
+                currentSessionId
+);
+        }
         console.log(result);
 
         if (!result.success) {
@@ -330,7 +357,13 @@ function addDateSeparator() {
 
 });
 
-   
+    // Restore send button
+    sendBtn.disabled = false;
+    
+    sendBtn.innerHTML = `
+        <i class="fa-solid fa-paper-plane"></i>
+    `;
+    
 
     }
 
@@ -415,8 +448,9 @@ if (newChat) {
 
         // Clear local storage
         localStorage.removeItem("healoraChat");
-
-       chatWindow.innerHTML = "";
+        localStorage.removeItem("chatSessionId");
+        currentSessionId = null;
+        chatWindow.innerHTML = "";
 
         lastChatDate = "";
 
