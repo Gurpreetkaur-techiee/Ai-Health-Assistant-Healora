@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const medicineCount = document.getElementById("medicineCount");
 
     let editing = false;
-
+    let emergencyContactId = null;
     const editableFields = [
         // Personal
         fullName,
@@ -211,7 +211,11 @@ async function loadEmergencyContact() {
 
         if (!result.success || result.data.count === 0) return;
 
-        const contact = result.data.contacts[0];
+        const contacts = result.data.contacts;
+
+        const contact =
+            contacts.find(c => c.isPrimary) || contacts[0];
+        emergencyContactId = contact._id;
 
         contactName.value = contact.name || "";
         relationship.value = contact.relationship || "";
@@ -379,6 +383,70 @@ if (editProfileBtn) {
 
 }
 
+async function saveEmergencyContact() {
+
+    const payload = {
+        name: contactName.value.trim(),
+        relationship: relationship.value.trim(),
+        phone: contactPhone.value.trim(),
+        email: contactEmail.value.trim() || null
+    };
+
+    try {
+
+        let response;
+
+        if (emergencyContactId) {
+
+            response = await fetch(
+                `${API_BASE_URL}/emergency/${emergencyContactId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+        } else {
+
+            payload.isPrimary = true;
+
+            response = await fetch(
+                `${API_BASE_URL}/emergency`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+        }
+
+        if (!response.ok) {
+            throw new Error("Failed to save emergency contact.");
+        }
+
+        await loadEmergencyContact();
+
+        return true;
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Failed to save emergency contact.");
+
+        return false;
+
+    }
+
+}
+
 async function updateProfile() {
 
     try {
@@ -411,11 +479,18 @@ async function updateProfile() {
 
         localStorage.setItem("healora_height", height.value.trim());
         localStorage.setItem("healora_weight", weight.value.trim());
+            
+        const emergencySaved = await saveEmergencyContact();
+            
+        if (!emergencySaved) {
+            return false;
+        }
         
         alert("✅ Profile updated successfully!");
-
+        
         await loadProfile();
-
+        await loadEmergencyContact();
+        
         return true;
 
     } catch (err) {
