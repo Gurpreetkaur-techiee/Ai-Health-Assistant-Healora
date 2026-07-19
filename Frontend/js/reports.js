@@ -8,7 +8,14 @@ if (!token) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+// ================= Apply Saved Theme =================
 
+const savedTheme = localStorage.getItem("theme");
+
+if (savedTheme === "dark") {
+    document.documentElement.classList.add("dark-mode");
+    document.body.classList.add("dark-mode");
+}
 const API_BASE_URL = "http://localhost:5000/api";
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -97,7 +104,7 @@ const searchInput = document.querySelector(".search-box input");
 
 const statCards = document.querySelectorAll(".stat-card");
 
-const moonBtn = document.querySelector(".fa-moon");
+const themeBtn = document.getElementById("themeBtn");
 /* ==========================================
    REPORT COUNTER
 ========================================== */
@@ -395,35 +402,48 @@ reportsGrid.addEventListener("click", (e) => {
 
 });
 
-/* ==========================================
-   DARK MODE
-========================================== */
 
-if(moonBtn){
 
-moonBtn.parentElement.addEventListener("click",()=>{
 
-document.body.classList.toggle("dark");
 
-localStorage.setItem(
+if (themeBtn) {
 
-"reportsDarkMode",
+    themeBtn.addEventListener("click", () => {
 
-document.body.classList.contains("dark")
+        const isDark =
+            !document.documentElement.classList.contains("dark-mode");
 
-);
+        document.documentElement.classList.toggle("dark-mode", isDark);
+        document.body.classList.toggle("dark-mode", isDark);
 
-});
+        localStorage.setItem(
+            "theme",
+            isDark ? "dark" : "light"
+        );
+
+        const settings =
+            JSON.parse(localStorage.getItem("healoraSettings")) || {};
+
+        settings.darkMode = isDark;
+
+        localStorage.setItem(
+            "healoraSettings",
+            JSON.stringify(settings)
+        );
+
+        const icon = themeBtn.querySelector("i");
+
+        if (icon) {
+            if (isDark) {
+                icon.classList.replace("fa-moon", "fa-sun");
+            } else {
+                icon.classList.replace("fa-sun", "fa-moon");
+            }
+        }
+
+    });
 
 }
-
-if(localStorage.getItem("reportsDarkMode")==="true"){
-
-document.body.classList.add("dark");
-
-}
-
-
 /* ==========================================
    SAVE REPORTS
 ========================================== */

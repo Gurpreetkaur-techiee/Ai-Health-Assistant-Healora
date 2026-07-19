@@ -82,7 +82,37 @@ avatar: {
     type: String,
     default: ''
 },
+// Contact Information
+phone: {
+  type: String,
+  trim: true,
+  default: '',
+  match: [/^[6-9]\d{9}$/, 'Please provide a valid 10-digit phone number']
+},
 
+// Physical Information
+height: {
+  type: Number,
+  min: 30,
+  max: 300,
+  default: null
+},
+
+// Medical Information
+allergies: {
+  type: [String],
+  default: []
+},
+
+chronicDiseases: {
+  type: [String],
+  default: []
+},
+
+currentMedications: {
+  type: [String],
+  default: []
+},
     // ── Optional Health Profile ───────────────────────────────
     // These improve AI prompt context for diet and symptom analysis
     dateOfBirth: {

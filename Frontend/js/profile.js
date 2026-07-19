@@ -158,10 +158,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "";
             gender.value = user.gender || "";
             bloodGroup.value = user.bloodGroup || "";
+            phoneNumber.value = user.phone || "";
+            height.value = user.height || "";
+
+            allergies.value =
+                user.allergies?.join(", ") || "";
+
+            chronicDisease.value =
+                user.chronicDiseases?.join(", ") || "";
+
+            currentMedications.value =
+                user.currentMedications?.join(", ") || "";
             await loadHealthInformation();
-            if (user.phoneNumber) {
-                phoneNumber.value = user.phoneNumber;
-            }
+            phoneNumber.value = user.phone || "";
 
             // ================= AI Badge =================
 
@@ -501,10 +510,36 @@ async function updateProfile() {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
+                        
                 name: fullName.value.trim(),
+                        
+                phone: phoneNumber.value.trim(),
+                        
+                height: height.value
+                    ? Number(height.value)
+                    : null,
+                        
                 dateOfBirth: dateOfBirth.value || null,
+                        
                 gender: gender.value || null,
-                bloodGroup: bloodGroup.value || null
+                        
+                bloodGroup: bloodGroup.value || null,
+                        
+                allergies: allergies.value
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean),
+                        
+                chronicDiseases: chronicDisease.value
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean),
+                        
+                currentMedications: currentMedications.value
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean)
+                        
             })
         });
 
@@ -641,8 +676,7 @@ async function loadHealthInformation() {
 
         }
 
-        // Height is not available in backend yet
-        height.value = "";
+        height.value = user.height || "";
 
     } catch (err) {
 

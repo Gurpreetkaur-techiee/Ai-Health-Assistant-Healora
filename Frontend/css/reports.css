@@ -1047,43 +1047,89 @@ color:#64748B;
 
 /* ================= DARK MODE ================= */
 
-body.dark{
-
-background:#071A23;
-
-color:white;
-
+html.dark-mode,
+html.dark-mode body{
+    background:#071A23;
+    color:white;
 }
 
-body.dark .sidebar,
-body.dark .stat-card,
-body.dark .report-card,
-body.dark .analysis-card,
-body.dark .timeline-card,
-body.dark .insight-card,
-body.dark .search-box,
-body.dark .upload-box{
-
-background:rgba(18,30,38,.92);
-
-color:white;
-
-border-color:rgba(255,255,255,.08);
-
+html.dark-mode .background-blobs{
+    background:linear-gradient(135deg,#0f172a,#111827);
 }
 
-body.dark .search-box input{
+html.dark-mode .sidebar,
+html.dark-mode .stat-card,
+html.dark-mode .report-card,
+html.dark-mode .analysis-card,
+html.dark-mode .timeline-card,
+html.dark-mode .insight-card,
+html.dark-mode .search-box,
+html.dark-mode .upload-box,
+html.dark-mode .hero-card,
+html.dark-mode .icon-btn{
 
-background:transparent;
+    background:rgba(18,30,38,.92);
 
-color:white;
+    color:white;
 
+    border-color:rgba(255,255,255,.08);
 }
 
-body.dark p{
+html.dark-mode .topbar h1,
+html.dark-mode .logo h2,
+html.dark-mode h2,
+html.dark-mode h3,
+html.dark-mode h4,
+html.dark-mode p,
+html.dark-mode span,
+html.dark-mode strong{
 
-color:#CBD5E1;
+    color:#f8fafc;
+}
 
+html.dark-mode .search-box input{
+
+    background:transparent;
+
+    color:white;
+}
+
+html.dark-mode .search-box input::placeholder{
+
+    color:#94a3b8;
+}
+
+html.dark-mode .report-meta{
+
+    background:#1e293b;
+}
+
+html.dark-mode .analysis-item{
+
+    background:#1e293b;
+
+    border-color:#334155;
+}
+
+html.dark-mode .report-info h3,
+html.dark-mode .timeline-item h4{
+
+    color:white;
+}
+
+html.dark-mode .sidebar nav a{
+
+    color:#e2e8f0;
+}
+
+html.dark-mode .sidebar nav a:hover{
+
+    background:rgba(20,184,166,.25);
+}
+
+html.dark-mode .sidebar nav a.active{
+
+    background:linear-gradient(135deg,#14b8a6,#0b4f6c);
 }
 
 /* ================= RESPONSIVE ================= */
