@@ -57,11 +57,31 @@ const UserSchema = new mongoose.Schema(
     // ── Authentication ────────────────────────────────────────
     // select: false → never returned in queries unless explicitly requested
     password: {
-      type: String,
-      required: [true, 'Password is required'],
-      minlength: [8, 'Password must be at least 8 characters'],
-      select: false
+    type: String,
+
+    required: function () {
+        return this.authProvider === "local";
     },
+
+    minlength: [8, 'Password must be at least 8 characters'],
+    select: false
+},
+
+googleId: {
+    type: String,
+    default: null
+},
+
+authProvider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local'
+},
+
+avatar: {
+    type: String,
+    default: ''
+},
 
     // ── Optional Health Profile ───────────────────────────────
     // These improve AI prompt context for diet and symptom analysis

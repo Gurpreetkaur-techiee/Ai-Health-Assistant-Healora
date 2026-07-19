@@ -236,3 +236,30 @@ exports.resetPassword = asyncWrapper(async (req, res) => {
   );
 
 });
+
+
+exports.googleLogin = asyncWrapper(async (req, res) => {
+
+    const { idToken } = req.body;
+
+    if (!idToken) {
+        return res.status(400).json({
+            success: false,
+            message: "Google ID token is required."
+        });
+    }
+
+    const user = await AuthService.googleLogin(idToken);
+
+    const token = signToken(user._id);
+
+    return sendSuccess(
+        res,
+        {
+            token,
+            user
+        },
+        "Google login successful."
+    );
+
+});

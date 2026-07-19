@@ -41,124 +41,101 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-    /* ===========================
-       LOGIN FORM
-    =========================== */
+/* ===========================
+   GOOGLE LOGIN
+=========================== */
 
-    const loginForm = document.getElementById("loginForm");
+async function handleGoogleResponse(response) {
 
-    if (loginForm) {
+    console.log("Google Credential Received");
+    console.log(response);
 
-        loginForm.addEventListener("submit", async function (e) {
+    try {
 
-            e.preventDefault();
+        const res = await fetch(`${API_BASE_URL}/auth/google`, {
 
-            const email = document.getElementById("loginEmail").value.trim();
-            const password = document.getElementById("loginPassword").value.trim();
+            method: "POST",
 
-            if (!validateEmail(email)) {
+            headers: {
+                "Content-Type": "application/json"
+            },
 
-                showMessage("Please enter a valid email address.", "error");
-                return;
+            body: JSON.stringify({
+                idToken: response.credential
+            })
 
-            }
+        });
 
-            const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/?])[A-Za-z\d@$!%*?&#^()_+\-=\[\]{};':"\\|,.<>\/?]{8,}$/;
+        const result = await res.json();
 
-            if (!passwordRegex.test(password)) {
+        console.log("Backend Response:", result);
 
-                showMessage(
-                    "Password must be at least 8 characters and include uppercase, lowercase, number and special character.",
-                    "error"
-                );
+        if (!res.ok) {
 
-                return;
+            showMessage(result.message || "Google Login Failed", "error");
+            return;
 
-            }
+        }
 
-           const loginButton = this.querySelector(".auth-btn");
+        localStorage.setItem("token", result.data.token);
 
-loginButton.classList.add("loading");
+        localStorage.setItem(
+            "user",
+            JSON.stringify(result.data.user)
+        );
 
-try {
+        showMessage("Google Login Successful!", "success");
 
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        setTimeout(() => {
 
-        method: "POST",
+            window.location.href = "dashboard.html";
 
-        headers: {
-            "Content-Type": "application/json"
-        },
+        }, 500);
 
-        body: JSON.stringify({
-            email,
-            password
-        })
+    } catch (err) {
 
-    });
+        console.error(err);
 
-    const result = await response.json();
-
-    loginButton.classList.remove("loading");
-
-    if (!response.ok) {
-
-        showMessage(result.message || "Login failed", "error");
-        return;
+        showMessage("Unable to connect to backend.", "error");
 
     }
-
-    localStorage.setItem("token", result.data.token);
-
-    localStorage.setItem(
-        "user",
-        JSON.stringify(result.data.user)
-    );
-
-    showMessage("Login Successful!", "success");
-
-    setTimeout(() => {
-
-        window.location.href = "dashboard.html";
-
-    }, 1000);
-
-} catch (error) {
-
-    loginButton.classList.remove("loading");
-
-    showMessage(
-        "Unable to connect to backend.",
-        "error"
-    );
-
-    console.error(error);
 
 }
 
-        });
+// Inside DOMContentLoaded
 
-    }
+if (typeof google === "undefined") {
 
-    /* ===========================
-       GOOGLE BUTTON
-    =========================== */
+    console.error("Google SDK not loaded.");
+    return;
 
-    const googleButton = document.querySelector(".google-btn");
+}
 
-    if (googleButton) {
+google.accounts.id.initialize({
 
-        googleButton.addEventListener("click", () => {
+    client_id: "105173876303-eetfe46f0pmudduvm3o8b5hf3fsgmral.apps.googleusercontent.com",
 
-            showMessage("Google Login Coming Soon", "success");
-
-        });
-
-    }
+    callback: handleGoogleResponse
 
 });
 
+const button = document.getElementById("googleButton");
+
+if (button) {
+
+    google.accounts.id.renderButton(button, {
+
+        theme: "outline",
+        size: "large",
+        shape: "pill",
+        width: 320,
+        text: "continue_with"
+
+    });
+
+}
+
+});
 
 /* ===========================
    EMAIL VALIDATION

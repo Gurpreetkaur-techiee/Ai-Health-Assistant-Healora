@@ -1654,3 +1654,45 @@ color:#64748B;
     margin-top:12px;
 
 }
+
+/* ===========================
+   GOOGLE BUTTON
+=========================== */
+
+.google-btn-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 20px 0;
+}
+
+#googleButton{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#googleButton > div{
+    margin: 0 auto !important;
+}
+
+.divider{
+    display:flex;
+    align-items:center;
+    margin:24px 0;
+}
+
+.divider::before,
+.divider::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:#d8dee9;
+}
+
+.divider span{
+    padding:0 18px;
+    color:#6b7280;
+    font-weight:600;
+}

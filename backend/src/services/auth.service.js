@@ -39,7 +39,13 @@ const AppError  = require('../utils/AppError');
 
 const { generateOTP, getOTPExpiry } = require('../utils/otp');
 const { sendEmail } = require('./email.service');
+const { OAuth2Client } = require("google-auth-library");
 
+const googleClient = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URI
+);
 // OWASP-recommended bcrypt cost factor (see note above)
 const BCRYPT_SALT_ROUNDS = 12;
 
@@ -348,13 +354,66 @@ const resetPassword = async ({ email, otp, newPassword }) => {
 
 };
 
+const googleLogin = async (idToken) => {
+
+  // Verify the ID token with Google
+  const ticket = await googleClient.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID
+  });
+
+  const payload = ticket.getPayload();
+
+  const {
+    sub,
+    email,
+    name,
+    picture,
+    email_verified
+  } = payload;
+
+  if (!email_verified) {
+    throw new AppError("Google email is not verified.", 401);
+  }
+
+  let user = await User.findOne({ email });
+
+  // First-time Google login
+  if (!user) {
+
+    user = await User.create({
+      name,
+      email,
+      googleId: sub,
+      authProvider: "google",
+      avatar: picture
+    });
+
+  } else {
+
+    // Existing local account → link it with Google
+    if (!user.googleId) {
+      user.googleId = sub;
+      user.authProvider = "google";
+
+      if (!user.avatar) {
+        user.avatar = picture;
+      }
+
+      await user.save();
+    }
+
+  }
+
+  return user;
+};
 module.exports = {
   registerUser,
   loginUser,
+  googleLogin,
   getUserById,
   updateMe,
   forgotPassword,
   verifyOtp,
   resetPassword
 };
-

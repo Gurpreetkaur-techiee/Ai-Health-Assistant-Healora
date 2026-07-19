@@ -116,7 +116,7 @@ router.post('/register', ...registerValidation, AuthController.register);
  */
 router.post('/login', ...loginValidation, AuthController.login);
 
-
+router.post("/google", AuthController.googleLogin);
 /**
  * POST /api/auth/forgot-password
  *
