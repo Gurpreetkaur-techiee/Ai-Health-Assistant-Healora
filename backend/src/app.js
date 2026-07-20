@@ -123,15 +123,12 @@ app.use('/api/reports',  require('./routes/report.routes'));
 // Phase 5: Core CRUD Feature Routes
 // Phase 5: Core CRUD Feature Routes
 app.use('/api/reminders',    require('./routes/reminder.routes'));
-app.use('/api/medicines',    require('./routes/medicine.routes')); 
+app.use('/api/reminders', require('./routes/reminder.routes'));
 app.use('/api/appointments', require('./routes/appointment.routes'));
 app.use('/api/health',       require('./routes/health.routes'));
 app.use('/api/emergency',    require('./routes/emergency.routes'));
-<<<<<<< HEAD
 app.use('/api/dashboard', require('./routes/dashboard.routes'));
 app.use('/api/water', require('./routes/water.routes'));
-=======
->>>>>>> dc5c686 (Added reminder page and navigation)
 // ─────────────────────────────────────────────
 // 7.  404 — NOT FOUND HANDLER
 // ─────────────────────────────────────────────

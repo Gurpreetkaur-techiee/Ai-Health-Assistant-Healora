@@ -1081,30 +1081,56 @@ logoutMenuBtn?.addEventListener("click", () => {
 ========================================== */
 
 async function getVitalsData() {
-    const heightCm = parseFloat(localStorage.getItem("healora_height"));
-    const weightKg = parseFloat(localStorage.getItem("healora_weight"));
-
-    if (!heightCm || !weightKg) {
-        return null; // user hasn't entered height/weight on Profile page yet
-    }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/auth/me`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        const result = await res.json();
-        const user = result?.data?.user;
+
+        const [profileRes, healthRes] = await Promise.all([
+
+            fetch(`${API_BASE_URL}/auth/me`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }),
+
+            fetch(`${API_BASE_URL}/health/summary`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+
+        ]);
+
+        const profileResult = await profileRes.json();
+        const healthResult = await healthRes.json();
+
+        const user = profileResult.data.user;
+
+        const latestWeight =
+            healthResult.data.latestReadings.weight;
 
         return {
-            heightCm,
-            weightKg,
-            dob: user?.dateOfBirth,
-            gender: user?.gender
+
+            heightCm: user.height,
+
+            weightKg:
+                latestWeight?.weight?.value ?? null,
+
+            dob: user.dateOfBirth,
+
+            gender: user.gender
+
         };
-    } catch (e) {
-        console.error("Could not load profile data:", e);
-        return null;
+
     }
+
+    catch (err) {
+
+        console.error("Unable to load vitals:", err);
+
+        return null;
+
+    }
+
 }
 
 function calcAge(dob) {
@@ -1159,7 +1185,7 @@ getVitalsData().then(data => {
         updateHealthScore(bmiToHealthScore(bmi));
     }
 
-
+    console.log("Vitals Data:", data);
     if (calEl && data.dob && data.gender) {
         const age = calcAge(data.dob);
         let bmr = 10 * data.weightKg + 6.25 * data.heightCm - 5 * age;

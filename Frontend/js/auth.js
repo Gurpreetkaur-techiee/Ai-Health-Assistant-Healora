@@ -305,6 +305,121 @@ function updateRule(element, valid){
 
 console.log("%c❤️ Healora Authentication Loaded",
 "color:#14B8A6;font-size:18px;font-weight:bold;");
+
+
+
+/* ==========================================
+   LOGIN
+========================================== */
+
+const loginForm = document.getElementById("loginForm");
+
+if (loginForm) {
+
+    loginForm.addEventListener("submit", async (e) => {
+
+        e.preventDefault();
+
+        const email = document
+            .getElementById("loginEmail")
+            .value
+            .trim();
+
+        const password = document
+            .getElementById("loginPassword")
+            .value;
+
+        if (!validateEmail(email)) {
+
+            showMessage(
+                "Please enter a valid email.",
+                "error"
+            );
+
+            return;
+
+        }
+
+        const button =
+            loginForm.querySelector(".auth-btn");
+
+        button.classList.add("loading");
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE_URL}/auth/login`,
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+
+                }
+            );
+
+            const result = await response.json();
+
+            button.classList.remove("loading");
+
+            if (!response.ok) {
+
+                showMessage(
+                    result.message || "Login failed.",
+                    "error"
+                );
+
+                return;
+
+            }
+
+            localStorage.setItem(
+                "token",
+                result.data.token
+            );
+
+            localStorage.setItem(
+                "user",
+                JSON.stringify(result.data.user)
+            );
+
+            showMessage(
+                "Login successful!",
+                "success"
+            );
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "../pages/dashboard.html";
+
+            }, 700);
+
+        }
+
+        catch (error) {
+
+            button.classList.remove("loading");
+
+            console.error(error);
+
+            showMessage(
+                "Unable to connect to backend.",
+                "error"
+            );
+
+        }
+
+    });
+
+}
 /* ==========================================
    SIGNUP
 ========================================== */
