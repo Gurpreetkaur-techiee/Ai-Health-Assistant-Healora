@@ -170,6 +170,7 @@ if (todayMedicines && todayMedicines.length > 0) {
 const sleepHours =
     parseFloat(localStorage.getItem("healora_sleep")) || 0;
 
+renderSleep(sleepHours);
 const sleepProgress =
     Math.min((sleepHours / 8) * 25, 25);
 
@@ -215,15 +216,6 @@ document.getElementById("healthStatus").textContent =
         ? "Keep Going 💪"
         : "Let's Start 🚀";
 
-const circle =
-    document.getElementById("healthScoreCircle");
-
-circle.style.background = `conic-gradient(
-    #14B8A6 0%,
-    #14B8A6 ${goalScore}%,
-    #E5E7EB ${goalScore}%,
-    #E5E7EB 100%
-)`;
 
 // ===============================
 // TODAY'S GOAL DETAILS
@@ -249,30 +241,6 @@ document.getElementById("goalMedicines").textContent =
 // Sleep
 document.getElementById("goalSleep").textContent =
     `${sleepHours} / 8 hrs`;
-    
-const bp = summary.latestReadings.blood_pressure;
-
-document.getElementById("bpValue").textContent =
-    bp
-        ? `${bp.bloodPressure.systolic}/${bp.bloodPressure.diastolic} mmHg`
-        : "--";
-
-const weight = summary.latestReadings.weight;
-
-document.getElementById("weightValue").textContent =
-    weight
-        ? `${weight.weight.value} ${weight.weight.unit}`
-        : "--";
-
-const sugar = summary.latestReadings.blood_sugar;
-
-document.getElementById("sugarValue").textContent =
-    sugar
-        ? `${sugar.bloodSugar.value} ${sugar.bloodSugar.unit}`
-        : "--";
-
-    document.getElementById("readingCount").textContent =
-        summary.totalReadings;
 
         // ===========================
         // RECENT ACTIVITY
@@ -299,6 +267,17 @@ document.getElementById("sugarValue").textContent =
     
     }
 }
+
+// Refresh dashboard whenever user returns to this tab/page
+document.addEventListener("visibilitychange", () => {
+
+    if (!document.hidden) {
+
+        loadDashboard();
+
+    }
+
+});
 
 function renderMedicines(medicines) {
     console.log("renderMedicines() called with:", medicines);
@@ -348,17 +327,77 @@ function renderMedicines(medicines) {
 
             </div>
 
-            <div class="status ${taken ? "done" : "pending"}">
+            <div class="status ${taken ? "done" : "pending"}"
+     data-id="${medicine.id}"
+     data-time="${time}">
 
-                ${taken ? '<i class="fa-solid fa-check"></i>' : ""}
+    ${
+        taken
+            ? '<i class="fa-solid fa-check"></i>'
+            : '<button class="markTakenBtn">✓ Mark Taken</button>'
+    }
 
-            </div>
+</div>
 
         </div>
 
         `;
 
     }).join("");
+
+container.querySelectorAll(".markTakenBtn").forEach(button => {
+
+    button.addEventListener("click", async (e) => {
+
+        e.stopPropagation();
+
+        const reminderId =
+    button.parentElement.dataset.id;
+
+const reminderTime =
+    button.parentElement.dataset.time;
+
+        console.log("Reminder ID:", reminderId);
+console.log("Reminder Time:", button.parentElement.dataset.time);
+
+        try {
+
+            const response = await fetch(
+                `${API_BASE_URL}/reminders/${reminderId}/complete`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+    time: reminderTime
+})
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success) {
+
+    window.location.reload();
+
+} else {
+
+    alert(result.message);
+
+}
+
+        } catch (err) {
+
+            console.error(err);
+            alert("Unable to update medicine.");
+
+        }
+
+    });
+
+});
     
     console.log("Medicine HTML:", container.innerHTML);
 }
@@ -639,7 +678,13 @@ function renderWater(water) {
 
     });
 
-}
+
+localStorage.setItem(
+    "healora_water",
+    JSON.stringify(water)
+);
+
+updateTodayGoal();}
 
 async function addWaterGlass() {
 
@@ -772,21 +817,7 @@ document.querySelectorAll(".medicine-item .status").forEach((status) => {
 
 });
 
-/* ==========================================
-   QUICK ACTION BUTTONS
-========================================== */
 
-document.querySelectorAll(".quick-grid button").forEach(btn => {
-
-    btn.addEventListener("click", () => {
-
-        const action = btn.innerText.trim();
-
-        alert(action + " feature will open in the next module.");
-
-    });
-
-});
 
 
 /* ==========================================
@@ -1177,6 +1208,173 @@ if (stepsMinusBtn) {
     });
 }
 
+const SLEEP_INCREMENT = 0.5;
+
+const sleepEl =
+document.getElementById("statSleep");
+
+const sleepMinusBtn =
+document.getElementById("sleepMinusBtn");
+
+const sleepPlusBtn =
+document.getElementById("sleepPlusBtn");
+
+function getSavedSleep() {
+
+    const saved =
+        localStorage.getItem("healora_sleep");
+
+    return saved
+        ? parseFloat(saved)
+        : 0;
+
+}
+
+function renderSleep(value) {
+
+    if (sleepEl) {
+
+        sleepEl.textContent =
+            value + "h";
+
+    }
+
+}
+
+let currentSleep =
+    getSavedSleep();
+
+renderSleep(currentSleep);
+
+sleepPlusBtn?.addEventListener("click", () => {
+
+    currentSleep =
+        Math.min(24, currentSleep + SLEEP_INCREMENT);
+
+    localStorage.setItem(
+        "healora_sleep",
+        currentSleep
+    );
+
+    renderSleep(currentSleep);
+
+    updateTodayGoal();
+
+});
+sleepMinusBtn?.addEventListener("click", () => {
+
+    currentSleep =
+        Math.max(0, currentSleep - SLEEP_INCREMENT);
+
+    localStorage.setItem(
+        "healora_sleep",
+        currentSleep
+    );
+
+    renderSleep(currentSleep);
+
+    updateTodayGoal();
+
+});
+
+const connectDeviceBtn =
+document.getElementById("connectDeviceBtn");
+
+connectDeviceBtn?.addEventListener("click", () => {
+
+    alert(
+`Wearable integration is coming soon.
+
+Future support includes:
+
+• Apple Health
+• Google Fit
+• Fitbit
+• Garmin
+
+This feature will allow live heart rate monitoring and health synchronization.`
+    );
+
+});
+function updateTodayGoal() {
+
+    const water =
+        JSON.parse(localStorage.getItem("healora_water")) ||
+        { glasses: 0, goal: 8 };
+
+    const sleep =
+        parseFloat(localStorage.getItem("healora_sleep")) || 0;
+
+    const steps =
+        parseInt(localStorage.getItem("healora_steps")) || 0;
+
+    const medicines =
+        document.querySelectorAll(".status.done").length;
+
+    const totalMedicines =
+        document.querySelectorAll(".medicine-item").length;
+
+    const waterProgress =
+        Math.min((water.glasses / water.goal) * 25, 25);
+
+    const stepProgress =
+        Math.min((steps / 8000) * 25, 25);
+
+    const sleepProgress =
+        Math.min((sleep / 8) * 25, 25);
+
+    const medicineProgress =
+        totalMedicines === 0
+            ? 25
+            : (medicines / totalMedicines) * 25;
+
+    const score = Math.round(
+        waterProgress +
+        stepProgress +
+        sleepProgress +
+        medicineProgress
+    );
+
+    document.getElementById("healthScoreValue").textContent =
+        score + "%";
+
+    document.getElementById("healthStatus").textContent =
+        score >= 80
+            ? "Excellent 🎉"
+            : score >= 60
+            ? "Great 👍"
+            : score >= 40
+            ? "Keep Going 💪"
+            : "Let's Start 🚀";
+
+    document.getElementById("goalWater").textContent =
+        `${water.glasses} / ${water.goal}`;
+
+    document.getElementById("goalSteps").textContent =
+        `${steps.toLocaleString()} / 8000`;
+
+    document.getElementById("goalSleep").textContent =
+        `${sleep} / 8 hrs`;
+
+    document.getElementById("goalMedicines").textContent =
+        `${medicines} / ${totalMedicines}`;
+
+    const circle =
+        document.getElementById("healthScoreCircle");
+
+    if (circle) {
+
+        circle.style.background = `conic-gradient(
+            #14B8A6 0%,
+            #14B8A6 ${score}%,
+            #E5E7EB ${score}%,
+            #E5E7EB 100%
+        )`;
+
+    }
+
+}
+
 function renderRecentActivity(activities) {
 
     const activityList = document.getElementById("activityList");
@@ -1233,18 +1431,24 @@ function renderWeeklyAnalytics(weeklyHealth) {
 
     if (!container) return;
 
-    if (!weeklyHealth || weeklyHealth.length === 0) {
+    container.innerHTML = "";
+
+    const hasData =
+        weeklyHealth &&
+        weeklyHealth.some(item => item.score > 0);
+
+    if (!hasData) {
 
         container.innerHTML = `
-            <div class="empty-state">
-                No health data available
+            <div class="empty-state analytics-empty">
+                <div style="font-size:40px;">📈</div>
+                <h3>No Weekly Progress Yet</h3>
+                <p>Start tracking water, medicines and daily goals to see your weekly progress.</p>
             </div>
         `;
 
         return;
     }
-
-    container.innerHTML = "";
 
     weeklyHealth.forEach(item => {
 
@@ -1252,9 +1456,13 @@ function renderWeeklyAnalytics(weeklyHealth) {
 
         bar.className = "bar";
 
-        bar.style.height = `${Math.max(item.score,5)}%`;
+        bar.style.height = `${Math.max(item.score,10)}%`;
 
-        bar.title = `${item.day}: ${item.score}`;
+        bar.innerHTML = `
+            <span class="bar-value">${item.score}%</span>
+        `;
+
+        bar.title = `${item.day}: ${item.score}%`;
 
         container.appendChild(bar);
 

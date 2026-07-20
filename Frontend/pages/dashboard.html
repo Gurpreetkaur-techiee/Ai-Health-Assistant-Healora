@@ -331,7 +331,31 @@ Track medicines, monitor reports, consult AI and manage your complete health jou
 
 <h3>Sleep</h3>
 
-<h2>7h 48m</h2>
+<div class="steps-control">
+
+<button
+class="stepper-btn"
+id="sleepMinusBtn">
+
+−
+
+</button>
+
+<h2 id="statSleep">
+
+0h
+
+</h2>
+
+<button
+class="stepper-btn"
+id="sleepPlusBtn">
+
++
+
+</button>
+
+</div>
 
 <span>Last Night</span>
 
@@ -602,22 +626,51 @@ placeholder="How are you feeling today?">
 
 <div class="ecg-info">
 
-<div>
+    <div>
 
-<h3>Heart Rate</h3>
+        <h3>Heart Rate</h3>
 
-<p>78 BPM</p>
+<p id="heartRateStatus">
+    --
+</p>
 
 </div>
 
 <div>
 
-<h3>Status</h3>
+<h3>Device</h3>
 
-<p class="positive">
+<p id="heartConnectionStatus" class="neutral">
 
-Healthy
+    Not Connected
 
+</p>
+
+</div>
+
+</div>
+
+<button
+class="primary-btn"
+id="connectDeviceBtn">
+
+⌚ Connect Device
+
+</button>
+
+<p class="heart-monitor-note">
+
+Supports Apple Health, Google Fit,
+Fitbit and Garmin integration.
+
+</p>
+
+    </div>
+
+</div>
+
+<p class="heart-monitor-note">
+    Connect a smartwatch or fitness band to monitor your live heart rate.
 </p>
 
 </div>

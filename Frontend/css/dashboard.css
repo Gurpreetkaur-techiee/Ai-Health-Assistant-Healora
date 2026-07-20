@@ -1109,7 +1109,55 @@ color:white;
 
 .status.pending{
 
-border:2px solid #CBD5E1;
+border:none;
+
+width:auto;
+
+height:auto;
+
+background:none;
+
+}
+
+.markTakenBtn{
+
+padding:10px 18px;
+
+border:none;
+
+border-radius:12px;
+
+background:linear-gradient(
+135deg,
+var(--primary),
+var(--secondary)
+);
+
+color:white;
+
+font-weight:600;
+
+font-size:14px;
+
+cursor:pointer;
+
+transition:.25s;
+
+box-shadow:0 6px 16px rgba(20,184,166,.25);
+
+}
+
+.markTakenBtn:hover{
+
+transform:translateY(-2px);
+
+box-shadow:0 10px 20px rgba(20,184,166,.35);
+
+}
+
+.markTakenBtn:active{
+
+transform:scale(.96);
 
 }
 
@@ -1220,34 +1268,29 @@ margin-top:25px;
 }
 
 .chart-bars{
-
-height:260px;
-
-display:flex;
-
-align-items:flex-end;
-
-justify-content:space-between;
-
-gap:12px;
-
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    height:220px;
+    padding:20px 10px 0;
 }
 
 .bar{
+    width:40px;
+    border-radius:12px 12px 0 0;
+    background:linear-gradient(180deg,#2dd4bf,#0f766e);
+    position:relative;
+    transition:.3s;
+}
 
-flex:1;
-
-background:linear-gradient(
-180deg,
-#6EE7E7,
-#14B8A6
-);
-
-border-radius:16px 16px 0 0;
-
-
-animation:growBar 1.5s ease;
-
+.bar-value{
+    position:absolute;
+    top:-25px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:12px;
+    font-weight:600;
+    color:#0f172a;
 }
 
 @keyframes growBar{
@@ -1986,4 +2029,28 @@ body.dark .health-item span{
 
     transition: height .4s ease;
 
+}
+
+.analytics-empty{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    height:100%;
+    text-align:center;
+    color:#64748b;
+    gap:10px;
+}
+
+.heart-monitor-note{
+    margin-top:18px;
+    text-align:center;
+    font-size:14px;
+    color:#64748b;
+    line-height:1.5;
+}
+
+.neutral{
+    color:#64748b;
+    font-weight:600;
 }

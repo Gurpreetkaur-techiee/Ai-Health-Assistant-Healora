@@ -291,59 +291,6 @@ const getDashboardSummary = async (userId) => {
 
   
 // ---------- HEALTH SCORE CALCULATION ----------
-
-let healthScore = 0;
-
-if (totalReadings > 0) {
-
-    healthScore = 100;
-
-    if (latestBP?.bloodPressure) {
-
-        const sys = latestBP.bloodPressure.systolic;
-        const dia = latestBP.bloodPressure.diastolic;
-
-        if (sys > 140 || dia > 90)
-            healthScore -= 20;
-        else if (sys > 130 || dia > 85)
-            healthScore -= 10;
-    }
-
-    if (latestSugar?.bloodSugar) {
-
-        const sugar = latestSugar.bloodSugar.value;
-
-        if (sugar > 180)
-            healthScore -= 20;
-        else if (sugar > 140)
-            healthScore -= 10;
-    }
-
-    if (latestWeight?.weight) {
-
-        const weight = latestWeight.weight.value;
-
-        if (weight < 40 || weight > 120)
-            healthScore -= 10;
-    }
-
-    healthScore = Math.max(0, Math.min(100, healthScore));
-
-}
-
-let healthStatus = "No Data";
-
-if (healthScore >= 90)
-    healthStatus = "Excellent";
-else if (healthScore >= 75)
-    healthStatus = "Good";
-else if (healthScore >= 60)
-    healthStatus = "Average";
-else if (healthScore > 0)
-    healthStatus = "Needs Attention";
-
-
-
 const dayNames = [
     "Sun",
     "Mon",
