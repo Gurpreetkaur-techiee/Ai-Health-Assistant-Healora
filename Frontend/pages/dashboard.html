@@ -113,7 +113,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
 
 Welcome,
 
-<span>User 👋</span>
+<span id="welcomeUser">User 👋</span>
 
 </h1>
 
@@ -137,15 +137,15 @@ Your AI Healthcare Companion
 
 <div class="notification-dropdown" id="notificationDropdown">
 
-<h4>Notifications</h4>
+    <h4>Notifications</h4>
 
-<div class="notification-item">
-    💊 Calcium Tablet due at 2:00 PM
-</div>
+    <div id="notificationList">
 
-<div class="notification-item">
-    📅 Appointment with Dr. Sharma tomorrow
-</div>
+        <div class="empty-state">
+            Loading...
+        </div>
+
+    </div>
 
 </div>
 
@@ -168,11 +168,12 @@ Your AI Healthcare Companion
 
         <div class="profile-info">
 
-            <strong id="dropdownUserName">User</strong>
+    <strong id="dropdownUserName">User</strong>
 
-            <small id="dropdownUserEmail">user@example.com</small>
+    <small id="dropdownUserEmail">user@example.com</small>
 
-        </div>
+</div>
+            
 
         <hr>
 
@@ -232,19 +233,42 @@ Track medicines, monitor reports, consult AI and manage your complete health jou
 
 <div class="health-score">
 
-<div class="circle">
+<div class="circle" id="healthScoreCircle">
 
-<div class="value">
-
-94%
-
+<div class="value" id="healthScoreValue">
+    --
 </div>
 
 </div>
+<h3>Today's Goal</h3>
 
-<h3>Health Score</h3>
+<p id="healthStatus">
+    Keep progressing 💪
+</p>
 
-<p>Excellent</p>
+<div class="health-details">
+
+    <div class="health-item">
+        <span>💧 Water</span>
+        <strong id="goalWater">0 / 8</strong>
+    </div>
+
+    <div class="health-item">
+        <span>🚶 Steps</span>
+        <strong id="goalSteps">0 / 8000</strong>
+    </div>
+
+    <div class="health-item">
+        <span>💊 Medicines</span>
+        <strong id="goalMedicines">0 / 0</strong>
+    </div>
+
+    <div class="health-item">
+        <span>😴 Sleep</span>
+        <strong id="goalSleep">0 / 8 hrs</strong>
+    </div>
+
+</div>
 
 </div>
 
@@ -410,94 +434,21 @@ placeholder="How are you feeling today?">
 
 <div class="glass-card medicine-card">
 
-<div class="card-header">
+    <div class="card-header">
+        <h2>💊 Today's Medicines</h2>
+    </div>
 
-<h2>
+    <div class="medicine-list" id="medicineList">
 
-💊 Today's Medicines
+        <div class="empty-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Loading medicines...
+        </div>
 
-</h2>
-
-</div>
-
-<div class="medicine-list">
-
-<div class="medicine-item">
-
-<div class="medicine-time">
-
-09:00 AM
+    </div>
 
 </div>
-
-<div class="medicine-info">
-
-<h4>Vitamin D</h4>
-
-<p>After Breakfast</p>
-
 </div>
-
-<div class="status done">
-
-<i class="fa-solid fa-check"></i>
-
-</div>
-
-</div>
-
-<div class="medicine-item">
-
-<div class="medicine-time">
-
-02:00 PM
-
-</div>
-
-<div class="medicine-info">
-
-<h4>Calcium Tablet</h4>
-
-<p>After Lunch</p>
-
-</div>
-
-<div class="status pending">
-
-</div>
-
-</div>
-
-<div class="medicine-item">
-
-<div class="medicine-time">
-
-09:00 PM
-
-</div>
-
-<div class="medicine-info">
-
-<h4>BP Medicine</h4>
-
-<p>After Dinner</p>
-
-</div>
-
-<div class="status pending">
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-
 <!-- RIGHT SIDE -->
 
 <div class="right-column">
@@ -517,15 +468,22 @@ placeholder="How are you feeling today?">
 </div>
 
 
-<h3 id="app-doctor-name">Dr. Sharma</h3>
+<h3 id="app-doctor-name">Loading...</h3>
 
-<p id="app-doctor-specialty">Cardiologist</p>
+<p id="app-doctor-specialty">Please wait</p>
 
-<div class="appointment-date" id="app-date">18 July 2026</div>
+<div class="appointment-date" id="app-date">--</div>
 
-<div class="appointment-time" id="app-time">11:30 AM</div>
+<div class="appointment-time" id="app-time">--</div>
 
-<button class="primary-btn" id="view-details-btn" data-id="">View Details</button>
+<button
+    class="primary-btn"
+    id="view-details-btn"
+    data-id=""
+    style="display:none;"
+>
+    View Details
+</button>
 
 </div>
 
@@ -594,22 +552,10 @@ placeholder="How are you feeling today?">
 
 <div class="chart-placeholder">
 
-<div class="chart-bars">
-
-<div class="bar" style="height:45%"></div>
-
-<div class="bar" style="height:65%"></div>
-
-<div class="bar" style="height:80%"></div>
-
-<div class="bar" style="height:60%"></div>
-
-<div class="bar" style="height:92%"></div>
-
-<div class="bar" style="height:75%"></div>
-
-<div class="bar" style="height:100%"></div>
-
+<div class="chart-bars" id="weeklyChartBars">
+    <div class="empty-state">
+        Loading analytics...
+    </div>
 </div>
 
 <div class="days">
@@ -696,88 +642,14 @@ Healthy
 
 <div class="activity-list" id="activityList">
 
-<div class="activity">
+    <div class="empty-state">
 
-<div class="activity-icon">
+        Loading...
 
-🤖
-
-</div>
-
-<div>
-
-<h4>
-
-AI Consultation
-
-</h4>
-
-<p>
-
-Today • 10:40 AM
-
-</p>
+    </div>
 
 </div>
-
 </div>
-
-<div class="activity">
-
-<div class="activity-icon">
-
-💊
-
-</div>
-
-<div>
-
-<h4>
-
-Medicine Taken
-
-</h4>
-
-<p>
-
-Today • 09:05 AM
-
-</p>
-
-</div>
-
-</div>
-
-<div class="activity">
-
-<div class="activity-icon">
-
-📄
-
-</div>
-
-<div>
-
-<h4>
-
-Blood Report Uploaded
-
-</h4>
-
-<p>
-
-Yesterday
-
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 <!-- QUICK ACTIONS -->
 
 <div class="glass-card quick-card">

@@ -125,7 +125,8 @@ app.use('/api/reminders',    require('./routes/reminder.routes'));
 app.use('/api/appointments', require('./routes/appointment.routes'));
 app.use('/api/health',       require('./routes/health.routes'));
 app.use('/api/emergency',    require('./routes/emergency.routes'));
-
+app.use('/api/dashboard', require('./routes/dashboard.routes'));
+app.use('/api/water', require('./routes/water.routes'));
 // ─────────────────────────────────────────────
 // 7.  404 — NOT FOUND HANDLER
 // ─────────────────────────────────────────────

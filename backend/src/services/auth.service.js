@@ -126,6 +126,11 @@ const loginUser = async ({ email, password }) => {
   // enumeration of valid email addresses.
   const DUMMY_HASH = '$2a$12$dummyhashtopreventtimingattacksonuserenumeration123456';
   const passwordToCompare = user ? user.password : DUMMY_HASH;
+  console.log("Email:", email);
+  console.log("Password:", password);
+  console.log("User:", user);
+  console.log("User password:", user?.password);
+  console.log("Password to compare:", passwordToCompare);
   const isPasswordCorrect = await bcrypt.compare(password, passwordToCompare);
 
   // ── Step 3: Fail with a generic message ───────────────────

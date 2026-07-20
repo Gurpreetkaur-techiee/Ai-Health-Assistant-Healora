@@ -73,139 +73,360 @@ document.addEventListener("DOMContentLoaded", () => {
 
         async function loadDashboard() {
 
-            try {
-
-                const response = await fetch(
-                    `${API_BASE_URL}/health/summary`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`
-                        }
-                    }
-                );
-
-                const result = await response.json();
-
-                console.log(JSON.stringify(result, null, 2));
-
-                const summary = result.data;
-
-                const healthScore =
-                    document.querySelector(".value");
-
-                if (healthScore && summary.healthScore) {
-
-                    healthScore.textContent =
-                        summary.healthScore + "%";
-
-                }
-
-                const healthStatus = document.querySelector(".health-score p");
-
-    if (healthStatus && summary.healthStatus) {
-        healthStatus.textContent = summary.healthStatus;
-    }
-
-    // === FETCH UPCOMING APPOINTMENT ===
     try {
-      const appResponse = await fetch(`${API_BASE_URL}/appointments?upcoming=true`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      
-      if (appResponse.ok) {
-        const appResult = await appResponse.json();
-        const appointments = appResult.data.appointments;
-        
-        if (appointments && appointments.length > 0) {
-          const nextApp = appointments[0];
-          
-          // Update HTML with actual backend details
-          document.getElementById('app-doctor-name').textContent = nextApp.doctorName || 'N/A';
-          document.getElementById('app-doctor-specialty').textContent = nextApp.specialization || 'General';
-          
-          // Format date and time
-          if (nextApp.date) {
-            document.getElementById('app-date').textContent = new Date(nextApp.date).toLocaleDateString();
-          }
-          if (nextApp.time) {
-            document.getElementById('app-time').textContent = nextApp.time;
-          }
-          
-          // Store MongoDB ID on the button
-          const viewDetailsBtn = document.getElementById('view-details-btn');
-          if (viewDetailsBtn) {
-            viewDetailsBtn.setAttribute('data-id', nextApp._id);
-          }
-        } else {
-          // Fallback if there are no upcoming appointments in DB
-          document.getElementById('app-doctor-name').textContent = 'No Upcoming Appointments';
-          document.getElementById('app-doctor-specialty').textContent = '';
-          document.getElementById('app-date').textContent = '-';
-          document.getElementById('app-time').textContent = '-';
-        }
-      }
-    } catch (appErr) {
-      console.error("Error fetching upcoming appointment:", appErr);
-    }
 
-            } catch (err) {
-
-            console.error(err);
-
-        }
-
-
-    // ================= RECENT ACTIVITY =================
-
-try {
-
-    const reportsResponse = await fetch(
-        `${API_BASE_URL}/reports`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`
+        const response = await fetch(
+            `${API_BASE_URL}/dashboard`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             }
-        }
-    );
+        );
 
-    const reportsResult = await reportsResponse.json();
+        const result = await response.json();
 
-    let activities = [];
+        console.log("Dashboard Response:", result);
 
-    if (
-        reportsResponse.ok &&
-        reportsResult.success &&
-        Array.isArray(reportsResult.data?.reports)
-    ) {
+        const dashboard = result.data;
 
-        reportsResult.data.reports
-            .slice(0, 5)
-            .forEach(report => {
+        // ===============================
+// Load Logged In User
+// ===============================
 
-                activities.push({
-                    icon: "📄",
-                    title: `Uploaded ${report.originalFileName}`,
-                    time: new Date(report.createdAt).toLocaleString()
-                });
+/*const storedUser = JSON.parse(localStorage.getItem("user"));
 
-            });
+if (storedUser) {
 
-    }
+    document.getElementById("welcomeUser").textContent =
+        `${storedUser.name} 👋`;
 
-    renderRecentActivity(activities);
+}*/
 
-} catch (err) {
+        const summary = dashboard.healthSummary;
+        const nextAppointment = dashboard.nextAppointment;
+        console.log("Next Appointment:", nextAppointment);
+        const recentActivity = dashboard.recentActivity;
+        const todayMedicines = dashboard.todayMedicines;
+        const todayWater = dashboard.todayWater;
+        renderWater(todayWater);
+        console.log("Frontend Today Medicines:", todayMedicines);
+        renderMedicines(todayMedicines);
+// ======================================
+// TODAY'S GOAL
+// ======================================
 
-    console.error(
-        "Recent Activity Error:",
-        err
-    );
+const water = dashboard.todayWater || { glasses: 0, goal: 8 };
+const waterProgress = Math.min((water.glasses / water.goal) * 25, 25);
 
-    renderRecentActivity([]);
+const currentSteps =
+    parseInt(localStorage.getItem("healora_steps")) || 0;
 
+const stepProgress =
+    Math.min((currentSteps / 8000) * 25, 25);
+
+let medicineProgress = 25;
+
+if (todayMedicines && todayMedicines.length > 0) {
+
+    const taken =
+        todayMedicines.filter(m => m.status === "taken").length;
+
+    medicineProgress =
+        (taken / todayMedicines.length) * 25;
 }
 
+const sleepHours =
+    parseFloat(localStorage.getItem("healora_sleep")) || 0;
+
+const sleepProgress =
+    Math.min((sleepHours / 8) * 25, 25);
+
+const goalScore = Math.round(
+    waterProgress +
+    stepProgress +
+    medicineProgress +
+    sleepProgress
+);
+
+document.getElementById("healthScoreValue").textContent =
+    `${goalScore}%`;
+
+document.getElementById("healthStatus").textContent =
+    goalScore >= 80
+        ? "Excellent 🎉"
+        : goalScore >= 60
+        ? "Great 👍"
+        : goalScore >= 40
+        ? "Keep Going 💪"
+        : "Let's Start 🚀";
+
+const circle = document.getElementById("healthScoreCircle");
+
+circle.style.background = `conic-gradient(
+    #14B8A6 0%,
+    #14B8A6 ${goalScore}%,
+    #E5E7EB ${goalScore}%,
+    #E5E7EB 100%
+)`;
+
+
+// Update Percentage
+document.getElementById("healthScoreValue").textContent =
+    `${goalScore}%`;
+
+document.getElementById("healthStatus").textContent =
+    goalScore >= 80
+        ? "Excellent 🎉"
+        : goalScore >= 60
+        ? "Great 👍"
+        : goalScore >= 40
+        ? "Keep Going 💪"
+        : "Let's Start 🚀";
+
+const circle =
+    document.getElementById("healthScoreCircle");
+
+circle.style.background = `conic-gradient(
+    #14B8A6 0%,
+    #14B8A6 ${goalScore}%,
+    #E5E7EB ${goalScore}%,
+    #E5E7EB 100%
+)`;
+
+// ===============================
+// TODAY'S GOAL DETAILS
+// ===============================
+
+// Water
+document.getElementById("goalWater").textContent =
+    `${water.glasses} / ${water.goal}`;
+
+// Steps
+document.getElementById("goalSteps").textContent =
+    `${currentSteps.toLocaleString()} / 8000`;
+
+// Medicines
+const takenMedicines =
+    todayMedicines
+        ? todayMedicines.filter(m => m.status === "taken").length
+        : 0;
+
+document.getElementById("goalMedicines").textContent =
+    `${takenMedicines} / ${todayMedicines ? todayMedicines.length : 0}`;
+
+// Sleep
+document.getElementById("goalSleep").textContent =
+    `${sleepHours} / 8 hrs`;
+    
+const bp = summary.latestReadings.blood_pressure;
+
+document.getElementById("bpValue").textContent =
+    bp
+        ? `${bp.bloodPressure.systolic}/${bp.bloodPressure.diastolic} mmHg`
+        : "--";
+
+const weight = summary.latestReadings.weight;
+
+document.getElementById("weightValue").textContent =
+    weight
+        ? `${weight.weight.value} ${weight.weight.unit}`
+        : "--";
+
+const sugar = summary.latestReadings.blood_sugar;
+
+document.getElementById("sugarValue").textContent =
+    sugar
+        ? `${sugar.bloodSugar.value} ${sugar.bloodSugar.unit}`
+        : "--";
+
+    document.getElementById("readingCount").textContent =
+        summary.totalReadings;
+
+        // ===========================
+        // RECENT ACTIVITY
+        // ===========================
+
+        renderRecentActivity(recentActivity);
+
+        // ===========================
+        // TODAY MEDICINES
+        // (We'll integrate this next)
+        // ===========================
+
+        console.log("Today's Medicines:", todayMedicines);
+        renderMedicines(todayMedicines);
+        renderRecentActivity(recentActivity);
+        renderAppointment(nextAppointment);
+        renderNotifications(todayMedicines, nextAppointment);
+        renderWeeklyAnalytics(summary.weeklyHealth);
+
+    } catch (err) {
+
+        console.error("Dashboard Error:", err);
+
+    
     }
+}
+
+function renderMedicines(medicines) {
+    console.log("renderMedicines() called with:", medicines);
+
+    const container = document.getElementById("medicineList");
+    console.log("Medicine Container:", container);
+    console.log("Medicines Received:", medicines);
+
+
+    if (!medicines || medicines.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-pills"></i>
+                No medicines scheduled for today.
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = medicines.map(medicine => {
+
+        const time = medicine.time || "--";
+
+        const name = medicine.medicineName || medicine.title || "Medicine";
+
+        const note = medicine.instructions || "";
+
+        const taken = medicine.status === "taken";
+
+        return `
+
+        <div class="medicine-item">
+
+            <div class="medicine-time">
+
+                ${time}
+
+            </div>
+
+            <div class="medicine-info">
+
+                <h4>${name}</h4>
+
+                <p>${note}</p>
+
+            </div>
+
+            <div class="status ${taken ? "done" : "pending"}">
+
+                ${taken ? '<i class="fa-solid fa-check"></i>' : ""}
+
+            </div>
+
+        </div>
+
+        `;
+
+    }).join("");
+    
+    console.log("Medicine HTML:", container.innerHTML);
+}
+
+function renderAppointment(appointment) {
+
+    const doctor = document.getElementById("app-doctor-name");
+    const specialty = document.getElementById("app-doctor-specialty");
+    const date = document.getElementById("app-date");
+    const time = document.getElementById("app-time");
+    const button = document.getElementById("view-details-btn");
+
+    if (!appointment) {
+
+        doctor.textContent = "No Upcoming Appointment";
+        specialty.textContent = "Book your first appointment";
+        date.textContent = "--";
+        time.textContent = "--";
+
+        button.style.display = "none";
+
+        return;
+    }
+
+    doctor.textContent =
+        appointment.doctorName || "Doctor";
+
+    specialty.textContent =
+        appointment.specialty || "";
+
+    date.textContent =
+    appointment.appointmentDate
+        ? new Date(appointment.appointmentDate).toLocaleDateString("en-GB")
+        : "--";
+
+    time.textContent =
+        appointment.appointmentTime || "--";
+
+    button.dataset.id = appointment._id;
+    button.style.display = "inline-block";
+}
+function renderNotifications(medicines, appointment) {
+
+    const container =
+        document.getElementById("notificationList");
+
+    let html = "";
+
+    if (appointment) {
+
+        html += `
+
+        <div class="notification-item">
+
+            📅 Appointment with
+            ${appointment.doctorName || "Doctor"}
+
+        </div>
+
+        `;
+
+    }
+
+    if (medicines && medicines.length > 0) {
+
+        medicines.forEach(medicine => {
+
+            html += `
+
+            <div class="notification-item">
+
+                💊 ${medicine.medicineName}
+                at ${medicine.time}
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+    if (html === "") {
+
+        html = `
+
+        <div class="empty-state">
+
+            No notifications.
+
+        </div>
+
+        `;
+
+    }
+
+    container.innerHTML = html;
+
+}
     loadDashboard();
 
   // === HANDLE VIEW DETAILS CLICK ===
@@ -232,14 +453,16 @@ try {
           // Display the backend appointment details cleanly in a popup
           alert(`
 🩺 Appointment Details
--------------------------
+
+------------------------
+
 Doctor: ${appointment.doctorName}
-Specialty: ${appointment.specialization}
-Date: ${new Date(appointment.date).toLocaleDateString()}
-Time: ${appointment.time}
-Status: ${appointment.status || 'Scheduled'}
-Notes: ${appointment.notes || 'No custom notes.'}
-          `);
+Specialty: ${appointment.specialty}
+Date: ${new Date(appointment.appointmentDate).toLocaleDateString("en-GB")}
+Time: ${appointment.appointmentTime}
+Status: ${appointment.status}
+Notes: ${appointment.notes || "No custom notes."}
+`);
         } else {
           alert("Failed to retrieve appointment details from server.");
         }
@@ -354,37 +577,93 @@ Notes: ${appointment.notes || 'No custom notes.'}
        GLASS CARD HOVER
     ====================================== */
 
-    document.querySelectorAll(".glass-card")
-        .forEach(card => {
-
-            card.addEventListener("mousemove", e => {
-
-                const rect =
-                    card.getBoundingClientRect();
-
-                const x =
-                    e.clientX - rect.left;
-
-                const y =
-                    e.clientY - rect.top;
-
-                card.style.background =
-                `radial-gradient(circle at ${x}px ${y}px,
-                rgba(255,255,255,.95),
-                rgba(255,255,255,.72))`;
-
-            });
-
-            card.addEventListener("mouseleave", () => {
-
-                card.style.background =
-                "rgba(255,255,255,.72)";
-
-            });
-
-        });
+    
 
 });
+
+function renderWater(water) {
+
+    if (!water) return;
+
+    const waterText = document.querySelector(".water-card p");
+
+    if (waterText) {
+        waterText.textContent =
+            `${water.glasses} / ${water.goal} Glasses`;
+    }
+
+    const glasses = document.querySelectorAll(".glass");
+
+    glasses.forEach((glass, index) => {
+
+        if (index < water.glasses) {
+
+            glass.classList.add("active");
+
+        } else {
+
+            glass.classList.remove("active");
+
+        }
+
+    });
+
+}
+
+async function addWaterGlass() {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/water/add`, {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            renderWater(result.data);
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
+
+async function removeWaterGlass() {
+
+    try {
+
+        const response = await fetch(`${API_BASE_URL}/water/remove`, {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+
+            renderWater(result.data);
+
+        }
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
+
 /* ==========================================
    DASHBOARD AI → CHATBOT
 ========================================== */
@@ -420,28 +699,22 @@ if (aiButton && aiInput) {
    WATER TRACKER
 ========================================== */
 
-document.querySelectorAll(".glass").forEach((glass, index) => {
+const glasses = document.querySelectorAll(".glass");
 
-    glass.addEventListener("click", () => {
+glasses.forEach((glass, index) => {
 
-        document.querySelectorAll(".glass").forEach((g, i) => {
+    glass.addEventListener("click", async () => {
 
-            if (i <= index) {
+        const activeCount =
+            document.querySelectorAll(".glass.active").length;
 
-                g.classList.add("active");
+        if (index + 1 > activeCount) {
 
-            } else {
+            await addWaterGlass();
 
-                g.classList.remove("active");
+        } else {
 
-            }
-
-        });
-        const waterText = document.querySelector(".water-card p");
-
-        if (waterText) {
-
-            waterText.textContent = `${index + 1} / 8 Glasses`;
+            await removeWaterGlass();
 
         }
 
@@ -895,6 +1168,41 @@ function renderRecentActivity(activities) {
         </div>
 
         `;
+
+    });
+
+}
+
+function renderWeeklyAnalytics(weeklyHealth) {
+
+    const container = document.getElementById("weeklyChartBars");
+
+    if (!container) return;
+
+    if (!weeklyHealth || weeklyHealth.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty-state">
+                No health data available
+            </div>
+        `;
+
+        return;
+    }
+
+    container.innerHTML = "";
+
+    weeklyHealth.forEach(item => {
+
+        const bar = document.createElement("div");
+
+        bar.className = "bar";
+
+        bar.style.height = `${Math.max(item.score,5)}%`;
+
+        bar.title = `${item.day}: ${item.score}`;
+
+        container.appendChild(bar);
 
     });
 

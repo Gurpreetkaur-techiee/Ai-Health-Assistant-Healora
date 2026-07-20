@@ -1927,3 +1927,63 @@ font-size:14px;
 margin-bottom:0;
 
 }
+
+.health-details{
+    margin-top:20px;
+    width:100%;
+}
+
+.health-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 0;
+    border-top:1px solid rgba(0,0,0,.08);
+    font-size:14px;
+}
+
+.health-item span{
+    color:#64748B;
+}
+
+.health-item strong{
+    color:var(--primary);
+    font-weight:700;
+}
+
+body.dark .health-item{
+    border-color:rgba(255,255,255,.08);
+}
+
+body.dark .health-item span{
+    color:#CBD5E1;
+}
+
+/* ===============================
+   EMPTY STATE
+================================= */
+
+.empty-state{
+
+    text-align:center;
+    color:#64748B;
+    padding:30px 15px;
+    font-size:15px;
+    line-height:1.6;
+
+}
+
+.empty-state i{
+
+    font-size:34px;
+    color:#CBD5E1;
+    margin-bottom:12px;
+    display:block;
+
+}
+
+.chart-bars .bar{
+
+    transition: height .4s ease;
+
+}

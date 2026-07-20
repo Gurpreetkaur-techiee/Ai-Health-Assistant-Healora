@@ -23,13 +23,16 @@ const MedicineReminder = require('./MedicineReminder');
 const Appointment      = require('./Appointment');
 const HealthReading    = require('./HealthReading');
 const EmergencyContact = require('./EmergencyContact');
-
+const WaterIntake = require('./WaterIntake');
 module.exports = {
+
   User,
   MedicalReport,
   ChatHistory,
   MedicineReminder,
   Appointment,
   HealthReading,
-  EmergencyContact
+  EmergencyContact,
+  WaterIntake
+
 };

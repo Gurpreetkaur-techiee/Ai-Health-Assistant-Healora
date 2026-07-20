@@ -148,8 +148,9 @@ const getDashboardSummary = async (userId) => {
     latestBP,
     latestWeight,
     latestSugar,
-    countAggregation
-  ] = await Promise.all([
+    countAggregation,
+    weeklyAggregation
+] = await Promise.all([
     // Latest reading of each type
     HealthReading.findOne({ userId, type: 'blood_pressure' }).sort({ recordedAt: -1 }),
     HealthReading.findOne({ userId, type: 'weight'         }).sort({ recordedAt: -1 }),
@@ -159,7 +160,52 @@ const getDashboardSummary = async (userId) => {
     HealthReading.aggregate([
       { $match: { userId: userId } }, // Must pass userId as-is (aggregation doesn't auto-cast)
       { $group: { _id: '$type', count: { $sum: 1 } } }
-    ])
+    ]),
+
+    HealthReading.aggregate([
+
+    {
+        $match: {
+
+            userId: userId,
+
+            recordedAt: {
+
+                $gte: new Date(
+                    Date.now() - 7 * 24 * 60 * 60 * 1000
+                )
+
+            }
+
+        }
+
+    },
+
+    {
+
+        $group: {
+
+            _id: {
+
+                day: {
+
+                    $dayOfWeek: "$recordedAt"
+
+                }
+
+            },
+
+            count: {
+
+                $sum: 1
+
+            }
+
+        }
+
+    }
+
+])
   ]);
 
   // ── Build count map { blood_pressure: 12, weight: 8, ... } ─
@@ -176,15 +222,108 @@ const getDashboardSummary = async (userId) => {
     return reading.toJSON();
   };
 
-  return {
+  
+// ---------- HEALTH SCORE CALCULATION ----------
+
+let healthScore = 0;
+
+if (totalReadings > 0) {
+
+    healthScore = 100;
+
+    if (latestBP?.bloodPressure) {
+
+        const sys = latestBP.bloodPressure.systolic;
+        const dia = latestBP.bloodPressure.diastolic;
+
+        if (sys > 140 || dia > 90)
+            healthScore -= 20;
+        else if (sys > 130 || dia > 85)
+            healthScore -= 10;
+    }
+
+    if (latestSugar?.bloodSugar) {
+
+        const sugar = latestSugar.bloodSugar.value;
+
+        if (sugar > 180)
+            healthScore -= 20;
+        else if (sugar > 140)
+            healthScore -= 10;
+    }
+
+    if (latestWeight?.weight) {
+
+        const weight = latestWeight.weight.value;
+
+        if (weight < 40 || weight > 120)
+            healthScore -= 10;
+    }
+
+    healthScore = Math.max(0, Math.min(100, healthScore));
+
+}
+
+let healthStatus = "No Data";
+
+if (healthScore >= 90)
+    healthStatus = "Excellent";
+else if (healthScore >= 75)
+    healthStatus = "Good";
+else if (healthScore >= 60)
+    healthStatus = "Average";
+else if (healthScore > 0)
+    healthStatus = "Needs Attention";
+
+
+
+const dayNames = [
+    "Sun",
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat"
+];
+
+const weeklyHealth = dayNames.map((day, index) => {
+
+    const found = weeklyAggregation.find(
+
+        item => item._id.day === index + 1
+
+    );
+
+    return {
+
+        day,
+
+        score: found ? found.count * 20 : 0
+
+    };
+
+});
+
+return {
+
     latestReadings: {
-      blood_pressure: formatReading(latestBP),
-      weight:         formatReading(latestWeight),
-      blood_sugar:    formatReading(latestSugar)
+        blood_pressure: formatReading(latestBP),
+        weight: formatReading(latestWeight),
+        blood_sugar: formatReading(latestSugar)
     },
+
     readingCounts,
-    totalReadings
-  };
+
+    totalReadings,
+
+    healthScore,
+
+    healthStatus,
+
+weeklyHealth
+
+};
 };
 
 module.exports = {
