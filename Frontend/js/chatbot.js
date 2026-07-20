@@ -803,7 +803,7 @@ document.querySelectorAll(".tool-card").forEach(card => {
 
         if (title === "Medicine Reminder") {
 
-           window.location.href = "medicine.html";
+           window.location.href = "reminder.html";
 
         }
 
@@ -824,6 +824,11 @@ document.querySelectorAll(".tool-card").forEach(card => {
             window.location.href = "health-tracker.html";
 
         }
+else if (title === "Medicine Reminder") {
+
+    window.location.href = "reminder.html";
+
+}
 
     });
 
@@ -898,7 +903,7 @@ document.querySelectorAll(".history-card").forEach(card => {
 
         if (text.includes("Medicine Reminder")) {
 
-            window.location.href = "medicine.html";
+            window.location.href = "reminder.html";
 
         }
 
@@ -914,6 +919,8 @@ document.querySelectorAll(".history-card").forEach(card => {
 
         }
 
+
     });
 
 });
+;
