@@ -44,6 +44,72 @@ const AppError           = require('../utils/AppError');
 const DEFAULT_LIMIT = 50;
 
 // ─────────────────────────────────────────────────────────────
+// HEALTH SCORE CALCULATION
+// ─────────────────────────────────────────────────────────────
+const evaluateBloodPressureScore = (bp) => {
+  if (!bp || bp.systolic == null || bp.diastolic == null) return null;
+  const { systolic, diastolic } = bp;
+
+  if (systolic >= 180 || diastolic >= 120) return 15;  // Hypertensive crisis
+  if (systolic >= 140 || diastolic >= 90)  return 40;  // Stage 2
+  if (systolic >= 130 || diastolic >= 80)  return 65;  // Stage 1
+  if (systolic >= 120)                     return 85;  // Elevated
+  return 100;                                          // Normal
+};
+
+const evaluateBloodSugarScore = (sugar) => {
+  if (!sugar || sugar.value == null) return null;
+  // Normalize mmol/L to mg/dL so thresholds are consistent
+  const mgdl = sugar.unit === 'mmol/L' ? sugar.value * 18 : sugar.value;
+
+  if (mgdl < 70) return 55; // Low / hypoglycemia risk
+
+  if (sugar.mealContext === 'fasting') {
+    if (mgdl <= 99)  return 100;
+    if (mgdl <= 125) return 70;
+    return 40;
+  }
+
+  // post_meal, random, before_bed
+  if (mgdl < 140) return 100;
+  if (mgdl < 200) return 70;
+  return 40;
+};
+
+const evaluateWeightScore = (weight) => {
+  // No height on this model, so we can't judge BMI/healthy-range here —
+  // logging a weight reading just earns neutral credit for tracking it.
+  if (!weight || weight.value == null) return null;
+  return 100;
+};
+
+const buildHealthScore = ({ latestBP, latestWeight, latestSugar }) => {
+  const scores = [];
+
+  const bpScore = evaluateBloodPressureScore(latestBP?.bloodPressure);
+  if (bpScore != null) scores.push(bpScore);
+
+  const sugarScore = evaluateBloodSugarScore(latestSugar?.bloodSugar);
+  if (sugarScore != null) scores.push(sugarScore);
+
+  const weightScore = evaluateWeightScore(latestWeight?.weight);
+  if (weightScore != null) scores.push(weightScore);
+
+  if (scores.length === 0) {
+    return { healthScore: null, healthStatus: 'No data yet' };
+  }
+
+  const healthScore = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  const healthStatus =
+    healthScore >= 90 ? 'Excellent' :
+    healthScore >= 75 ? 'Good' :
+    healthScore >= 50 ? 'Fair' :
+    'Needs Attention';
+
+  return { healthScore, healthStatus };
+};
+
+// ─────────────────────────────────────────────────────────────
 // LOG A READING
 // ─────────────────────────────────────────────────────────────
 /**
@@ -215,6 +281,7 @@ const getDashboardSummary = async (userId) => {
   });
 
   const totalReadings = Object.values(readingCounts).reduce((sum, c) => sum + c, 0);
+  const { healthScore, healthStatus } = buildHealthScore({ latestBP, latestWeight, latestSugar });
 
   // ── Format latest readings for display ───────────────────
   const formatReading = (reading) => {

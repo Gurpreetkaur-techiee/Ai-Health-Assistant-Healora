@@ -180,7 +180,13 @@ const updateMe = async (userId, data) => {
     name: data.name,
     dateOfBirth: data.dateOfBirth,
     gender: data.gender,
-    bloodGroup: data.bloodGroup
+    bloodGroup: data.bloodGroup,
+    
+    phone: data.phone,
+    height: data.height,
+    allergies: data.allergies,
+    chronicDiseases: data.chronicDiseases,
+    currentMedications: data.currentMedications
   };
 
   const user = await User.findByIdAndUpdate(

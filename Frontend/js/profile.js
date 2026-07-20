@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const medicineCount = document.getElementById("medicineCount");
 
     let editing = false;
-
+    let emergencyContactId = null;
     const editableFields = [
         // Personal
         fullName,
@@ -158,11 +158,19 @@ document.addEventListener("DOMContentLoaded", async () => {
                 user.dateOfBirth ? user.dateOfBirth.substring(0, 10) : "";
             gender.value = user.gender || "";
             bloodGroup.value = user.bloodGroup || "";
-            height.value = localStorage.getItem("healora_height") || "";
-            weight.value = localStorage.getItem("healora_weight") || "";
-            if (user.phoneNumber) {
-                phoneNumber.value = user.phoneNumber;
-            }
+            phoneNumber.value = user.phone || "";
+            height.value = user.height || "";
+
+            allergies.value =
+                user.allergies?.join(", ") || "";
+
+            chronicDisease.value =
+                user.chronicDiseases?.join(", ") || "";
+
+            currentMedications.value =
+                user.currentMedications?.join(", ") || "";
+            await loadHealthInformation();
+            phoneNumber.value = user.phone || "";
 
             // ================= AI Badge =================
 
@@ -211,7 +219,11 @@ async function loadEmergencyContact() {
 
         if (!result.success || result.data.count === 0) return;
 
-        const contact = result.data.contacts[0];
+        const contacts = result.data.contacts;
+
+        const contact =
+            contacts.find(c => c.isPrimary) || contacts[0];
+        emergencyContactId = contact._id;
 
         contactName.value = contact.name || "";
         relationship.value = contact.relationship || "";
@@ -379,6 +391,114 @@ if (editProfileBtn) {
 
 }
 
+async function saveEmergencyContact() {
+
+    const payload = {
+        name: contactName.value.trim(),
+        relationship: relationship.value.trim(),
+        phone: contactPhone.value.trim(),
+        email: contactEmail.value.trim() || null
+    };
+
+    try {
+
+        let response;
+
+        if (emergencyContactId) {
+
+            response = await fetch(
+                `${API_BASE_URL}/emergency/${emergencyContactId}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+        } else {
+
+            payload.isPrimary = true;
+
+            response = await fetch(
+                `${API_BASE_URL}/emergency`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+        }
+
+        if (!response.ok) {
+            throw new Error("Failed to save emergency contact.");
+        }
+
+        await loadEmergencyContact();
+
+        return true;
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Failed to save emergency contact.");
+
+        return false;
+
+    }
+
+}
+
+async function saveWeight() {
+
+    const weightValue = parseFloat(weight.value);
+
+    if (isNaN(weightValue)) {
+        return true;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/health/readings`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    type: "weight",
+                    weight: {
+                        value: weightValue,
+                        unit: "kg"
+                    }
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to save weight.");
+        }
+
+        return true;
+
+    } catch (err) {
+
+        console.error(err);
+        alert("Failed to save weight.");
+
+        return false;
+    }
+
+}
+
 async function updateProfile() {
 
     try {
@@ -390,10 +510,36 @@ async function updateProfile() {
                 Authorization: `Bearer ${token}`
             },
             body: JSON.stringify({
+                        
                 name: fullName.value.trim(),
+                        
+                phone: phoneNumber.value.trim(),
+                        
+                height: height.value
+                    ? Number(height.value)
+                    : null,
+                        
                 dateOfBirth: dateOfBirth.value || null,
+                        
                 gender: gender.value || null,
-                bloodGroup: bloodGroup.value || null
+                        
+                bloodGroup: bloodGroup.value || null,
+                        
+                allergies: allergies.value
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean),
+                        
+                chronicDiseases: chronicDisease.value
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean),
+                        
+                currentMedications: currentMedications.value
+                    .split(",")
+                    .map(item => item.trim())
+                    .filter(Boolean)
+                        
             })
         });
 
@@ -408,14 +554,23 @@ async function updateProfile() {
             alert(result.message || "Failed to update profile.");
             return false;
         }
+            
+        const emergencySaved = await saveEmergencyContact();
+            
+        if (!emergencySaved) {
+            return false;
+        }
+        const weightSaved = await saveWeight();
 
-        localStorage.setItem("healora_height", height.value.trim());
-        localStorage.setItem("healora_weight", weight.value.trim());
-        
+        if (!weightSaved) {
+            return false;
+        }
+
         alert("✅ Profile updated successfully!");
-
+        
         await loadProfile();
-
+        await loadEmergencyContact();
+        
         return true;
 
     } catch (err) {
@@ -487,6 +642,50 @@ if (themeBtn) {
     });
 
 }
+
+async function loadHealthInformation() {
+
+    try {
+
+        const response = await fetch(
+            `${API_BASE_URL}/health/summary`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) return;
+
+        const result = await response.json();
+
+        const latestWeight =
+            result.data.latestReadings.weight;
+
+        if (
+            latestWeight &&
+            latestWeight.weight
+        ) {
+
+            weight.value = latestWeight.weight.value;
+
+        } else {
+
+            weight.value = "";
+
+        }
+
+        height.value = user.height || "";
+
+    } catch (err) {
+
+        console.error("Failed to load health information:", err);
+
+    }
+
+}
+
 // ================= PROFILE IMAGE =================
 
 if (cameraBtn && profileUpload) {
