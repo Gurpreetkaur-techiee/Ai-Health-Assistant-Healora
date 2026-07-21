@@ -151,10 +151,20 @@ function updateStats(reports) {
 /* ==========================================
    FILE UPLOAD
 ========================================== */
-
+console.log("UPLOAD EVENT FIRED");
 uploadInput.addEventListener("change", async (e) => {
 
     const file = e.target.files[0];
+
+console.log("File object:", file);
+
+if (!file) {
+    console.log("NO FILE FOUND");
+    return;
+}
+
+console.log("FILE NAME:", file.name);
+    console.log(file);
 
     // No file selected
     if (!file) {
@@ -228,26 +238,29 @@ uploadInput.addEventListener("change", async (e) => {
 
 
         // ================= IMMEDIATE AI RENDER =================
+console.log("SUCCESS BLOCK REACHED");
+        alert(
+`✅ Report uploaded successfully!
 
-        // Display AI analysis directly from POST response
-        renderAIAnalysis(uploadedReport);
+🤖 AI analysis has started.
 
+Please wait about 15–20 seconds.
 
-        // ================= SYNC REPORT LIST =================
+The page will refresh automatically.`
+);
 
-        // Refresh report cards, timeline and statistics
-        // using reports stored in MongoDB
-        await loadReportsFromBackend();
+selectedFile.textContent = "No file selected";
+uploadInput.value = "";
 
+setTimeout(async () => {
 
-        // ================= SUCCESS =================
+    await loadReportsFromBackend();
 
-        alert("Report uploaded successfully!");
+    window.location.reload();
 
-        selectedFile.textContent =
-            "No file selected";
-
-        uploadInput.value = "";
+}, 15000);
+selectedFile.textContent = "No file selected";
+uploadInput.value = "";
 
 
     } catch (err) {

@@ -86,7 +86,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         loadReportCount(),
         loadMedicineCount(),
         loadAppointmentCount(),
-        loadEmergencyContact()
+        loadEmergencyContact(),
+        loadHealthScore()
     ]).catch(err => {
         console.error("Initialization failed:", err);
     });
@@ -731,7 +732,88 @@ if (cameraBtn && profileUpload) {
     });
 
 }
+async function loadHealthScore() {
 
+    try {
+
+        const water =
+            JSON.parse(localStorage.getItem("healora_water")) ||
+            { glasses: 0, goal: 8 };
+
+        const sleep =
+            parseFloat(localStorage.getItem("healora_sleep")) || 0;
+
+        const steps =
+            parseInt(localStorage.getItem("healora_steps")) || 0;
+
+        const response = await fetch(
+            `${API_BASE_URL}/reminders?active=true`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        let medicines = 0;
+        let totalMedicines = 0;
+
+        if (response.ok) {
+
+            const result = await response.json();
+
+            if (result.success) {
+
+                totalMedicines = result.data.reminders.length;
+
+                medicines = result.data.reminders.filter(
+                    m => m.status === "taken"
+                ).length;
+
+            }
+
+        }
+
+        const waterProgress =
+            Math.min((water.glasses / water.goal) * 25, 25);
+
+        const stepProgress =
+            Math.min((steps / 8000) * 25, 25);
+
+        const sleepProgress =
+            Math.min((sleep / 8) * 25, 25);
+
+        const medicineProgress =
+            totalMedicines === 0
+                ? 25
+                : (medicines / totalMedicines) * 25;
+
+        const score = Math.round(
+            waterProgress +
+            stepProgress +
+            sleepProgress +
+            medicineProgress
+        );
+
+        document.getElementById("healthScore").textContent =
+            score + "%";
+
+        document.getElementById("healthScoreStatus").textContent =
+            score >= 80
+                ? "Excellent 🎉"
+                : score >= 60
+                ? "Great 👍"
+                : score >= 40
+                ? "Keep Going 💪"
+                : "Let's Start 🚀";
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+
+}
 async function logout() {
 
     try {
