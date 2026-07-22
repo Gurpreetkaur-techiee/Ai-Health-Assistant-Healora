@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const chatWindow = document.querySelector(".chat-window");
     const input = document.getElementById("messageInput");
     const sendBtn = document.getElementById("sendBtn");
-    const API_BASE_URL = "http://localhost:5000/api";
+    const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
     if(localStorage.getItem("theme")==="dark"){
 
     document.body.classList.add("dark");
@@ -252,7 +252,7 @@ function addDateSeparator() {
             requestBody.sessionId = currentSessionId;
         }
         const response = await fetch(
-            `${API_BASE_URL}/symptoms/analyze`,
+            `${API_BASE_URL}/api/symptoms/analyze`,
             {
                 method: "POST",
                 headers: {

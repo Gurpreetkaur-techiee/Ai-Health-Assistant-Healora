@@ -1,7 +1,7 @@
 /* ==========================================
    HEALORA DASHBOARD
 ========================================== */
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 
 /* Updates BOTH the number and the visual ring around it.
    Without this, the ring stays stuck at the CSS-hardcoded 94%
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/dashboard`,
+            `${API_BASE_URL}/api/dashboard`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -363,7 +363,7 @@ console.log("Reminder Time:", button.parentElement.dataset.time);
         try {
 
             const response = await fetch(
-                `${API_BASE_URL}/reminders/${reminderId}/complete`,
+                `${API_BASE_URL}/api/reminders/${reminderId}/complete`,
                 {
                     method: "PATCH",
                     headers: {
@@ -512,7 +512,7 @@ function renderNotifications(medicines, appointment) {
       }
       
       try {
-        const res = await fetch(`${API_BASE_URL}/appointments/${appointmentId}`, {
+        const res = await fetch(`${API_BASE_URL}/api/appointments/${appointmentId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         
@@ -690,7 +690,7 @@ async function addWaterGlass() {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/water/add`, {
+        const response = await fetch(`${API_BASE_URL}/api/water/add`, {
             method: "PATCH",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -717,7 +717,7 @@ async function removeWaterGlass() {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/water/remove`, {
+        const response = await fetch(`${API_BASE_URL}/api/water/remove`, {
             method: "PATCH",
             headers: {
                 Authorization: `Bearer ${token}`
@@ -1086,13 +1086,13 @@ async function getVitalsData() {
 
         const [profileRes, healthRes] = await Promise.all([
 
-            fetch(`${API_BASE_URL}/auth/me`, {
+            fetch(`${API_BASE_URL}/api/auth/me`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             }),
 
-            fetch(`${API_BASE_URL}/health/summary`, {
+            fetch(`${API_BASE_URL}/api/health/summary`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

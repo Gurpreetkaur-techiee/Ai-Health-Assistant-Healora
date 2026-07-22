@@ -9,7 +9,7 @@ if (!token) {
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 
 
 const form=document.getElementById("reminderForm");
@@ -138,8 +138,8 @@ form.addEventListener("submit", async (e) => {
     try {
 
        const url = editingReminderId
-    ? `${API_BASE_URL}/reminders/${editingReminderId}`
-    : `${API_BASE_URL}/reminders`;
+    ? `${API_BASE_URL}/api/reminders/${editingReminderId}`
+    : `${API_BASE_URL}/api/reminders`;
 
 const method = editingReminderId ? "PUT" : "POST";
 
@@ -480,7 +480,7 @@ async function loadRemindersFromBackend(){
     try{
 
         const response = await fetch(
-            `${API_BASE_URL}/reminders`,
+            `${API_BASE_URL}/api/reminders`,
             {
                 headers:{
                     Authorization:`Bearer ${token}`
@@ -576,7 +576,7 @@ console.log(id);
 
         const response = await fetch(
 
-            `${API_BASE_URL}/reminders/${id}`,
+            `${API_BASE_URL}/api/reminders/${id}`,
 
             {
                 method: "DELETE",
@@ -610,7 +610,7 @@ async function editReminder(id){
 try{
 
        const response = await fetch(
-            `${API_BASE_URL}/reminders/${id}`,
+            `${API_BASE_URL}/api/reminders/${id}`,
             {
                 headers:{
                     Authorization:`Bearer ${token}`
@@ -660,7 +660,7 @@ async function completeReminder(id, time) {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/reminders/${id}/complete`,
+            `${API_BASE_URL}/api/reminders/${id}/complete`,
             {
                 method: "PATCH",
                 headers: {

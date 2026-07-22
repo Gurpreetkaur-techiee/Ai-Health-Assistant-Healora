@@ -2,7 +2,7 @@
    HEALORA AUTHENTICATION
    auth.js
 ========================================== */
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 
 const token = localStorage.getItem("token");
 
@@ -52,7 +52,7 @@ async function handleGoogleResponse(response) {
 
     try {
 
-        const res = await fetch(`${API_BASE_URL}/auth/google`, {
+const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
 
             method: "POST",
 
@@ -348,7 +348,7 @@ if (loginForm) {
         try {
 
             const response = await fetch(
-                `${API_BASE_URL}/auth/login`,
+                `${API_BASE_URL}/api/auth/login`,
                 {
 
                     method: "POST",
@@ -708,7 +708,7 @@ updateRule(
 
 try {
 
-    const response = await fetch(`${API_BASE_URL}/auth/register`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
 
         method: "POST",
 
@@ -782,7 +782,7 @@ if (forgotPasswordForm) {
 
             const response = await fetch(
 
-                `${API_BASE_URL}/auth/forgot-password`,
+                `${API_BASE_URL}/api/auth/forgot-password`,
 
                 {
 
@@ -927,7 +927,7 @@ if (verifyOtpForm) {
 
             const response = await fetch(
 
-                `${API_BASE_URL}/auth/verify-otp`,
+                `${API_BASE_URL}/api/auth/verify-otp`,
 
                 {
 
@@ -1023,7 +1023,7 @@ if (verifyOtpForm) {
 
             await fetch(
 
-                `${API_BASE_URL}/auth/forgot-password`,
+                `${API_BASE_URL}/api/auth/forgot-password`,
 
                 {
 
@@ -1301,7 +1301,7 @@ if (resetPasswordForm) {
 
             const response = await fetch(
 
-                `${API_BASE_URL}/auth/reset-password`,
+                `${API_BASE_URL}/api/auth/reset-password`,
 
                 {
 
