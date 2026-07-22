@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     
-    const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+    const API_BASE_URL = "https://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 
     let redirecting = false;
 

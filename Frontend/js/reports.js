@@ -16,7 +16,7 @@ if (savedTheme === "dark") {
     document.documentElement.classList.add("dark-mode");
     document.body.classList.add("dark-mode");
 }
-const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+const API_BASE_URL = "https://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
 const profileImage = document.getElementById("profileImage");
