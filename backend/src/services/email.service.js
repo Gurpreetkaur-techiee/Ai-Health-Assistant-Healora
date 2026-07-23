@@ -1,32 +1,43 @@
-const nodemailer = require("nodemailer");
+const brevo = require("@getbrevo/brevo");
 
-const transporter = nodemailer.createTransport({
-    host: "smtp-relay.brevo.com",
-    port: 587,
-    secure: false,
-    auth: {
-        user: process.env.BREVO_LOGIN,
-        pass: process.env.BREVO_SMTP_KEY
-    }
-});
+const apiInstance = new brevo.TransactionalEmailsApi();
+
+apiInstance.setApiKey(
+  brevo.TransactionalEmailsApiApiKeys.apiKey,
+  process.env.BREVO_API_KEY
+);
 
 const sendEmail = async ({ to, subject, html }) => {
-    try {
-        const info = await transporter.sendMail({
-            // Replace this with your VERIFIED sender email in Brevo
-            from: '"Healora Team" <healora.ai.helpdesk@gmail.com>',
-            to,
-            subject,
-            html
-        });
+  try {
+    const sendSmtpEmail = new brevo.SendSmtpEmail();
 
-        console.log("Email sent:", info.response);
-    } catch (err) {
-        console.error("EMAIL ERROR:", err);
-        throw err;
-    }
+    sendSmtpEmail.subject = subject;
+    sendSmtpEmail.htmlContent = html;
+
+    sendSmtpEmail.sender = {
+      name: "Healora Team",
+      email: "healora.ai.helpdesk@gmail.com"
+    };
+
+    sendSmtpEmail.to = [
+      {
+        email: to
+      }
+    ];
+
+    const response = await apiInstance.sendTransacEmail(sendSmtpEmail);
+
+    console.log("Email sent successfully:", response.body);
+    return response.body;
+  } catch (err) {
+    console.error(
+      "EMAIL API ERROR:",
+      err.response?.body || err.message || err
+    );
+    throw err;
+  }
 };
 
 module.exports = {
-    sendEmail
+  sendEmail
 };
