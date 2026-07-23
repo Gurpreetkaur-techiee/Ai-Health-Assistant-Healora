@@ -1,7 +1,7 @@
 /* ==========================================
    HEALORA DASHBOARD
 ========================================== */
-const API_BASE_URL = "https://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 
 /* Updates BOTH the number and the visual ring around it.
    Without this, the ring stays stuck at the CSS-hardcoded 94%

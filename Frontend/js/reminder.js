@@ -9,7 +9,7 @@ if (!token) {
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
-const API_BASE_URL = "https://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
 
 
 const form=document.getElementById("reminderForm");
