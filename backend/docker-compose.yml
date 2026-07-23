@@ -1,0 +1,82 @@
+# ─────────────────────────────────────────────────────────────
+# docker-compose.yml — Local Development Environment
+#
+# USAGE:
+#   Start:   docker-compose up --build
+#   Stop:    docker-compose down
+#   Logs:    docker-compose logs -f api
+#   Shell:   docker-compose exec api sh
+#
+# DESIGN DECISIONS:
+#
+# 1. ENV vars from .env file:
+#    We use `env_file: .env` to load all variables from the local .env file.
+#    This avoids duplicating variable definitions between .env and this file.
+#    NEVER commit .env — it's in .gitignore.
+#
+# 2. Volume mount for hot-reload:
+#    `./:/app` mounts the project directory so code changes are reflected
+#    immediately inside the container (used with `npm run dev` / nodemon).
+#    `node_modules` is excluded via a named volume to prevent the host's
+#    node_modules from overriding the container's (they may differ by OS).
+#
+# 3. MongoDB Atlas (remote):
+#    This compose file does NOT run a local MongoDB container.
+#    We use MongoDB Atlas (MONGODB_URI in .env) for all environments.
+#    Reason: Maintains parity between development and production environments.
+#    IMPROVEMENT: Add a local mongo service with a separate MONGODB_URI
+#    if offline development is required:
+#      mongo:
+#        image: mongo:7
+#        ports: ["27017:27017"]
+#    Then set MONGODB_URI=mongodb://mongo:27017/ai-health-dev in the api service.
+#
+# 4. NODE_ENV override:
+#    Even though .env may set NODE_ENV, we explicitly set it in the compose
+#    environment to make the intent clear. Compose environment values
+#    take precedence over env_file values.
+# ─────────────────────────────────────────────────────────────
+
+services:
+  api:
+    # Build from the local Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Container name for easy reference in `docker logs` and `docker exec`
+    container_name: ai-health-assistant-api
+
+    # Map host port 5000 to container port 5000
+    # Access the API at http://localhost:5000 on the host machine
+    ports:
+      - "${PORT:-5000}:${PORT:-5000}"
+
+    # Load environment variables from the .env file
+    env_file:
+      - .env
+
+    # Override specific variables for the development environment
+    environment:
+      - NODE_ENV=development
+
+    # Volume mounts for hot-reload development
+    volumes:
+      # Mount source code for live editing (nodemon watches for changes)
+      - .:/app
+      # Preserve the container's node_modules (don't overwrite with host's)
+      - /app/node_modules
+
+    # Override CMD from Dockerfile to use nodemon for hot-reload in development
+    command: npm run dev
+
+    # Restart policy for development (restart if crash, not on manual stop)
+    restart: unless-stopped
+
+    # Health check matches the Dockerfile definition
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:${PORT:-5000}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
