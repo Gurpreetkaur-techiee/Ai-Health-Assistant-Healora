@@ -248,7 +248,7 @@ const uploadAndAnalyzeReport = async ({
 
     urgencyReason,
 
-    modelUsed: process.env.GEMINI_MODEL || "gemini-1.5-flash"
+    modelUsed: process.env.GEMINI_MODEL || "gemini-2.5-flash"
 
 });
   return report;

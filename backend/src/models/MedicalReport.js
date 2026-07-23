@@ -135,7 +135,7 @@ mimeType: {
     modelUsed: {
       type: String,
       default: null
-      // e.g. 'gemini-1.5-flash'
+      // e.g. 'gemini-2.5-flash'
     }
   },
   {

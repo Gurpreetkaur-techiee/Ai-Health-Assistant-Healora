@@ -97,7 +97,7 @@ const GENERATION_CONFIG = {
  */
 const _createModel = (systemInstruction = null) => {
   const config = {
-    model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
+    model: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
     safetySettings: SAFETY_SETTINGS,
     generationConfig: GENERATION_CONFIG
   };
