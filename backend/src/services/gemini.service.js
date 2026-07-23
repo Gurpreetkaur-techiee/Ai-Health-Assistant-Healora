@@ -43,6 +43,7 @@
  */
 
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+const geminiPkg = require('@google/generative-ai/package.json');
 const AppError = require('../utils/AppError');
 
 // ── Singleton Client ──────────────────────────────────────────
@@ -50,6 +51,9 @@ let genAI = null;
 
 const getClient = () => {
   if (!genAI) {
+    console.log("Gemini SDK Version:", geminiPkg.version);
+    console.log("Gemini Model:", process.env.GEMINI_MODEL);
+
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
   return genAI;
