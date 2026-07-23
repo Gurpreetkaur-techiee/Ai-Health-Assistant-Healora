@@ -1,0 +1,1 @@
+const API_BASE_URL = "https://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
