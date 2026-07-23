@@ -16,7 +16,7 @@ if (savedTheme === "dark") {
     document.documentElement.classList.add("dark-mode");
     document.body.classList.add("dark-mode");
 }
-const API_BASE_URL = "http://localhost:5000/api";
+const API_BASE_URL = "https://ai-health-assistant-healora-1.onrender.com/api";
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
 const profileImage = document.getElementById("profileImage");
@@ -429,7 +429,7 @@ reportsGrid.addEventListener("click", (e) => {
     }
 
     window.open(
-        `http://localhost:5000${file}`,
+        `https://ai-health-assistant-healora-1.onrender.com${file}`,
         "_blank"
     );
 
