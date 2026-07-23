@@ -50,14 +50,6 @@ let genAI = null;
 
 const getClient = () => {
   if (!genAI) {
-    console.log("GEMINI MODEL:", process.env.GEMINI_MODEL);
-    console.log(
-      "API KEY:",
-      process.env.GEMINI_API_KEY
-        ? process.env.GEMINI_API_KEY.substring(0, 8) + "..."
-        : "Missing"
-    );
-
     genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
   return genAI;
@@ -105,7 +97,7 @@ const GENERATION_CONFIG = {
  */
 const _createModel = (systemInstruction = null) => {
   const config = {
-    model: process.env.GEMINI_MODEL || 'models/gemini-2.5-flash',
+    model: process.env.GEMINI_MODEL || 'gemini-1.5-flash',
     safetySettings: SAFETY_SETTINGS,
     generationConfig: GENERATION_CONFIG
   };

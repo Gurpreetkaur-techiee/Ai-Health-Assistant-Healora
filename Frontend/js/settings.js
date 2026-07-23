@@ -27,7 +27,7 @@ const topProfileImage = document.getElementById("topProfileImage");
 const themeStatus = document.getElementById("themeStatus");
 const themeSubStatus = document.getElementById("themeSubStatus");
 
-const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+const API_BASE_URL = "http://localhost:5000/api";
 
 function updateThemeCard(isDark) {
 
@@ -44,7 +44,7 @@ async function loadProfile() {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -170,8 +170,7 @@ function saveSettings() {
         JSON.stringify(data)
     );
     updateStatusCards();
-    
-    /*loadSystemInformation();*/
+    loadSystemInformation();
     // Keep global theme in sync across the app
     localStorage.setItem(
         "theme",

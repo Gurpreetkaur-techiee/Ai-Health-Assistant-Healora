@@ -9,7 +9,7 @@ if (!token) {
     window.location.href = "login.html";
 }
 const storedUser = JSON.parse(localStorage.getItem("user"));
-const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+const API_BASE_URL = "http://localhost:5000/api";
 
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -154,7 +154,7 @@ bookButtons.forEach(btn => {
                 token
             });
 
-            const response = await fetch(`${API_BASE_URL}/api/appointments`, {
+            const response = await fetch(`${API_BASE_URL}/appointments`, {
 
                 method: "POST",
 
@@ -396,7 +396,7 @@ async function loadAppointments() {
 
         console.log("Loading appointments...");
 
-        const response = await fetch(`${API_BASE_URL}/api/appointments`, {
+        const response = await fetch(`${API_BASE_URL}/appointments`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -487,7 +487,7 @@ async function loadAppointments() {
                 try {
 
                     const response = await fetch(
-                        `${API_BASE_URL}/api/appointments/${appointment._id}`,
+                        `${API_BASE_URL}/appointments/${appointment._id}`,
                         {
                             method: "DELETE",
                             headers: {
@@ -556,7 +556,7 @@ async function loadAppointments() {
                 try {
 
                     const response = await fetch(
-                        `${API_BASE_URL}/api/appointments/${appointment._id}`,
+                        `${API_BASE_URL}/appointments/${appointment._id}`,
                         {
                             method: "PUT",
                             headers: {

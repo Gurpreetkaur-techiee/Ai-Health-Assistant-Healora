@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     
-    const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+    const API_BASE_URL = "http://localhost:5000/api";
 
     let redirecting = false;
 
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         try {
 
             const response = await fetch(
-                `${API_BASE_URL}/api/auth/me`,
+                `${API_BASE_URL}/auth/me`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -208,7 +208,7 @@ async function loadEmergencyContact() {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/api/emergency`, {
+        const response = await fetch(`${API_BASE_URL}/emergency`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
@@ -242,7 +242,7 @@ async function loadReportCount() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/reports`,
+            `${API_BASE_URL}/reports`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -282,7 +282,7 @@ async function loadMedicineCount() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/reminders?active=true`,
+            `${API_BASE_URL}/reminders?active=true`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -321,7 +321,7 @@ async function loadAppointmentCount() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/appointments?upcoming=true`,
+            `${API_BASE_URL}/appointments?upcoming=true`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -408,7 +408,7 @@ async function saveEmergencyContact() {
         if (emergencyContactId) {
 
             response = await fetch(
-                `${API_BASE_URL}/api/emergency/${emergencyContactId}`,
+                `${API_BASE_URL}/emergency/${emergencyContactId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -424,7 +424,7 @@ async function saveEmergencyContact() {
             payload.isPrimary = true;
 
             response = await fetch(
-                `${API_BASE_URL}/api/emergency`,
+                `${API_BASE_URL}/emergency`,
                 {
                     method: "POST",
                     headers: {
@@ -467,7 +467,7 @@ async function saveWeight() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/health/readings`,
+            `${API_BASE_URL}/health/readings`,
             {
                 method: "POST",
                 headers: {
@@ -504,7 +504,7 @@ async function updateProfile() {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -649,7 +649,7 @@ async function loadHealthInformation() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/health/summary`,
+            `${API_BASE_URL}/health/summary`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -677,6 +677,7 @@ async function loadHealthInformation() {
 
         }
 
+        height.value = user.height || "";
 
     } catch (err) {
 
@@ -746,7 +747,7 @@ async function loadHealthScore() {
             parseInt(localStorage.getItem("healora_steps")) || 0;
 
         const response = await fetch(
-            `${API_BASE_URL}/api/reminders?active=true`,
+            `${API_BASE_URL}/reminders?active=true`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -817,7 +818,7 @@ async function logout() {
 
     try {
 
-        const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+        const response = await fetch(`${API_BASE_URL}/auth/logout`, {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${token}`

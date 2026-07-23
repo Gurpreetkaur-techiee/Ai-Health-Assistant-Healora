@@ -16,7 +16,7 @@ if (savedTheme === "dark") {
     document.documentElement.classList.add("dark-mode");
     document.body.classList.add("dark-mode");
 }
-const API_BASE_URL = "http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com";
+const API_BASE_URL = "http://localhost:5000/api";
 const storedUser = JSON.parse(localStorage.getItem("user"));
 
 const profileImage = document.getElementById("profileImage");
@@ -188,7 +188,7 @@ console.log("FILE NAME:", file.name);
         // ================= UPLOAD REPORT =================
 
         const response = await fetch(
-            `${API_BASE_URL}/api/reports/upload`,
+            `${API_BASE_URL}/reports/upload`,
             {
                 method: "POST",
                 headers: {
@@ -377,7 +377,7 @@ reportsGrid.addEventListener("click", async (e) => {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/reports/${reportId}`,
+            `${API_BASE_URL}/reports/${reportId}`,
             {
                 method: "DELETE",
                 headers: {
@@ -429,9 +429,9 @@ reportsGrid.addEventListener("click", (e) => {
     }
 
     window.open(
-    `http://Healora-env.eba-fdvdpf3j.eu-north-1.elasticbeanstalk.com${file}`,
-    "_blank"
-);
+        `http://localhost:5000${file}`,
+        "_blank"
+    );
 
 });
 
@@ -629,7 +629,7 @@ async function loadReportsFromBackend() {
     try {
 
         const response = await fetch(
-            `${API_BASE_URL}/api/reports`,
+            `${API_BASE_URL}/reports`,
             {
                 headers: {
                     Authorization: `Bearer ${token}`
